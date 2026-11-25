@@ -1,0 +1,6 @@
+# Nunca versionar as palavras-código
+codigos*.json
+*codigos-secretos*
+.DS_Store
+__pycache__/
+node_modules/
