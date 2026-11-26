@@ -1128,7 +1128,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     JS.open = "";
     const a = S.atividades[n] || {};
     const nm = String(a.nome || "");
-    JS.tipo = a.tipo && TIPOS_J.includes(a.tipo) ? a.tipo : TIPOS_J.find((x) => nrm(nm).startsWith(nrm(x))) || "";
+    JS.tipo = "";
     jsQ.value = "";
     document.getElementById("js-for").textContent = `Para a atividade ${n + 1}${actLabel(a) ? " \xB7 " + actTitle(a) : ""}`;
     jsEl.hidden = false;

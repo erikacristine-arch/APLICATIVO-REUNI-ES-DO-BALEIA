@@ -1121,7 +1121,7 @@ function searchJ(q,tipo){const toks=nrm(q).split(/\s+/).filter(Boolean);
 const jsEl=document.getElementById('jsheet'),jsQ=document.getElementById('js-q'),jsL=document.getElementById('js-l'),jsT=document.getElementById('js-t');
 const JS={n:0,tipo:'',open:''};
 function openJogos(n){JS.n=n;JS.open='';const a=S.atividades[n]||{};const nm=String(a.nome||'');
-  JS.tipo=(a.tipo&&TIPOS_J.includes(a.tipo))?a.tipo:(TIPOS_J.find(x=>nrm(nm).startsWith(nrm(x)))||'');jsQ.value='';
+  JS.tipo='';jsQ.value='';
   document.getElementById('js-for').textContent=`Para a atividade ${n+1}${actLabel(a)?' · '+actTitle(a):''}`;jsEl.hidden=false;document.body.style.overflow='hidden';renderJogos();loadJogos().then(renderJogos);setTimeout(()=>jsQ.focus(),60)}
 function closeJogos(){jsEl.hidden=true;document.body.style.overflow=''}
 document.getElementById('js-x').onclick=closeJogos;
