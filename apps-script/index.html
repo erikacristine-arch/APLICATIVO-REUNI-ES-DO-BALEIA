@@ -705,6 +705,23 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     RAW = Object.entries(lget(LREU)).map(([id, x]) => ({ id, x: objOr(x) }));
     decodeAll();
   }, gsr2 = function(fn, ...args) {
+    if (IN_API) return fetch(window.RN_API + "/rpc", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fn, args }) }).then(
+      async (r) => {
+        let j = null;
+        try {
+          j = await r.json();
+        } catch (e) {
+        }
+        if (!r.ok || !j || j.erro) {
+          const m = String(j && j.erro || "HTTP " + r.status);
+          throw { code: errCode(m), message: m };
+        }
+        return j.resultado === void 0 ? null : j.resultado;
+      },
+      (e) => {
+        throw e && e.code ? e : { code: "net", message: String(e) };
+      }
+    );
     return new Promise((ok, no) => google.script.run.withSuccessHandler(ok).withFailureHandler((e) => {
       const m = String(e && e.message || e || "");
       no({ code: /codigo/i.test(m) ? "permission_denied" : /not_found/.test(m) ? "not_found" : "net", message: m });
@@ -2613,7 +2630,9 @@ ${hhmm(t + d)}` : "";
     renderBoard2();
   }
   loadLocal2();
-  const IN_GAS = !!(window.google && google.script && google.script.run);
+  const IN_API = typeof window.RN_API === "string";
+  const IN_GAS = IN_API || !!(window.google && google.script && google.script.run);
+  const errCode = (m) => /codigo/i.test(m) ? "permission_denied" : /not_found/.test(m) ? "not_found" : "net";
   const GSUBS = [];
   let gPollT = null, gBusy = false;
   async function gPoll() {

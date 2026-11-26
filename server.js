@@ -1,0 +1,144 @@
+// Reuniões do Baleia — servidor (Node.js + Hono + Supabase)
+// Entrega o app (public/index.html) e guarda reuniões, pontuação e banco de jogos no Supabase.
+// O conteúdo das reuniões chega embaralhado (criptografado) pelo app; aqui só se guarda
+// e se confere a palavra-código antes de gravar ou apagar.
+import 'dotenv/config'
+import { readFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { Hono } from 'hono'
+import { serve } from '@hono/node-server'
+import { serveStatic } from '@hono/node-server/serve-static'
+import { criarArmazem } from './armazem.js'
+
+const VER = JSON.parse(readFileSync(new URL('./codigo-fonte/conferencia-codigos.json', import.meta.url), 'utf8')).ver
+const COLECOES = new Set(['reunioes', 'planos', 'jogos'])
+const armazem = criarArmazem()
+const app = new Hono()
+
+// Gravações só da própria página (mesma origem), como no IFPlay.
+app.use('/api/*', async (c, next) => {
+    if (c.req.method !== 'GET') {
+        const origem = c.req.header('origin')
+        if (origem) {
+            let o
+            try { o = new URL(origem) } catch { return c.json({ erro: 'Origem inválida.' }, 403) }
+            if (o.host !== new URL(c.req.url).host && o.host !== c.req.header('host')) return c.json({ erro: 'Origem não permitida.' }, 403)
+        }
+    }
+    await next()
+})
+
+// ---------- Regras (as mesmas do Code.gs do Google) ----------
+
+function confere(secao, prova) {
+    const esperado = VER[secao]
+    if (!esperado) throw new Error('codigo: seção inválida')
+    const p = String(prova || '')
+    if (!/^[0-9a-f]{64}$/.test(p)) throw new Error('codigo: palavra-código ausente')
+    if (createHash('sha256').update(Buffer.from(p, 'hex')).digest('hex') !== esperado) throw new Error('codigo: palavra-código não confere')
+}
+
+function colecao(c) {
+    if (!COLECOES.has(c)) throw new Error('coleção inválida')
+    return c
+}
+
+// Uma gravação por vez em cada registro (evita que dois chefes se atropelem).
+const filas = new Map()
+function emFila(chave, fn) {
+    const anterior = filas.get(chave) || Promise.resolve()
+    const atual = anterior.catch(() => {}).then(fn)
+    filas.set(chave, atual)
+    atual.finally(() => { if (filas.get(chave) === atual) filas.delete(chave) }).catch(() => {})
+    return atual
+}
+
+const api = {
+    async apiList(c) {
+        const linhas = await armazem.listar(colecao(c))
+        return linhas.map(r => ({ ...r.dados, id: r.id, secao: r.secao }))
+    },
+    async apiGet(c, id) {
+        const r = await armazem.pegar(colecao(c), String(id))
+        return r ? { ...r.dados, secao: r.secao } : null
+    },
+    async apiSet(c, id, json, prova) {
+        colecao(c)
+        const o = JSON.parse(json)
+        const secao = String(o.secao || '')
+        confere(secao, prova)
+        return emFila(c + ':' + id, async () => {
+            const r = await armazem.pegar(c, String(id))
+            if (r && c === 'jogos') throw new Error('ja_existe: o banco de jogos não aceita sobrescrever um jogo')
+            if (r && r.secao !== secao) throw new Error('codigo: reunião de outra seção')
+            o.secao = secao
+            await armazem.gravar(c, String(id), secao, o)
+            return true
+        })
+    },
+    async apiUpdate(c, id, json, prova) {
+        colecao(c)
+        const parte = JSON.parse(json)
+        return emFila(c + ':' + id, async () => {
+            const r = await armazem.pegar(c, String(id))
+            if (!r) throw new Error('not_found')
+            confere(r.secao, prova)
+            const o = { ...r.dados, ...parte, secao: r.secao }
+            await armazem.gravar(c, String(id), r.secao, o)
+            return true
+        })
+    },
+    async apiDelete(c, id, prova) {
+        colecao(c)
+        return emFila(c + ':' + id, async () => {
+            const r = await armazem.pegar(c, String(id))
+            if (!r) return true
+            confere(r.secao, prova)
+            await armazem.apagar(c, String(id))
+            return true
+        })
+    },
+    // Salva a reunião e o formulário numa chamada só.
+    async apiSaveReuniao(id, resumoJson, pontosJson, planoJson, prova) {
+        const resumo = JSON.parse(resumoJson), pontos = JSON.parse(pontosJson), plano = JSON.parse(planoJson)
+        const secao = String(resumo.secao || '')
+        confere(secao, prova)
+        return emFila('reunioes:' + id, async () => {
+            const r = await armazem.pegar('reunioes', String(id))
+            if (r && r.secao !== secao) throw new Error('codigo: reunião de outra seção')
+            const o = { ...(r ? r.dados : {}), ...resumo }
+            if (!o.p && pontos.p) o.p = pontos.p
+            o.secao = secao
+            await armazem.gravar('reunioes', String(id), secao, o)
+            await armazem.gravar('planos', String(id), secao, { ...plano, secao })
+            return true
+        })
+    }
+}
+
+app.post('/api/rpc', async c => {
+    let corpo
+    try { corpo = await c.req.json() } catch { return c.json({ erro: 'pedido inválido' }, 400) }
+    const fn = api[corpo && corpo.fn]
+    if (!fn || !Array.isArray(corpo.args)) return c.json({ erro: 'função inválida' }, 400)
+    try {
+        const resultado = await fn(...corpo.args)
+        return c.json({ resultado: resultado ?? null })
+    } catch (e) {
+        const msg = String((e && e.message) || e)
+        if (!/^(codigo|not_found|ja_existe|coleção)/.test(msg)) console.error('Erro em', corpo.fn, e)
+        return c.json({ erro: msg }, /^codigo/.test(msg) ? 403 : 400)
+    }
+})
+
+app.get('/saude', c => c.json({ ok: true, armazem: armazem.nome }))
+
+app.use('/*', serveStatic({ root: './public' }))
+
+// Nunca derrubar o servidor por um erro solto: registra e segue.
+process.on('unhandledRejection', e => console.error('Erro não tratado:', e))
+
+const porta = Number(process.env.PORT) || 3333
+serve({ fetch: app.fetch, port: porta }, () => {
+    console.log(`Reuniões do Baleia rodando em http://localhost:${porta} (dados: ${armazem.nome})`)
+})

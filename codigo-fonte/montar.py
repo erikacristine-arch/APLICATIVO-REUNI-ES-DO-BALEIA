@@ -6,8 +6,9 @@ Uso (na pasta codigo-fonte):
     python3 montar.py
 
 Gera:
-    ../apps-script/index.html  -> colar no arquivo "index" do Apps Script
-    ../apps-script/Code.gs     -> colar no arquivo "Código.gs" do Apps Script
+    ../public/index.html       -> app servido pelo servidor Node.js (Railway + Supabase)
+    ../apps-script/index.html  -> colar no arquivo "index" do Apps Script (versão Google)
+    ../apps-script/Code.gs     -> colar no arquivo "Código.gs" do Apps Script (versão Google)
 
 Precisa de Python 3 e Node.js (o esbuild é baixado pelo npx na primeira vez).
 O esbuild converte o JavaScript para uma versão mais antiga e só com
@@ -71,12 +72,23 @@ def main():
     ver = json.loads(ler('conferencia-codigos.json'))['ver']
     code = ler('Code.modelo.gs').replace('__VER__', json.dumps(ver, ensure_ascii=False, indent=2))
 
+    # Versão do servidor próprio (Railway + Supabase): o app fala com /api
+    servidor = html.replace('<script>\n(function(){var errs=[];', "<script>window.RN_API='/api';</script>\n<script>\n(function(){var errs=[];", 1)
+    if servidor == html:
+        sys.exit('Não achei onde avisar o app sobre o servidor (/api).')
+    servidor = servidor.replace('Confira se o arquivo index foi colado inteiro (a última linha deve ser </html>), salve e implante uma nova versão.',
+                                'Recarregue a página. Se continuar, avise quem cuida do app.')
+    publico = os.path.join(AQUI, '..', 'public')
+    os.makedirs(publico, exist_ok=True)
+    with open(os.path.join(publico, 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(servidor)
+
     os.makedirs(SAIDA, exist_ok=True)
     with open(os.path.join(SAIDA, 'index.html'), 'w', encoding='utf-8') as f:
         f.write(html)
     with open(os.path.join(SAIDA, 'Code.gs'), 'w', encoding='utf-8') as f:
         f.write(code)
-    print('Pronto: apps-script/index.html e apps-script/Code.gs atualizados.')
+    print('Pronto: public/index.html, apps-script/index.html e apps-script/Code.gs atualizados.')
 
 
 if __name__ == '__main__':
