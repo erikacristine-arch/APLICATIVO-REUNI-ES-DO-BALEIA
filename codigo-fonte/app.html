@@ -977,7 +977,7 @@ bdBody.addEventListener('change',e=>{if(e.target.dataset.itv){const r=REUN.find(
 
 /* ---------- Capa e tela da seção ---------- */
 const GRUPOS=[['Ninhadas','#0F8A9D',['Ninhada 1','Ninhada 2']],['Alcateias','#C08A00',['Alcateia Lobo Guará','Alcateia Sabiá','Alcateia Túnel do Morcego']],
- ['Escoteiros','#2E8B57',['Tropa Escoteira Hussardos','Tropa Escoteira Lis de Ouro','Tropa Escoteira Scorpions']],['Sêniors','#8B1E3F',['Tropa Sênior Botocudos Pankas','Tropa Sênior Kakremaan']],['Pioneiros','#C62828',['Clã Zulu Mac Smyth']]];
+ ['Escoteiros','#2E8B57',['Tropa Escoteira Hussardos','Tropa Escoteira Lis de Ouro','Tropa Escoteira Scorpions']],['Seniores','#8B1E3F',['Tropa Sênior Botocudos Pankas','Tropa Sênior Kakremaan']],['Pioneiros','#C62828',['Clã Zulu Mac Smyth']]];
 const LOGO_FILE={'Ninhada 1':'filhotes','Ninhada 2':'filhotes','Alcateia Lobo Guará':'loboguara','Alcateia Sabiá':'sabia','Alcateia Túnel do Morcego':'tunel','Tropa Escoteira Hussardos':'hussardos','Tropa Escoteira Lis de Ouro':'lisdeouro','Tropa Escoteira Scorpions':'scorpions','Tropa Sênior Botocudos Pankas':'botocudos','Tropa Sênior Kakremaan':'kakremaan','Clã Zulu Mac Smyth':'cla'};
 const logoImg=(s,cls)=>LOGO_FILE[s]&&IN_API?`<img class="${cls||''}" src="/logos/${LOGO_FILE[s]}.jpg" alt="" loading="lazy" onerror="this.remove()">`:'';
 const CREDITO='<p class="credito">Desenvolvido e elaborado por <b>Erika Cristine</b> · Escoteiros do Baleia<br><a href="mailto:erika-cristine@escoteiros.org.br">erika-cristine@escoteiros.org.br</a></p>';
