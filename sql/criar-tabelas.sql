@@ -35,3 +35,7 @@ alter table public.jogos       enable row level security;
 
 -- Nenhum acesso pela chave pública (anon/authenticated): só o servidor grava e lê.
 revoke all on public.reunioes, public.formularios, public.jogos from anon, authenticated;
+
+-- O servidor (chave secreta, papel service_role) precisa ler e gravar.
+-- Projetos novos do Supabase não dão essa permissão sozinhos.
+grant select, insert, update, delete on public.reunioes, public.formularios, public.jogos to service_role;
