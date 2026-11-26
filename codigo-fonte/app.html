@@ -378,7 +378,7 @@ const AREAS=[['HV','Habilidades para a Vida'],['MA','Meio Ambiente'],['PD','Paz 
 const PONT=[['Apresentação','Apres.'],['Jogo','Jogo']];
 const TIPOS_ATV=['Abertura','Quebra-gelo','Canção','Capacitação','Jogo ativo','Observação','Revezamento','Grande jogo','Jogo de cooperação','Jogo de confiança','Atividade de progressão','Conselho de patrulha','Lanche','Encerramento','Outro'];
 const NOMES_ATV=['IBOA','Abertura','Quebra-gelo','Canção','Capacitação','Jogo ativo','Jogo de observação','Revezamento','Grande jogo','Atividade de progressão','Conselho de patrulha','Lanche','Encerramento'];
-const PS_URL='https://claude.ai/artifact/5rwiMXLwmvW3341jK6ts3r';
+const PS_URL=typeof window.RN_API==='string'?'/seguranca.html':'https://claude.ai/artifact/5rwiMXLwmvW3341jK6ts3r';
 const JOV=['jovem','Jovem (nome e sobrenome)'];
 const COLORS={identificacao:'#3955A4',objetivos:'#7B4FB8',pontuacao:'#E07B00',programacao:'#2E8B57',cuidados:'#C62828',lembretes:'#0F8A9D'};
 const SCHEMA=[
@@ -387,7 +387,7 @@ const SCHEMA=[
   {k:'secaoOutra',type:'text',l:'Qual seção?',req:1,when:['secao','Outra']},
   {pair:[{k:'ciclo',type:'ciclo',l:'Ciclo'},{k:'folha',type:'number',l:'Folha de Jogos nº'}]},
   {k:'tema',type:'text',l:'Tema / lema do ciclo',hint:'sai no cabeçalho do PDF'},
-  {pair:[{k:'elaborador',type:'text',l:'Elaborado por',req:1},{k:'inicio',type:'time',l:'Horário de início',hint:'opcional · calcula o horário de cada atividade'}]}]},
+  {pair:[{k:'elaborador',type:'text',l:'Elaborado por',req:1},{k:'inicio',type:'time',l:'Horário de início',hint:'padrão 14:30 · calcula o horário de cada atividade'}]}]},
  {id:'objetivos',t:'Objetivos',items:[
   {k:'objetivos',type:'area',l:'Objetivos da reunião',req:1,min:3},
   {k:'enfase',type:'text',l:'Ênfase trabalhada segundo o diagnóstico'},
@@ -756,7 +756,8 @@ let CODES={};try{CODES=JSON.parse(localStorage.getItem('rn-codigos-v1')||'{}')||
 const saveCodes=()=>{try{localStorage.setItem('rn-codigos-v1',JSON.stringify(CODES))}catch(e){}};
 const unlocked=s=>!!CODES[s];
 async function tryUnlock(sec,code){if(!CP.ver[sec])return false;const d=await derive(sec,code);if(d.ver!==CP.ver[sec])return false;await setKey(sec,d.key,d.proof);CODES[sec]=normCode(code);saveCodes();return true}
-async function tryMaster(code){const d=await derive('__diretoria__',code);if(d.ver!==CP.mver)return false;
+let MPROOF='';try{MPROOF=sessionStorage.getItem('rn-dir-prova')||''}catch(e){}
+async function tryMaster(code){const d=await derive('__diretoria__',code);if(d.ver!==CP.mver)return false;MPROOF=d.proof;try{sessionStorage.setItem('rn-dir-prova',MPROOF)}catch(e){}
   const all=await decWith(d.key,CP.wrap);for(const [s,c] of Object.entries(all)){const k=await derive(s,c);if(k.ver===CP.ver[s]){await setKey(s,k.key,k.proof);CODES[s]=c}}saveCodes();return true}
 const keysReady=(async()=>{for(const [s,c] of Object.entries(CODES)){try{const d=await derive(s,c);if(d.ver===CP.ver[s])await setKey(s,d.key,d.proof);else delete CODES[s]}catch(e){}}saveCodes()})();
 function lockSec(s){delete KEYS[s];delete KEYS_OLD[s];delete PROOF[s];delete CODES[s];saveCodes()}
@@ -775,7 +776,7 @@ const cleanItems=a=>{const out=[];if(!Array.isArray(a))return out;for(const raw 
   if(i.v&&typeof i.v==='object'){for(const [tm,v] of Object.entries(i.v))if(Math.abs(Math.round(Number(v)))>0)out.push({d,t:String(tm),v:Math.abs(Math.round(Number(v)))})}
   else out.push({d,t:String(i.t||''),v:i.v===''||i.v==null?'':Math.abs(Math.round(Number(i.v)))||0})}return out};
 const cleanJogos=a=>Array.isArray(a)?a.slice(0,30).map(j=>({id:String(objOr(j).id||''),nome:String(objOr(j).nome||'').slice(0,80)})).filter(j=>j.id):[];
-const cleanReu=(id,x)=>({id:String(id),secao:String(x.secao||''),data:String(x.data||''),ciclo:String(x.ciclo||''),folha:String(x.folha||''),
+const cleanReu=(id,x)=>({id:String(id),secao:String(x.secao||''),data:String(x.data||''),ciclo:String(x.ciclo||''),tema:String(x.tema||''),inicio:String(x.inicio||''),folha:String(x.folha||''),
   equipes:Array.isArray(x.equipes)?x.equipes.map(String):[],visitante:x.visitante==='Sim'?'Sim':'',pontJogo:String(x.pontJogo||''),pontApres:String(x.pontApres||''),
   atividades:Array.isArray(x.atividades)?x.atividades.map(a=>({id:String(a&&a.id||''),nome:String(a&&a.nome||''),pont:Array.isArray(a&&a.pont)?a.pont.map(String):[]})):[],
   resultados:objOr(x.resultados),ajustes:objOr(x.ajustes),extras:cleanItems(x.extras),descontos:cleanItems(x.descontos),jogosExtra:cleanJogos(x.jogosExtra),atualizadoEm:String(x.atualizadoEm||'')});
@@ -810,7 +811,7 @@ const GDB={collection:c=>({doc:id=>({
   DB=db;const timer=setTimeout(()=>{if(dbState==='loading'){dbState='slow';renderBoard()}},10000);
   db.collection('reunioes').onSnapshot(snap=>{clearTimeout(timer);dbState='ok';const P=lget(LPEND);RAW=snap.docs.map(d=>({id:d.id,x:{...objOr(d.data()),...objOr(P[d.id])}}));decodeAll()},
     ()=>{clearTimeout(timer);dbState='err';renderBoard()})})();
-function reuSummary(){return {secao:secaoNome(),data:S.data,ciclo:S.ciclo||'',folha:String(S.folha||''),equipes:PON()?[...S.equipes]:[],visitante:PON()&&S.visitante==='Sim'?'Sim':'',
+function reuSummary(){return {secao:secaoNome(),data:S.data,ciclo:S.ciclo||'',tema:S.tema||'',inicio:S.inicio||'',folha:String(S.folha||''),equipes:PON()?[...S.equipes]:[],visitante:PON()&&S.visitante==='Sim'?'Sim':'',
   pontJogo:S.pontJogo||'',pontApres:S.pontApres||'',atividades:acts().map(a=>({id:a.id,nome:actTitle(a),pont:PON()?[...(a.pont||[])]:[]})),atualizadoEm:new Date().toISOString()}}
 let SAVING=false;
 function saveBusy(on,label){for(const b of document.querySelectorAll('#m-save,#trp,[data-endsave]')){if(!b.dataset.lbl)b.dataset.lbl=b.textContent;b.disabled=on;b.textContent=on?'Salvando…':(label||b.dataset.lbl)}
@@ -1047,14 +1048,18 @@ async function loadPlan(id){let p=null;
   if(!p||!p.dados||typeof p.dados!=='object'){toast('Não encontrei o formulário desta reunião');return}
   await flushScore();for(const f of (S.anexos||[]))att.del(f.id);S=JSON.parse(JSON.stringify(p.dados));S.anexos=[];defaults();persist();markSaved();
   board.hidden=true;document.body.style.overflow='';setView('form');toast('Reunião aberta')}
+async function temaDaReuniao(id){const sec=(REUN.find(x=>x.id===id)||{}).secao;
+  try{if(DB){const s=await DB.collection('planos').doc(id).get();const x=s&&s.exists?objOr(s.data()):null;if(x&&x.d&&KEYS[sec])return String(objOr(await decSec(sec,x.d)).tema||'');return String(objOr(x&&x.dados).tema||'')}return String(objOr(objOr(lget(LPLA)[id]).dados).tema||'')}catch(e){return ''}}
 function guard(go,msg){if(UNSAVED&&hasContent())showPanel('A reunião do formulário não foi salva na tropa',msg,[],[['Cancelar','ghost'],['Continuar sem salvar','',go],['Salvar e continuar','blue',async()=>{if(await saveTropa(false))go()}]]);else go()}
 function askLoad(id){if(reuId(secaoNome(),S.data)===id&&S.secao){board.hidden=true;document.body.style.overflow='';setView('form');return}guard(()=>loadPlan(id),'Se continuar, ela será substituída pela reunião que você escolheu.')}
 function novaReuniao(){guard(()=>{const sec=HOME_SEC;const rs=REUN.filter(r=>r.secao===sec).sort((a,b)=>b.data.localeCompare(a.data));const last=rs[0];
   for(const f of (S.anexos||[]))att.del(f.id);S={secao:sec};defaults();
-  const m=memo(sec);S.equipes=m.equipes?[...m.equipes]:[];S.tema=m.tema||'';S.ciclo=(last&&last.ciclo)||m.ciclo||'';if(PATRULHAS[sec])S.pontua='Sim';
+  const m=memo(sec);S.equipes=m.equipes?[...m.equipes]:[];S.ciclo=(last&&last.ciclo)||m.ciclo||'';
+  const mesmo=rs.find(r=>normC(r.ciclo)===normC(S.ciclo)&&r.tema);S.tema=(mesmo&&mesmo.tema)||(normC(m.ciclo)===normC(S.ciclo)?m.tema:'')||'';if(PATRULHAS[sec])S.pontua='Sim';S.inicio=(last&&last.inicio)||'14:30';
   const fs=rs.filter(r=>normC(r.ciclo)===normC(S.ciclo)).map(r=>parseInt(r.folha)).filter(n=>n>0);S.folha=fs.length?String(Math.max(...fs)+1):'';
   let d=nextSat();while(rs.some(r=>r.data===d)){const x=pd(d);x.setDate(x.getDate()+7);d=iso(x)}S.data=d;
-  persist();markSaved();UNSAVED=false;setView('form');toast('Nova reunião para '+fmtD(d))},'Se continuar, ela será substituída por uma reunião nova.')}
+  persist();markSaved();UNSAVED=false;setView('form');toast('Nova reunião para '+fmtD(d));
+  if(!S.tema&&last&&normC(last.ciclo)===normC(S.ciclo))temaDaReuniao(last.id).then(tm=>{if(tm&&!S.tema&&S.data===d&&S.secao===sec){S.tema=tm;persist();markSaved();const el=document.getElementById('f-tema');if(el)el.value=tm}})},'Se continuar, ela será substituída por uma reunião nova.')}
 async function delReuniao(id){
   try{if(DB){await DB.collection('reunioes').doc(id).delete();try{await DB.collection('planos').doc(id).delete()}catch(e){}}
     else{const m=lget(LREU);delete m[id];lset(LREU,m);const pl=lget(LPLA);delete pl[id];lset(LPLA,pl)}
@@ -1103,9 +1108,11 @@ const SEED_JOGOS=(__SEED_JOGOS__).map((g,i)=>({...g,id:'base_'+i,secao:''}));
 let JOGOS_R=[],JOGOS_L=[];try{JOGOS_L=JSON.parse(localStorage.getItem('rn-jogos-locais')||'[]')||[]}catch(e){JOGOS_L=[]}
 const cleanJ=x=>({id:String(x.id||''),nome:String(x.nome||'').slice(0,80),tipo:String(x.tipo||'Outro'),dur:String(x.dur||'').replace(/\D/g,'').slice(0,3),mat:String(x.mat||'').slice(0,500),
   eixos:Array.isArray(x.eixos)?x.eixos.map(String).filter(e=>AREAS.some(a=>a[1]===e)):[],desc:String(x.desc||'').slice(0,5000),int:String(x.int||'').slice(0,1500),secao:String(x.secao||'')});
-async function loadJogos(){if(IN_GAS){try{const l=await gsr('apiList','jogos');JOGOS_R=(l||[]).map(cleanJ).filter(g=>g.id&&g.nome)}catch(e){}}}
+let JOGOS_OCULTOS=new Set();
+async function loadJogos(){if(IN_GAS){try{const l=await gsr('apiList','jogos');JOGOS_R=(l||[]).map(cleanJ).filter(g=>g.id&&g.nome)}catch(e){}}
+  if(IN_API){try{const o=await gsr('apiGet','base','config:jogos-ocultos');JOGOS_OCULTOS=new Set(Array.isArray(o&&o.ids)?o.ids.map(String):[])}catch(e){}}}
 loadJogos();
-const allJogos=()=>{const m=new Map();for(const g of [...SEED_JOGOS.map(cleanJ),...JOGOS_L.map(cleanJ),...JOGOS_R])if(g.nome)m.set(g.id,g);return [...m.values()]};
+const allJogos=()=>{const m=new Map();for(const g of [...SEED_JOGOS.map(cleanJ),...JOGOS_L.map(cleanJ),...JOGOS_R])if(g.nome&&!JOGOS_OCULTOS.has(g.id))m.set(g.id,g);return [...m.values()]};
 const nrm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 function searchJ(q,tipo){const toks=nrm(q).split(/\s+/).filter(Boolean);
   return allJogos().filter(g=>!tipo||g.tipo===tipo).map(g=>{const n=nrm(g.nome),all=nrm([g.nome,g.tipo,g.desc,g.mat,g.int,g.eixos.join(' ')].join(' '));
@@ -1127,13 +1134,18 @@ function renderJogos(){
   jsL.innerHTML=res.length?res.slice(0,80).map(g=>{const op=JS.open===g.id;const own=g.secao&&(PROOF[g.secao]||(!IN_GAS&&g.id.startsWith('j_')));
     return `<div class="jit"><button type="button" class="jhead" data-jopen="${esc(g.id)}" aria-expanded="${op}"><b>${esc(g.nome)}</b><small>${esc(g.tipo)}${g.dur?' · '+esc(g.dur)+' min':''} · ${g.secao?'enviado por '+esc(g.secao):'banco do app'}</small>${op?'':`<span class="pv">${esc(g.desc)}</span>`}</button>
     ${op?`<div class="jdet"><p>${esc(g.desc).replace(/\n/g,'<br>')}</p>${g.mat?`<p><span class="k">Material</span>${esc(g.mat)}</p>`:''}${g.int?`<p><span class="k">Intencionalidade educativa</span>${esc(g.int)}</p>`:''}${g.eixos.length?`<p><span class="k">Eixos</span>${esc(g.eixos.join(', '))}</p>`:''}
-      <div class="tools"><button type="button" class="btn" style="background:#2E8B57" data-juse="${esc(g.id)}">Usar este jogo</button>${own?`<button type="button" class="btn ghost sm" data-jdel="${esc(g.id)}">Remover do banco</button>`:''}</div></div>`:''}</div>`}).join('')+(res.length>80?`<p class="jempty">Mostrando 80 de ${res.length}. Refine a busca.</p>`:'')
+      <div class="tools"><button type="button" class="btn" style="background:#2E8B57" data-juse="${esc(g.id)}">Usar este jogo</button>${own?`<button type="button" class="btn ghost sm" data-jdel="${esc(g.id)}">Remover do banco</button>`:(IN_API&&MPROOF?`<button type="button" class="btn ghost sm" style="color:#C62828" data-jdeldir="${esc(g.id)}">Excluir do banco (diretoria)</button>`:'')}</div></div>`:''}</div>`}).join('')+(res.length>80?`<p class="jempty">Mostrando 80 de ${res.length}. Refine a busca.</p>`:'')
     :`<p class="jempty">Nenhum jogo encontrado${jsQ.value?' para “'+esc(jsQ.value)+'”':''}. Tente outra palavra ou outro tipo.</p>`;
 }
 jsEl.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(d.jtipo!=null){JS.tipo=d.jtipo;JS.open='';renderJogos();return}
   if(d.jopen){JS.open=JS.open===d.jopen?'':d.jopen;renderJogos();const el=jsL.querySelector(`[data-jopen="${CSS.escape(d.jopen)}"]`);if(el){el.focus({preventScroll:true});const it=el.closest('.jit');(it||el).scrollIntoView({block:'nearest'});const ub=it&&it.querySelector('[data-juse]');if(ub)ub.scrollIntoView({block:'nearest'})}return}
   if(d.juse){const g=allJogos().find(x=>x.id===d.juse);if(g)useJogo(g,JS.n);return}
+  if(d.jdeldir){const g=allJogos().find(x=>x.id===d.jdeldir);if(!g||!MPROOF)return;showPanel(`Excluir “${g.nome}” do banco?`,'Como diretoria, o jogo sai da busca de todas as seções. Use para jogos fora do padrão. As reuniões que já usaram o jogo não mudam.',[],[['Cancelar','ghost'],['Excluir do banco','',async()=>{
+    try{if(g.id.startsWith('base_')){const ids=[...JOGOS_OCULTOS,g.id];await gsr('apiBaseSet','config:jogos-ocultos',JSON.stringify({ids}),MPROOF);JOGOS_OCULTOS=new Set(ids)}
+      else{await gsr('apiJogoDelDiretoria',g.id,MPROOF);JOGOS_R=JOGOS_R.filter(x=>x.id!==g.id)}
+      JS.open='';renderJogos();toast('Jogo excluído do banco')}
+    catch(e){toast(e&&e.code==='permission_denied'?'Palavra da diretoria não confere. Entre de novo com o código da diretoria.':'Não foi possível excluir agora')}}]]);return}
   if(d.jdel){const g=allJogos().find(x=>x.id===d.jdel);if(!g)return;showPanel(`Remover “${g.nome}” do banco?`,'Ele some da busca de todas as seções. As reuniões que já usaram o jogo não mudam.',[],[['Cancelar','ghost'],['Remover','',async()=>{
     try{if(IN_GAS)await GDB.collection('jogos').doc(g.id).delete(g.secao);JOGOS_L=JOGOS_L.filter(x=>x.id!==g.id);try{localStorage.setItem('rn-jogos-locais',JSON.stringify(JOGOS_L))}catch(e){}JOGOS_R=JOGOS_R.filter(x=>x.id!==g.id);JS.open='';renderJogos();toast('Jogo removido do banco')}
     catch(e){toast('Não foi possível remover agora')}}]]);return}});

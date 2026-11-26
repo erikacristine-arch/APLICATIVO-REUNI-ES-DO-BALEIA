@@ -223,7 +223,7 @@ const LOGO_B="__BALEIA__",LOGO_U="__UEB__";
 const SN=['Sim','Não'];
 const DIR_DEFAULT={metodosCargo:'Diretor de Métodos Educativos',metodosNome:'Percival Palmiro Alves',presCargo:'Diretor Presidente',presNome:'Leonardo Espi Cavalcanti'};
 let DIR={...DIR_DEFAULT};
-const SEC=(()=>{try{return new URLSearchParams(location.search).get('secao')||''}catch(e){return ''}})();
+const SEC=(()=>{let v='';try{v=new URLSearchParams(location.search).get('secao')||''}catch(e){}if(!v){try{v=localStorage.getItem('rn-secao-home')||''}catch(e){}}return v})();
 const SECOES=['Ninhada 1','Ninhada 2','Alcateia Lobo Guará','Alcateia Sabiá','Alcateia Túnel do Morcego','Tropa Escoteira Hussardos','Tropa Escoteira Lis de Ouro','Tropa Escoteira Scorpions','Tropa Sênior Botocudos Pankas','Tropa Sênior Kakremaan','Clã Zulu Mac Smyth','Outra'];
 const FRET='Fretado (ônibus/van)',PUB='Transporte público',PART='Carros particulares';
 const JOV=['jovem','Jovem (nome e sobrenome)'];

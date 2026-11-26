@@ -764,6 +764,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       secao: secaoNome(),
       data: S.data,
       ciclo: S.ciclo || "",
+      tema: S.tema || "",
+      inicio: S.inicio || "",
       folha: String(S.folha || ""),
       equipes: PON() ? [...S.equipes] : [],
       visitante: PON() && S.visitante === "Sim" ? "Sim" : "",
@@ -1074,9 +1076,11 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       defaults2();
       const m = memo(sec);
       S.equipes = m.equipes ? [...m.equipes] : [];
-      S.tema = m.tema || "";
       S.ciclo = last && last.ciclo || m.ciclo || "";
+      const mesmo = rs.find((r) => normC(r.ciclo) === normC(S.ciclo) && r.tema);
+      S.tema = mesmo && mesmo.tema || (normC(m.ciclo) === normC(S.ciclo) ? m.tema : "") || "";
       if (PATRULHAS[sec]) S.pontua = "Sim";
+      S.inicio = last && last.inicio || "14:30";
       const fs = rs.filter((r) => normC(r.ciclo) === normC(S.ciclo)).map((r) => parseInt(r.folha)).filter((n) => n > 0);
       S.folha = fs.length ? String(Math.max(...fs) + 1) : "";
       let d = nextSat();
@@ -1091,6 +1095,15 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       UNSAVED = false;
       setView2("form");
       toast2("Nova reuni\xE3o para " + fmtD(d));
+      if (!S.tema && last && normC(last.ciclo) === normC(S.ciclo)) temaDaReuniao(last.id).then((tm) => {
+        if (tm && !S.tema && S.data === d && S.secao === sec) {
+          S.tema = tm;
+          persist2();
+          markSaved2();
+          const el = document.getElementById("f-tema");
+          if (el) el.value = tm;
+        }
+      });
     }, "Se continuar, ela ser\xE1 substitu\xEDda por uma reuni\xE3o nova.");
   }, askCode2 = function(sec, h, p, fn) {
     document.getElementById("cb-h").textContent = h;
@@ -1135,7 +1148,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       const own = g.secao && (PROOF[g.secao] || !IN_GAS && g.id.startsWith("j_"));
       return `<div class="jit"><button type="button" class="jhead" data-jopen="${esc(g.id)}" aria-expanded="${op}"><b>${esc(g.nome)}</b><small>${esc(g.tipo)}${g.dur ? " \xB7 " + esc(g.dur) + " min" : ""} \xB7 ${g.secao ? "enviado por " + esc(g.secao) : "banco do app"}</small>${op ? "" : `<span class="pv">${esc(g.desc)}</span>`}</button>
     ${op ? `<div class="jdet"><p>${esc(g.desc).replace(/\n/g, "<br>")}</p>${g.mat ? `<p><span class="k">Material</span>${esc(g.mat)}</p>` : ""}${g.int ? `<p><span class="k">Intencionalidade educativa</span>${esc(g.int)}</p>` : ""}${g.eixos.length ? `<p><span class="k">Eixos</span>${esc(g.eixos.join(", "))}</p>` : ""}
-      <div class="tools"><button type="button" class="btn" style="background:#2E8B57" data-juse="${esc(g.id)}">Usar este jogo</button>${own ? `<button type="button" class="btn ghost sm" data-jdel="${esc(g.id)}">Remover do banco</button>` : ""}</div></div>` : ""}</div>`;
+      <div class="tools"><button type="button" class="btn" style="background:#2E8B57" data-juse="${esc(g.id)}">Usar este jogo</button>${own ? `<button type="button" class="btn ghost sm" data-jdel="${esc(g.id)}">Remover do banco</button>` : IN_API && MPROOF ? `<button type="button" class="btn ghost sm" style="color:#C62828" data-jdeldir="${esc(g.id)}">Excluir do banco (diretoria)</button>` : ""}</div></div>` : ""}</div>`;
     }).join("") + (res.length > 80 ? `<p class="jempty">Mostrando 80 de ${res.length}. Refine a busca.</p>` : "") : `<p class="jempty">Nenhum jogo encontrado${jsQ.value ? " para \u201C" + esc(jsQ.value) + "\u201D" : ""}. Tente outra palavra ou outro tipo.</p>`;
   }, useJogo2 = function(g, n) {
     const a = S.atividades[n];
@@ -1886,7 +1899,7 @@ ${hhmm(t + d)}` : "";
   const PONT = [["Apresenta\xE7\xE3o", "Apres."], ["Jogo", "Jogo"]];
   const TIPOS_ATV = ["Abertura", "Quebra-gelo", "Can\xE7\xE3o", "Capacita\xE7\xE3o", "Jogo ativo", "Observa\xE7\xE3o", "Revezamento", "Grande jogo", "Jogo de coopera\xE7\xE3o", "Jogo de confian\xE7a", "Atividade de progress\xE3o", "Conselho de patrulha", "Lanche", "Encerramento", "Outro"];
   const NOMES_ATV = ["IBOA", "Abertura", "Quebra-gelo", "Can\xE7\xE3o", "Capacita\xE7\xE3o", "Jogo ativo", "Jogo de observa\xE7\xE3o", "Revezamento", "Grande jogo", "Atividade de progress\xE3o", "Conselho de patrulha", "Lanche", "Encerramento"];
-  const PS_URL = "https://claude.ai/artifact/5rwiMXLwmvW3341jK6ts3r";
+  const PS_URL = typeof window.RN_API === "string" ? "/seguranca.html" : "https://claude.ai/artifact/5rwiMXLwmvW3341jK6ts3r";
   const JOV = ["jovem", "Jovem (nome e sobrenome)"];
   const COLORS = { identificacao: "#3955A4", objetivos: "#7B4FB8", pontuacao: "#E07B00", programacao: "#2E8B57", cuidados: "#C62828", lembretes: "#0F8A9D" };
   const SCHEMA = [
@@ -1895,7 +1908,7 @@ ${hhmm(t + d)}` : "";
       { k: "secaoOutra", type: "text", l: "Qual se\xE7\xE3o?", req: 1, when: ["secao", "Outra"] },
       { pair: [{ k: "ciclo", type: "ciclo", l: "Ciclo" }, { k: "folha", type: "number", l: "Folha de Jogos n\xBA" }] },
       { k: "tema", type: "text", l: "Tema / lema do ciclo", hint: "sai no cabe\xE7alho do PDF" },
-      { pair: [{ k: "elaborador", type: "text", l: "Elaborado por", req: 1 }, { k: "inicio", type: "time", l: "Hor\xE1rio de in\xEDcio", hint: "opcional \xB7 calcula o hor\xE1rio de cada atividade" }] }
+      { pair: [{ k: "elaborador", type: "text", l: "Elaborado por", req: 1 }, { k: "inicio", type: "time", l: "Hor\xE1rio de in\xEDcio", hint: "padr\xE3o 14:30 \xB7 calcula o hor\xE1rio de cada atividade" }] }
     ] },
     { id: "objetivos", t: "Objetivos", items: [
       { k: "objetivos", type: "area", l: "Objetivos da reuni\xE3o", req: 1, min: 3 },
@@ -2581,9 +2594,19 @@ ${hhmm(t + d)}` : "";
     saveCodes();
     return true;
   }
+  let MPROOF = "";
+  try {
+    MPROOF = sessionStorage.getItem("rn-dir-prova") || "";
+  } catch (e) {
+  }
   async function tryMaster(code) {
     const d = await derive("__diretoria__", code);
     if (d.ver !== CP.mver) return false;
+    MPROOF = d.proof;
+    try {
+      sessionStorage.setItem("rn-dir-prova", MPROOF);
+    } catch (e) {
+    }
     const all = await decWith(d.key, CP.wrap);
     for (const [s, c] of Object.entries(all)) {
       const k = await derive(s, c);
@@ -2643,6 +2666,8 @@ ${hhmm(t + d)}` : "";
     secao: String(x.secao || ""),
     data: String(x.data || ""),
     ciclo: String(x.ciclo || ""),
+    tema: String(x.tema || ""),
+    inicio: String(x.inicio || ""),
     folha: String(x.folha || ""),
     equipes: Array.isArray(x.equipes) ? x.equipes.map(String) : [],
     visitante: x.visitante === "Sim" ? "Sim" : "",
@@ -3188,6 +3213,20 @@ ${hhmm(t + d)}` : "";
     document.body.style.overflow = "";
     setView2("form");
     toast2("Reuni\xE3o aberta");
+  }
+  async function temaDaReuniao(id) {
+    const sec = (REUN.find((x) => x.id === id) || {}).secao;
+    try {
+      if (DB) {
+        const s = await DB.collection("planos").doc(id).get();
+        const x = s && s.exists ? objOr(s.data()) : null;
+        if (x && x.d && KEYS[sec]) return String(objOr(await decSec(sec, x.d)).tema || "");
+        return String(objOr(x && x.dados).tema || "");
+      }
+      return String(objOr(objOr(lget(LPLA)[id]).dados).tema || "");
+    } catch (e) {
+      return "";
+    }
   }
   async function delReuniao(id) {
     try {
@@ -3787,6 +3826,7 @@ ${hhmm(t + d)}` : "";
     int: String(x.int || "").slice(0, 1500),
     secao: String(x.secao || "")
   });
+  let JOGOS_OCULTOS = /* @__PURE__ */ new Set();
   async function loadJogos() {
     if (IN_GAS) {
       try {
@@ -3795,11 +3835,18 @@ ${hhmm(t + d)}` : "";
       } catch (e) {
       }
     }
+    if (IN_API) {
+      try {
+        const o = await gsr2("apiGet", "base", "config:jogos-ocultos");
+        JOGOS_OCULTOS = new Set(Array.isArray(o && o.ids) ? o.ids.map(String) : []);
+      } catch (e) {
+      }
+    }
   }
   loadJogos();
   const allJogos = () => {
     const m = /* @__PURE__ */ new Map();
-    for (const g of [...SEED_JOGOS.map(cleanJ), ...JOGOS_L.map(cleanJ), ...JOGOS_R]) if (g.nome) m.set(g.id, g);
+    for (const g of [...SEED_JOGOS.map(cleanJ), ...JOGOS_L.map(cleanJ), ...JOGOS_R]) if (g.nome && !JOGOS_OCULTOS.has(g.id)) m.set(g.id, g);
     return [...m.values()];
   };
   const nrm = (s) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -3839,6 +3886,28 @@ ${hhmm(t + d)}` : "";
     if (d.juse) {
       const g = allJogos().find((x) => x.id === d.juse);
       if (g) useJogo2(g, JS.n);
+      return;
+    }
+    if (d.jdeldir) {
+      const g = allJogos().find((x) => x.id === d.jdeldir);
+      if (!g || !MPROOF) return;
+      showPanel2(`Excluir \u201C${g.nome}\u201D do banco?`, "Como diretoria, o jogo sai da busca de todas as se\xE7\xF5es. Use para jogos fora do padr\xE3o. As reuni\xF5es que j\xE1 usaram o jogo n\xE3o mudam.", [], [["Cancelar", "ghost"], ["Excluir do banco", "", async () => {
+        try {
+          if (g.id.startsWith("base_")) {
+            const ids = [...JOGOS_OCULTOS, g.id];
+            await gsr2("apiBaseSet", "config:jogos-ocultos", JSON.stringify({ ids }), MPROOF);
+            JOGOS_OCULTOS = new Set(ids);
+          } else {
+            await gsr2("apiJogoDelDiretoria", g.id, MPROOF);
+            JOGOS_R = JOGOS_R.filter((x) => x.id !== g.id);
+          }
+          JS.open = "";
+          renderJogos2();
+          toast2("Jogo exclu\xEDdo do banco");
+        } catch (e2) {
+          toast2(e2 && e2.code === "permission_denied" ? "Palavra da diretoria n\xE3o confere. Entre de novo com o c\xF3digo da diretoria." : "N\xE3o foi poss\xEDvel excluir agora");
+        }
+      }]]);
       return;
     }
     if (d.jdel) {

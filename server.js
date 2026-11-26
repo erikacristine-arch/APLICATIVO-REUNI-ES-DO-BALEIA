@@ -135,6 +135,12 @@ const api = {
         if (!ID_BASE.test(id)) throw new Error('id inválido')
         return emFila('base:' + id, async () => { await armazem.apagar('base', id); return true })
     },
+    // Diretoria exclui um jogo do banco (jogos fora do padrão), de qualquer seção.
+    async apiJogoDelDiretoria(id, provaDiretoria) {
+        confereDiretoria(provaDiretoria)
+        id = String(id)
+        return emFila('jogos:' + id, async () => { await armazem.apagar('jogos', id); return true })
+    },
     // Salva a reunião e o formulário numa chamada só.
     async apiSaveReuniao(id, resumoJson, pontosJson, planoJson, prova) {
         const resumo = JSON.parse(resumoJson), pontos = JSON.parse(pontosJson), plano = JSON.parse(planoJson)
