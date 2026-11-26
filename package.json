@@ -1,0 +1,26 @@
+{
+  "name": "reunioes-do-baleia",
+  "version": "1.0.0",
+  "description": "Programação das reuniões, banco de jogos e pontuação das patrulhas dos Escoteiros do Baleia",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "montar": "python3 codigo-fonte/montar.py"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erikacristine-arch/APLICATIVO-REUNI-ES-DO-BALEIA.git"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "@supabase/supabase-js": "^2.46.1",
+    "dotenv": "^16.4.5",
+    "hono": "^4.6.12"
+  }
+}

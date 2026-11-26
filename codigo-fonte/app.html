@@ -753,8 +753,13 @@ async function decodeAll(){await keysReady;const out=[],cnt={};
     try{let base;if(x.s||x.p){if(!KEYS[sec])continue;base={...(x.s?await decSec(sec,x.s):{}),...(x.p?await decSec(sec,x.p):{})}}else base={...x};base.secao=sec;out.push(cleanReu(id,base))}catch(e){}}
   REUN=out;COUNTS=cnt;renderBoard()}
 loadLocal();
-const IN_GAS=!!(window.google&&google.script&&google.script.run);
-function gsr(fn,...args){return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>{const m=String((e&&e.message)||e||'');no({code:/codigo/i.test(m)?'permission_denied':/not_found/.test(m)?'not_found':'net',message:m})})[fn](...args))}
+const IN_API=typeof window.RN_API==='string';
+const IN_GAS=IN_API||!!(window.google&&google.script&&google.script.run);
+const errCode=m=>/codigo/i.test(m)?'permission_denied':/not_found/.test(m)?'not_found':'net';
+function gsr(fn,...args){if(IN_API)return fetch(window.RN_API+'/rpc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fn,args})})
+    .then(async r=>{let j=null;try{j=await r.json()}catch(e){}if(!r.ok||!j||j.erro){const m=String((j&&j.erro)||('HTTP '+r.status));throw {code:errCode(m),message:m}}return j.resultado===undefined?null:j.resultado},
+      e=>{throw e&&e.code?e:{code:'net',message:String(e)}});
+  return new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>{const m=String((e&&e.message)||e||'');no({code:/codigo/i.test(m)?'permission_denied':/not_found/.test(m)?'not_found':'net',message:m})})[fn](...args))}
 const GSUBS=[];let gPollT=null,gBusy=false;
 async function gPoll(){if(gBusy)return;gBusy=true;try{const list=await gsr('apiList','reunioes');const snap={docs:(list||[]).map(x=>({id:String(x.id),data:()=>x})),metadata:{fromCache:false}};GSUBS.forEach(([cb])=>cb(snap))}catch(e){GSUBS.forEach(([,er])=>er&&dbState==='loading'&&er(e))}finally{gBusy=false}
   clearTimeout(gPollT);gPollT=setTimeout(gPoll,document.hidden?60000:20000)}
