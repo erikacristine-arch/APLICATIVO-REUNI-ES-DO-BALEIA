@@ -17,11 +17,17 @@ Nos dois, não precisa de login: basta o link e a palavra-código da seção.
 |---|---|
 | `server.js`, `armazem.js`, `package.json` | Servidor Node.js (Hono) que entrega o app e guarda os dados no Supabase. |
 | `public/` | App servido pelo servidor (gerado pelo `montar.py`). |
-| `sql/` | `criar-tabelas.sql`: tabelas do Supabase. |
+| `sql/` | `criar-tabelas.sql`: tabelas do Supabase (inclui `planos_seguranca` e `base_seguranca`). |
+| `public/logos/`, `public/icones/` | Logos das seções e ícones do app instalável. |
+| `public/manifest.webmanifest`, `public/sw.js` | Deixam o app instalável no celular (Android e iPhone). |
 | `apps-script/` | **Arquivos prontos para colar no Apps Script.** `Code.gs` vai no arquivo `Código.gs`; `index.html` vai no arquivo `index`. |
 | `codigo-fonte/` | Código-fonte do app (`app.html`), modelo do servidor (`Code.modelo.gs`), banco inicial de jogos (`jogos.json`), logos e o script `montar.py`, que gera `public/index.html` e os arquivos de `apps-script/`. |
 
 ## O que o app faz
+
+- **Entrada em árvore:** os ramos crescem das Ninhadas (no alto) até os Pioneiros, com a raiz do grupo embaixo. Ao entrar na seção, o chefe escolhe **Preparar reunião** ou **Criar plano de segurança**.
+- **Planos de segurança** (`/seguranca.html`, só na versão servidor): cada seção tem a sua lista de planos, embaralhados com a palavra-código da seção. Locais salvos, base de delegacias/hospitais e nomes da diretoria ficam na base compartilhada, que só a palavra da diretoria altera ("Modo diretoria"). Anexos ficam no aparelho e entram no PDF.
+- **App instalável:** no Android, Chrome → "Instalar app"; no iPhone, Safari → Compartilhar → "Adicionar à Tela de Início".
 
 - **Capa por seção** com palavra-código. Cada aparelho fica liberado só para a seção cuja palavra foi digitada; a palavra da diretoria libera todas.
 - **Formulário da reunião** em seções numeradas: identificação, objetivos (eixos de progressão), pontuação, programação, cuidados e avisos, lembretes e anexos. Pula sozinho para a próxima seção, confere campos obrigatórios e guarda rascunho no aparelho.

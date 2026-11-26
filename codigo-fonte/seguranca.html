@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planos de segurança · Escoteiros do Baleia</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#3955A4">
+<link rel="apple-touch-icon" href="/icones/icone-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: prático e acolhedor, como uma ficha oficial bem feita do grupo escoteiro.
+IDEA: a própria ficha de papel do grupo — cabeçalho com os dois logos e a faixa vermelho/azul.
+PICTURE: o formulário é a peça principal; uma coluna calma, seção por seção, e a prévia do PDF real.
+COLOUR and TYPE: branco, tinta azul-marinho, vermelho #EC272A e azul #3955A4 do Baleia; Barlow.
+LAYOUT: barra superior fixa com progresso e botão de PDF; navegação de seções; cartões empilhados.
+*/
+:root{color-scheme:light dark;
+--bg:light-dark(#f3f5fa,#0e1424);--card:light-dark(#fff,#161e33);--ink:light-dark(#141b2e,#e8ecf6);
+--mute:light-dark(#5b6479,#9aa4bd);--line:light-dark(#dde2ec,#28324d);--red:#EC272A;--blue:light-dark(#3955A4,#8ba4ec);
+--blueBg:light-dark(#e9eefa,#1d2846);--redBg:light-dark(#fdeaea,#3a1a20);--field:light-dark(#fbfcfe,#10172a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Barlow,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Barlow Semi Condensed",Barlow,sans-serif;margin:0;line-height:1.1}
+a{color:var(--blue)}
+.top{position:sticky;top:0;z-index:10;background:var(--card);border-bottom:1px solid var(--line)}
+.stripe{display:flex;height:5px}.stripe i{flex:1;background:var(--red)}.stripe i+i{background:#3955A4}
+.bar{max-width:880px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 16px}
+.bar img{height:44px;width:auto;border-radius:6px;background:#fff}
+.bar .ttl{flex:1}.bar h1{font-size:22px}.bar small{color:var(--mute);font-size:13px}
+.meter{height:6px;background:var(--line);border-radius:3px;margin-top:5px;overflow:hidden;max-width:260px}
+.meter b{display:block;height:100%;width:0;background:var(--blue);transition:width .3s}
+.btn{font:600 16px Barlow,sans-serif;border:0;border-radius:10px;padding:0 18px;min-height:44px;cursor:pointer;background:var(--red);color:#fff;white-space:nowrap;text-decoration:none;display:inline-grid;place-items:center}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.blue{background:#3955A4;color:#fff}
+.btn.sm{min-height:38px;font-size:14px;padding:0 12px}
+.btn:disabled{opacity:.5;cursor:default}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,.seg label:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+.nav{max-width:880px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none}
+.nav a{flex:none;text-decoration:none;color:var(--mute);font-size:14px;font-weight:600;padding:6px 12px;border-radius:99px;background:var(--bg)}
+.nav a.done{color:var(--blue);background:var(--blueBg)}
+main{max-width:880px;margin:0 auto;padding:20px 16px 80px}
+.intro{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:18px}
+.intro p{margin:0;color:var(--mute);max-width:60ch}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-bottom:18px;overflow:hidden;scroll-margin-top:130px}
+.card>h2{font-size:20px;padding:14px 20px;background:var(--blueBg);color:var(--blue);display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.card>h2 span{font:500 13px Barlow,sans-serif;color:var(--mute)}
+.body{padding:6px 20px 16px}
+.q{padding:14px 0;border-bottom:1px solid var(--line)}.q:last-child{border-bottom:0}
+.q.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+[hidden]{display:none!important}
+.lbl{display:block;font-weight:600;margin-bottom:6px}.lbl em{color:var(--red);font-style:normal}
+.hint{color:var(--mute);font-size:13px;font-weight:400}
+input[type=text],input[type=number],input[type=date],input[type=tel],input[type=email],input[type=url],textarea,select{width:100%;font:16px Barlow,sans-serif;color:var(--ink);background:var(--field);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;min-height:44px}
+textarea{min-height:92px;resize:vertical}
+.bad .drop{border-color:var(--red);background:var(--redBg)}
+.bad input,.bad textarea{border-color:var(--red);background:var(--redBg)}
+.ynrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.ynrow .lbl{margin:0;flex:1 1 320px;font-weight:500}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;flex:none;flex-wrap:wrap}
+.seg label{position:relative;min-width:64px;min-height:42px;display:grid;place-items:center;padding:0 12px;cursor:pointer;font-weight:600;font-size:15px;color:var(--mute)}
+.seg label+label{border-left:1.5px solid var(--line)}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.seg label:has(input:checked){background:#3955A4;color:#fff}
+.seg label.no:has(input:checked){background:var(--ink);color:var(--card)}
+.more{margin-top:10px}
+.place{border:1px dashed var(--line);border-radius:12px;padding:12px;margin-top:10px;display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:10px}
+.place h3{grid-column:1/-1;font-size:16px;color:var(--blue)}
+.place .full{grid-column:1/-1}
+.place .lbl{font-size:14px;margin-bottom:4px}
+.preset{background:var(--blueBg);border-radius:12px;padding:12px 14px;margin:12px 0 2px;display:grid;gap:8px}
+.preset .row{display:flex;gap:8px;flex-wrap:wrap}.preset select{flex:1 1 220px}
+.preset b{font-size:15px}
+.mapinfo{font-size:14px;margin-top:8px;display:flex;gap:8px 14px;flex-wrap:wrap;align-items:center;color:var(--mute)}
+.mapinfo .ok{color:#1c7c47;font-weight:600}
+.sug{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 2px}.sug>span{font-size:14px;font-weight:600;color:var(--mute)}
+.chip{font:500 14px Barlow,sans-serif;border:1.5px solid var(--line);background:var(--field);color:var(--ink);border-radius:99px;padding:6px 12px;min-height:38px;cursor:pointer;text-align:left}.chip b{color:var(--blue)}
+.auto{font-size:13px;color:#1c7c47;font-weight:600}
+.place h3{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:16px;display:grid;gap:10px;justify-items:center;text-align:center;background:var(--field);cursor:pointer}
+.drop:focus-visible{outline:3px solid var(--blue);outline-offset:2px}.drop.over{border-color:var(--blue);background:var(--blueBg)}
+.drop img{max-width:100%;max-height:340px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.drop p{margin:0;color:var(--mute);font-size:14px;max-width:52ch}
+.find{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.dir{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:4px}
+.dir div{border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.dir small{display:block;color:var(--mute);font-size:13px}.dir strong{font-size:17px}
+.dirhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.note{font-size:13px;color:var(--mute);margin:6px 0 0}
+.panel{position:fixed;inset:auto 16px 16px;max-width:560px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 50px rgba(10,20,50,.25);padding:18px;z-index:40;max-height:calc(100vh - 32px);overflow:auto}
+.panel h3{font-size:19px;margin-bottom:6px}.panel p{margin:0 0 12px;color:var(--mute)}
+.panel ul{margin:0 0 12px;padding-left:20px;max-height:160px;overflow:auto;font-size:14px}
+.panel .tools{justify-content:flex-end}
+.panel .fields{display:grid;gap:10px;margin-bottom:14px}
+.panel .fields label{font-weight:600;font-size:14px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--card);padding:10px 18px;border-radius:99px;font-weight:600;z-index:50;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.on{opacity:1}
+.prev{position:fixed;inset:0;z-index:30;background:light-dark(#d9dde6,#070b16);display:flex;flex-direction:column}
+.prev header{background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px}
+.prev header div{max-width:880px;margin:0 auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.prev header h2{flex:1;font-size:20px}
+.pages{flex:1;overflow:auto;padding:20px 12px 40px;display:grid;justify-items:center;gap:16px;align-content:start}
+.pages canvas{width:min(794px,100%);height:auto;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.18);border-radius:2px}
+.pages p{color:var(--mute);text-align:center;max-width:46ch}
+@media(max-width:600px){.bar img{height:36px}.bar h1{font-size:19px}.bar small{display:none}.q.pair,.place,.dir{grid-template-columns:minmax(0,1fr)}.body{padding:4px 14px 12px}.card>h2{padding:12px 14px}.btn{padding:0 14px}.prev header h2{flex-basis:100%}}
+.list{display:grid;gap:10px;margin-top:10px}
+.lrow{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr)) auto;gap:8px;align-items:end;background:var(--field)}
+.lrow label{font-size:13px;font-weight:600;display:block;margin-bottom:3px}
+.lrow .x{min-height:44px;width:44px;border-radius:10px;border:1.5px solid var(--line);background:transparent;color:var(--mute);font-size:20px;cursor:pointer}
+.lrow .x:hover{color:var(--red);border-color:var(--red)}
+.add{justify-self:start}
+.att{border:2px dashed var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;background:var(--field)}
+.att.over{border-color:var(--blue);background:var(--blueBg)}
+.att ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.att li{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:6px 6px 6px 12px;background:var(--card);font-size:14px}
+.att li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.att li small{color:var(--mute);white-space:nowrap}
+.att .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.att p{margin:0;font-size:13px;color:var(--mute)}
+.bad .att{border-color:var(--red);background:var(--redBg)}
+.bad .list{outline:2px solid var(--red);outline-offset:4px;border-radius:12px}
+.choice{display:flex;flex-wrap:wrap;gap:8px}
+.choice label{display:flex;gap:8px;align-items:center;border:1.5px solid var(--line);border-radius:10px;padding:8px 14px;min-height:44px;cursor:pointer;font-weight:600;font-size:15px}
+.choice label:has(input:checked){border-color:#3955A4;background:var(--blueBg);color:var(--blue)}
+.choice input{width:18px;height:18px;accent-color:#3955A4}
+.sub{border-left:3px solid var(--blueBg);padding-left:14px;margin-left:2px}
+.grp{font:600 15px "Barlow Semi Condensed",Barlow,sans-serif;color:var(--blue);padding:14px 0 0;letter-spacing:.01em}
+@media(max-width:600px){.lrow{grid-template-columns:minmax(0,1fr)}.lrow .x{justify-self:end}}
+
+section.card{border-top:5px solid var(--c)}
+.card>h2{background:color-mix(in srgb,var(--c) 11%,var(--card));color:color-mix(in srgb,var(--c) 82%,var(--ink));align-items:center;justify-content:flex-start}
+.card>h2 span{margin-left:auto}
+.card>h2 .num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--c);color:#fff;font:700 15px Barlow,sans-serif;flex:none}
+.card .seg label:has(input:checked){background:var(--c);color:#fff}
+.card .choice label:has(input:checked){border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--card));color:color-mix(in srgb,var(--c) 85%,var(--ink))}
+.card .sub{border-left-color:color-mix(in srgb,var(--c) 35%,transparent)}
+.card .grp{color:color-mix(in srgb,var(--c) 85%,var(--ink))}
+.card .place h3{color:color-mix(in srgb,var(--c) 85%,var(--ink))}
+.next{display:flex;justify-content:flex-end;padding-top:14px;border-top:1px solid var(--line);margin-top:6px}
+.nextbtn{background:var(--c)}
+.nav a{border:1.5px solid transparent}
+.nav a.done{color:color-mix(in srgb,var(--c) 85%,var(--ink));background:color-mix(in srgb,var(--c) 13%,var(--card))}
+.nav a.on{background:var(--c);color:#fff;border-color:var(--c)}
+.nav a.done::after{content:" ✓"}
+
+.prinfo{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px}
+.prinfo img{width:120px;height:90px;object-fit:cover;border-radius:6px}
+.prinfo dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 10px;font-size:14px}
+.prinfo dt{color:var(--mute);font-weight:600}.prinfo dd{margin:0}
+.prinfo:not(:has(img)){grid-template-columns:minmax(0,1fr)}
+@media(max-width:600px){.prinfo{grid-template-columns:minmax(0,1fr)}.prinfo dl{grid-template-columns:minmax(0,1fr)}.prinfo dd{margin-bottom:4px}}
+
+.wd{font-size:13px;color:var(--mute);margin-top:4px;font-weight:600;min-height:1em}
+.alertbox{border:2px solid #C81E3C;background:light-dark(#fdecf0,#3a1520);border-radius:12px;padding:12px 14px}
+.alertbox .tag{display:inline-block;background:#C81E3C;color:#fff;font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;margin-bottom:6px;letter-spacing:.02em}
+.alertbox .lrow{background:var(--card)}
+.alertbox .lrow input[data-k$=".jovem"]{color:light-dark(#A3162F,#ff9fb1);font-weight:600}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.credito{text-align:center;font-size:12.5px;color:var(--mute);margin:28px 0 8px;line-height:1.5}.credito a{color:var(--mute)}
+.fixed{min-height:44px;display:flex;align-items:center;padding:0 12px;border-radius:10px;background:var(--blueBg);font-weight:600}
+body[data-view=lista] .formonly{display:none!important}
+body[data-view=form] #lista{display:none}
+#lista .hero{display:flex;gap:14px;align-items:center;background:var(--c);color:#fff;border-radius:16px;padding:14px 16px;margin-bottom:16px}
+#lista .hero img{width:64px;height:64px;border-radius:50%;object-fit:cover;background:#fff;flex:none}
+#lista .hero small{opacity:.85;font-size:13px}#lista .hero h2{font-size:24px;color:#fff}
+.hacts{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}.btn.big{min-height:52px;font-size:17px;padding:0 20px}
+#lista .card{padding:14px 16px}#lista .card h3{font-size:19px;display:flex;justify-content:space-between;gap:10px;margin-bottom:8px}#lista .card h3 small{font:500 13px Barlow,sans-serif;color:var(--mute)}
+.pi{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding:12px 0}
+.pi b{font-size:17px;display:block}.pi small{display:block;color:var(--mute);font-size:13px}
+.btn.del{color:var(--red)}
+.lock .row{display:flex;gap:8px;margin:10px 0}.lock input{flex:1;font:16px Barlow,sans-serif;min-height:44px;border:1.5px solid var(--line);border-radius:10px;padding:0 12px;background:var(--field);color:var(--ink)}
+.err{color:var(--red);font-size:14px;min-height:1em;margin:0 0 8px}
+.dirline{margin-top:14px}
+.bar .bk{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.bar img{border-radius:50%;object-fit:cover}
+@media(max-width:600px){body[data-view=form] .bar .ttl{display:none}body[data-view=form] .bar img{display:none}.bar .btn{padding:0 12px;font-size:15px}.bar{gap:8px}body[data-view=form] .bar #gen{margin-left:auto}}
+</style>
+<script>window.addEventListener('load',function(){if((window.RN_API!==undefined||location.pathname.indexOf('/seguranca')===0)&&'serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){})})</script>
+</head>
+<body>
+<header class="top">
+  <div class="stripe"><i></i><i></i></div>
+  <div class="bar">
+    <button class="btn sm bk" id="bk" aria-label="Voltar">‹ Voltar</button>
+    <img id="hdr-logo" src="/logos/baleia.jpg" alt="" onerror="this.style.visibility='hidden'">
+    <div class="ttl"><h1>Plano de Segurança</h1><small id="hdr-sec"></small><div class="meter formonly"><b id="prog"></b></div><small class="formonly" id="prog-t" style="display:none"></small></div>
+    <button class="btn ghost formonly" id="save-plan">Salvar plano</button>
+    <button class="btn formonly" id="gen">Gerar PDF</button>
+  </div>
+  <nav class="nav formonly" id="nav"></nav>
+</header>
+<main>
+  <section id="lista"></section>
+  <div class="intro formonly">
+    <p>Preencha o plano da atividade, confira a prévia e baixe o PDF no modelo padrão do grupo, com os anexos juntados ao final. Campos com <b style="color:var(--red)">*</b> são obrigatórios. O rascunho fica salvo neste aparelho; toque em <b>Salvar plano</b> para guardar na seção.</p>
+    <div class="tools">
+      <button class="btn ghost sm" id="exp">Salvar rascunho</button>
+      <label class="btn ghost sm">Abrir rascunho<input type="file" id="imp" accept=".json,application/json" hidden></label>
+      <button class="btn ghost sm" id="clr">Limpar</button>
+    </div>
+  </div>
+  <form id="f" class="formonly" autocomplete="off"></form>
+  <div class="formonly"><p class="credito">Desenvolvido e elaborado por <b>Erika Cristine</b> · Escoteiros do Baleia<br><a href="mailto:erika-cristine@escoteiros.org.br">erika-cristine@escoteiros.org.br</a></p></div>
+</main>
+<div class="prev" id="prev" hidden>
+  <header><div><h2>Prévia do documento</h2><button class="btn ghost" id="pv-back">Voltar e editar</button><button class="btn" id="pv-dl">Baixar PDF</button></div></header>
+  <div class="pages" id="pages"></div>
+</div>
+<div class="panel" id="panel" hidden>
+  <h3 id="p-h"></h3><p id="p-p"></p><div class="fields" id="p-f"></div><ul id="p-l"></ul>
+  <div class="tools" id="p-b"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+{
+const LOGO_B="__BALEIA__",LOGO_U="__UEB__";
+const SN=['Sim','Não'];
+const DIR_DEFAULT={metodosCargo:'Diretor de Métodos Educativos',metodosNome:'Percival Palmiro Alves',presCargo:'Diretor Presidente',presNome:'Leonardo Espi Cavalcanti'};
+let DIR={...DIR_DEFAULT};
+const SEC=(()=>{try{return new URLSearchParams(location.search).get('secao')||''}catch(e){return ''}})();
+const SECOES=['Ninhada 1','Ninhada 2','Alcateia Lobo Guará','Alcateia Sabiá','Alcateia Túnel do Morcego','Tropa Escoteira Hussardos','Tropa Escoteira Lis de Ouro','Tropa Escoteira Scorpions','Tropa Sênior Botocudos Pankas','Tropa Sênior Kakremaan','Clã Zulu Mac Smyth','Outra'];
+const FRET='Fretado (ônibus/van)',PUB='Transporte público',PART='Carros particulares';
+const JOV=['jovem','Jovem (nome e sobrenome)'];
+const COLORS={identificacao:'#3955A4',equipe:'#7B4FB8',saude:'#D6457A',local:'#2E8B57',riscos:'#E07B00',transporte:'#0F8A9D',comunicacao:'#5A6ACF',emergencia:'#C62828',assinaturas:'#4A5568'};
+const SCHEMA=[
+ {id:'identificacao',t:'Identificação',items:[
+  {pair:[{k:'secao',type:'fixed',l:'Seção'},{k:'atividade',type:'text',l:'Atividade',req:1}]},
+  {pair:[{k:'dataIni',type:'date',l:'Data da atividade',req:1},{k:'dataFim',type:'date',l:'Até',hint:'se durar mais de um dia'}]},
+  {pair:[{k:'elaborador',type:'text',l:'Elaborado por',req:1,hint:'chefe que preencheu'},{k:'elabTel',type:'tel',l:'Telefone de quem elaborou'}]},
+  {k:'chefe',type:'text',l:'Chefe de Seção',req:1,hint:'quem assina; pode ser diferente de quem elaborou'}]},
+ {id:'equipe',t:'Equipe e participantes',items:[
+  {pair:[{k:'qJovens',type:'number',l:'Quantidade de membros juvenis',req:1},{k:'qEscotistas',type:'number',l:'Quantidade de escotistas',req:1}]},
+  {k:'socorrista',type:'yn',l:'Há um socorrista treinado na equipe de adultos?'},
+  {k:'_pSoc',when:['socorrista','Sim'],pair:[{k:'socorristaNome',type:'text',l:'Nome do(s) socorrista(s)',req:1},{k:'socorristaCurso',type:'text',l:'Curso e validade',hint:'ex.: APH, válido até 03/2027'}]},
+  {pair:[{k:'emergNome',type:'text',l:'Contato de emergência do grupo',hint:'quem fica de plantão na cidade'},{k:'emergTel',type:'tel',l:'Telefone do contato de emergência'}]}]},
+ {id:'saude',t:'Saúde',items:[
+  {k:'fichas',type:'yn',l:'O chefe de seção possui todas as fichas médicas atualizadas dos jovens e dos escotistas?'},
+  {k:'fichasFaltam',type:'area',l:'Quais fichas estão faltando ou desatualizadas?',req:1,when:['fichas','Não'],min:2},
+  {k:'medic',type:'yn',l:'Algum jovem faz uso de medicação?'},
+  {k:'medicList',type:'list',alert:1,l:'Jovens que fazem uso de medicação',req:1,when:['medic','Sim'],add:'Adicionar jovem',cols:[JOV,['remedio','Medicamento'],['dose','Dose e horário'],['quem','Quem administra']]},
+  {k:'alim',type:'yn',l:'Algum jovem tem alergia ou restrição alimentar?'},
+  {k:'alimList',type:'list',alert:1,l:'Jovens com alergia ou restrição alimentar',req:1,when:['alim','Sim'],add:'Adicionar jovem',cols:[JOV,['alergia','Alergia ou restrição'],['cuidado','Cuidados']]},
+  {k:'alerg',type:'yn',l:'Algum jovem tem alergia a medicamentos, picadas de insetos ou outras?'},
+  {k:'alergList',type:'list',alert:1,l:'Jovens com outras alergias',req:1,when:['alerg','Sim'],add:'Adicionar jovem',cols:[JOV,['alergia','Alergia'],['cuidado','Cuidados']]},
+  {k:'cond',type:'yn',l:'Algum jovem tem condição de saúde que exige cuidado? (asma, diabetes, epilepsia etc.)'},
+  {k:'condList',type:'list',alert:1,l:'Jovens com condição de saúde',req:1,when:['cond','Sim'],add:'Adicionar jovem',cols:[JOV,['condicao','Condição'],['cuidado','O que fazer em caso de crise']]},
+  {k:'caixaPS',type:'yn',l:'Será utilizada uma caixa de Primeiros Socorros?'},
+  {k:'caixaOk',type:'yn',l:'Ela está completa e com os itens dentro da validade e em condições de uso?',pre:'Se sim, ',when:['caixaPS','Sim']}]},
+ {id:'local',t:'Local',items:[
+  {type:'preset'},
+  {k:'local',type:'text',l:'Local',req:1,hint:'nome do lugar'},
+  {k:'mapsLink',type:'text',l:'Link do Google Maps ou coordenadas',hint:'usado para achar delegacias e hospitais próximos'},
+  {k:'endereco',type:'text',l:'Endereço do local',req:1,hint:'vem do link completo do Maps; se não vier, digite'},
+  {k:'imagem',type:'image',l:'Imagem do local',req:1,hint:'print do Google Maps mostrando a área da atividade'},
+  {k:'comoChegar',type:'area',l:'Descreva como chegar ao local',min:4},
+  {k:'areas',type:'area',l:'Definição das áreas a serem utilizadas no local da atividade',min:4},
+  {k:'autProp',type:'yn',opts:['Sim','Não','Não é necessário'],l:'O proprietário do local autorizou formalmente a atividade? (documento, ofício, e-mail)'},
+  {k:'_pProp',when:['autProp','Sim'],pair:[{k:'propTel',type:'tel',l:'Telefones do proprietário'},{k:'propEmail',type:'email',l:'E-mail do proprietário'}]},
+  {k:'autPropDoc',type:'attach',l:'Documento de autorização do proprietário',hint:'opcional',when:['autProp','Sim']},
+  {k:'abrigo',type:'yn',l:'O local possui abrigo coberto (casas, galpões, salas, quartos etc.) para os casos de chuva ou outras necessidades?'},
+  {k:'abrigoSuf',type:'yn',l:'Os abrigos são suficientes para abrigar TODOS os participantes da atividade?',pre:'Se sim, ',when:['abrigo','Sim']},
+  {k:'banheiros',type:'yn',l:'O local possui infraestrutura de banheiros com vasos sanitários e chuveiros?',more:{k:'banheirosObs',l:'Obs.:'}},
+  {k:'potavel',type:'yn',l:'A água do local é potável e segura para beber, tomar banho e lavar utensílios?'}]},
+ {id:'riscos',t:'Riscos do local',items:[
+  {k:'previsao',type:'text',l:'Qual é a previsão do tempo para o período da atividade?'},
+  {k:'violencia',type:'yn',l:'Há locais conhecidos por violência próximos ao local da atividade?',more:{k:'violenciaQuais',l:'Quais?',when:'Sim'}},
+  {k:'violenciaRisco',type:'yn',l:'Esse(s) local(ais) podem oferecer riscos à atividade?',when:['violencia','Sim']},
+  {k:'agua',type:'yn',l:'O local da atividade possui lagoa, rio, cachoeiras ou córregos?'},
+  {k:'aquaticas',type:'yn',l:'Serão realizadas atividades aquáticas?',when:['agua','Sim']},
+  {k:'aquaticasSeg',type:'area',l:'Quais medidas de segurança serão adotadas? (salva-vidas, coletes, área delimitada, supervisão)',req:1,when:['aquaticas','Sim'],min:2},
+  {k:'raios',type:'yn',l:"Existe a incidência de raios, enchentes, alagamentos, cabeça d'água em dias de chuva?"},
+  {k:'peconhentos',type:'yn',l:'É frequente a aparição de animais peçonhentos/abelhas/felinos/caninos/cobras/escorpiões etc. que possam trazer riscos aos participantes?'},
+  {k:'gado',type:'yn',l:'Existe criação de gado, cavalos e outros animais que possam trazer riscos à atividade?'},
+  {k:'buracos',type:'yn',l:'Existem buracos profundos, cisternas, poços ou valas no local da atividade?'},
+  {k:'altaTensao',type:'yn',l:'Possui torres ou fios de alta tensão próximos de onde ocorrerão as atividades?'},
+  {k:'perigosos',type:'yn',l:'O local possui recintos de armazenagem de materiais perigosos como gases, inflamáveis, lixo hospitalar, rejeitos químicos etc?'},
+  {k:'freq',type:'yn',l:'Existem outros frequentadores do local? (campistas, banhistas, visitantes, turistas etc.)'},
+  {k:'freqInterf',type:'yn',l:'Estes frequentadores podem interferir na segurança da atividade?',pre:'Se sim, ',when:['freq','Sim']}]},
+ {id:'transporte',t:'Transporte',items:[
+  {k:'transpTipo',type:'choice',l:'Como os participantes vão até o local?',hint:'marque todos que se aplicam',req:1,opts:[FRET,PUB,PART,'A pé','Outros']},
+  {k:'_gFret',type:'grp',l:'Transporte fretado',when:['transpTipo',FRET]},
+  {k:'_pFret1',when:['transpTipo',FRET],pair:[{k:'fretEmpresa',type:'text',l:'Empresa contratada',req:1},{k:'fretCNPJ',type:'text',l:'CNPJ'}]},
+  {k:'_pFret2',when:['transpTipo',FRET],pair:[{k:'fretMotorista',type:'text',l:'Motorista',req:1},{k:'fretMotTel',type:'tel',l:'Telefone do motorista'}]},
+  {k:'fretadoLegal',type:'yn',l:'A empresa contratada está legalizada para realizar o transporte?',when:['transpTipo',FRET]},
+  {k:'fretCNH',type:'attach',l:'CNH do motorista',hint:'opcional',when:['transpTipo',FRET]},
+  {k:'fretSeguro',type:'attach',l:'Seguro do veículo',hint:'apólice · opcional',when:['transpTipo',FRET]},
+  {k:'_gPart',type:'grp',l:'Carros particulares',when:['transpTipo',PART]},
+  {k:'partList',type:'list',l:'Motoristas e veículos',req:1,when:['transpTipo',PART],add:'Adicionar motorista',cols:[['motorista','Motorista'],['veiculo','Veículo e placa'],['tel','Telefone']]},
+  {k:'partPais',type:'yn',l:'Os responsáveis autorizaram o transporte dos jovens em veículo particular?',when:['transpTipo',PART]},
+  {k:'partCNH',type:'attach',l:'CNH dos motoristas',hint:'opcional',when:['transpTipo',PART]},
+  {k:'_gPub',type:'grp',l:'Transporte público',when:['transpTipo',PUB]},
+  {k:'publicoDesc',type:'area',l:'Linhas, trajeto e pontos de embarque',req:1,when:['transpTipo',PUB],min:2},
+  {k:'_gOutro',type:'grp',l:'Outros',when:['transpTipo','Outros']},
+  {k:'transpOutro',type:'area',l:'Descreva o outro tipo de transporte',req:1,when:['transpTipo','Outros'],min:2},
+  {k:'outroTransp',type:'area',l:'Observações sobre o transporte',min:2}]},
+ {id:'comunicacao',t:'Comunicação e apoio',items:[
+  {k:'radios',type:'yn',l:'Serão utilizados rádios de comunicação?',more:{k:'radiosQtd',l:'Quantos?',when:'Sim',type:'number'}},
+  {k:'celular',type:'yn',l:'Há sinal de celular no local da atividade?',more:{k:'celularObs',l:'Obs.:'}},
+  {k:'fixo',type:'yn',l:'Há telefone fixo no local (particular ou público)?',more:{k:'fixoNum',l:'Número:',when:'Sim',type:'tel'}},
+  {k:'carros',type:'yn',l:'Serão utilizados carros de apoio?',more:{k:'carrosQtd',l:'Quantos?',when:'Sim',type:'number'}}]},
+ {id:'emergencia',t:'Emergência',sub:'ao menos 1 delegacia e 1 hospital',items:[
+  {type:'find'},
+  {k:'postos',type:'places',l:'Posto policial / Delegacia',short:'Posto',n:3},
+  {k:'hospitais',type:'places',l:'Hospital / UPA / Pronto-socorro',short:'Hospital',n:3},
+  {k:'orgaos',type:'yn',l:'É necessário solicitar autorização/apoio a órgãos como Polícia, Bombeiros?',more:{k:'orgaosQual',l:'Qual?',when:'Sim'}},
+  {k:'orgaosSolic',type:'yn',l:'A autorização já foi solicitada?',when:['orgaos','Sim']},
+  {k:'orgaosDoc',type:'attach',l:'Ofício ou protocolo da solicitação',hint:'opcional',when:['orgaos','Sim']}]},
+ {id:'assinaturas',t:'Data e assinaturas',items:[
+  {pair:[{k:'cidade',type:'text',l:'Cidade',def:'Belo Horizonte'},{k:'dataDoc',type:'date',l:'Data do documento',def:'today'}]},
+  {type:'dir'}]}
+];
+const PRESET_KEYS=['imagem','imagemW','imagemH','local','mapsLink','endereco','comoChegar','areas','autProp','propTel','propEmail','abrigo','abrigoSuf','banheiros','banheirosObs','potavel','violencia','violenciaQuais','violenciaRisco','agua','raios','peconhentos','gado','buracos','altaTensao','perigosos','freq','freqInterf','celular','celularObs','fixo','fixoNum','postos','hospitais','orgaos','orgaosQual'];
+const PLACE_REQ=['nome','end','dist'];
+const KEY='rn-seg-rascunho:'+SEC,PKEY='rn-seg-presets-v0',AKEY='rn-seg-apoio-v0';
+const ITEMS={};
+for(const s of SCHEMA)for(const i of s.items){i._s=s;if(i.k)ITEMS[i.k]=i;if(i.pair)for(const c of i.pair){c._s=s;c._pair=i.k?i:null;ITEMS[c.k]=c}}
+const ALL=Object.values(ITEMS);
+const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DIAS=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+const weekday=d=>{if(!d||!/^\d{4}-\d\d-\d\d$/.test(d))return '';const [y,m,dd]=d.split('-').map(Number);return DIAS[new Date(y,m-1,dd).getDay()]};
+const slug=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w]+/g,'_').replace(/^_|_$/g,'');
+let S={};
+try{S=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){S={}}
+delete S.aprov;delete S.ressalvas;
+if(S.fretado==='Sim'&&!S.transpTipo)S.transpTipo=[FRET];
+if(S.secao&&!SECOES.includes(S.secao)){S.secaoOutra=S.secao;S.secao='Outra'}
+const secaoNome=()=>SEC;
+function defaults(){S.secao=SEC;for(const i of ALL)if(i.def&&S[i.k]==null)S[i.k]=i.def==='today'?today():i.def;
+  for(const i of ALL)if((i.type==='places'||i.type==='list'||i.type==='attach')&&!Array.isArray(S[i.k]))S[i.k]=[];
+  if(!Array.isArray(S.transpTipo))S.transpTipo=[]}
+defaults();
+
+/* ---------- Anexos (IndexedDB) ---------- */
+const MEM=new Map();let idbOk=true;
+const idbP=new Promise(ok=>{try{const r=indexedDB.open('plano-anexos',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>ok(r.result);r.onerror=()=>{idbOk=false;ok(null)}}catch(e){idbOk=false;ok(null)}});
+async function idb(mode,fn){const db=await idbP;if(!db)return undefined;return new Promise(ok=>{try{const t=db.transaction('f',mode);const r=fn(t.objectStore('f'));t.oncomplete=()=>ok(r&&r.result);t.onerror=()=>ok(undefined)}catch(e){ok(undefined)}})}
+const att={put:async(id,v)=>{MEM.set(id,v);await idb('readwrite',s=>s.put(v,id))},get:async id=>MEM.get(id)||await idb('readonly',s=>s.get(id)),del:async id=>{MEM.delete(id);await idb('readwrite',s=>s.delete(id))}};
+const readURL=f=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(r.error);r.readAsDataURL(f)});
+const fmtSize=n=>n>1048576?(n/1048576).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(n/1024))+' KB';
+const attachItems=()=>ALL.filter(i=>i.type==='attach');
+
+/* ---------- Maps ---------- */
+function parseMaps(raw){
+  const u=String(raw||'').trim();if(!u)return null;
+  const pc=u.match(/^\s*(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)\s*$/);
+  if(pc)return {short:false,name:'',lat:pc[1],lng:pc[2],url:`https://www.google.com/maps?q=${pc[1]},${pc[2]}`,coords:1};
+  let url;try{url=new URL(u)}catch(e){return {bad:1}}
+  if(url.protocol!=='https:')return {bad:1};
+  const short=/(^|\.)goo\.gl$|maps\.app\.goo\.gl/.test(url.hostname);
+  let name='',lat=null,lng=null,m;
+  if((m=url.pathname.match(/\/place\/([^/]+)/)))name=decodeURIComponent(m[1].replace(/\+/g,' '));
+  const q=url.searchParams.get('q')||url.searchParams.get('query')||url.searchParams.get('destination')||'';
+  if(!name&&q)name=q.replace(/\+/g,' ');
+  if((m=u.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/))||(m=u.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/)))[lat,lng]=[m[1],m[2]];
+  const cm=name.match(/^\s*(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)\s*$/);
+  if(cm){if(!lat)[lat,lng]=[cm[1],cm[2]];name=''}
+  return {short,name:name.trim(),lat,lng,url:url.href};
+}
+function splitPlace(name){const i=name.indexOf(',');if(i<0)return /\d/.test(name)?{nome:'',end:name}:{nome:name,end:''};
+  const first=name.slice(0,i).trim(),rest=name.slice(i+1).trim();return /\d/.test(first)?{nome:'',end:name}:{nome:first,end:rest}}
+function mapSearch(term){const p=parseMaps(S.mapsLink);
+  if(p&&p.lat)return `https://www.google.com/maps/search/${encodeURIComponent(term)}/@${p.lat},${p.lng},14z`;
+  const where=S.endereco||S.local;return `https://www.google.com/maps/search/${encodeURIComponent(term+(where?' perto de '+where:''))}`}
+const TIPO={postos:'policia',hospitais:'saude'};
+function hav(a,b,c,d){const R=6371,r=x=>x*Math.PI/180;const h=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function actCoords(){const p=parseMaps(S.mapsLink);return p&&p.lat?[+p.lat,+p.lng]:null}
+const fmtKm=x=>x<10?x.toFixed(1).replace('.',','):String(Math.round(x));
+let APOIO=[];
+function nearest(k,max=5,lim=80){const c=actCoords();if(!c)return [];const taken=new Set((S[k]||[]).filter(p=>p&&p.nome).map(p=>p.nome.toLowerCase()));
+  return APOIO.filter(a=>a.tipo===TIPO[k]&&!taken.has(a.nome.toLowerCase())).map(a=>({...a,d:hav(c[0],c[1],a.lat,a.lng)})).filter(a=>a.d<=lim).sort((x,y)=>x.d-y.d).slice(0,max)}
+const autoTxt=p=>p.auto?(p.auto===2?'Sugerido pela base do grupo · distância em linha reta':'Distância em linha reta, calculada pelo app'):'';
+function setPlaceDom(k,n){const p=(S[k]||[])[n]||{};for(const f of ['nome','dist','end','obs','maps']){const el=document.getElementById(`f-${k}.${n}.${f}`);if(el)el.value=p[f]||''}
+  const a=document.getElementById(`auto-${k}-${n}`);if(a)a.textContent=autoTxt(p)}
+function fillSlot(k,n,a){const c=actCoords();S[k][n]={nome:a.nome,end:a.end||'',obs:(S[k][n]||{}).obs||'',maps:a.maps||'',lat:a.lat,lng:a.lng,dist:c?fmtKm(hav(c[0],c[1],a.lat,a.lng)):'',auto:2};setPlaceDom(k,n)}
+function autoFill(){if(!actCoords())return;let did=0;
+  for(const k of ['postos','hospitais']){if(S[k].some(p=>p&&p.nome))continue;nearest(k,3,50).forEach((a,n)=>{fillSlot(k,n,a);did=1})}
+  if(did){persist();toast('Delegacias/hospitais próximos preenchidos — confira')}}
+function recalcDist(){const c=actCoords();if(!c)return;for(const k of ['postos','hospitais'])S[k].forEach((p,n)=>{if(p&&p.lat&&p.auto){p.dist=fmtKm(hav(c[0],c[1],+p.lat,+p.lng));setPlaceDom(k,n)}})}
+function renderSug(){for(const k of ['postos','hospitais']){const el=document.getElementById('sug-'+k);if(!el)continue;
+  const list=nearest(k);el.innerHTML='';if(!list.length){el.hidden=true;continue}el.hidden=false;
+  const s=document.createElement('span');s.textContent='Próximos na base do grupo:';el.appendChild(s);
+  for(const a of list){const b=document.createElement('button');b.type='button';b.className='chip';const bb=document.createElement('b');bb.textContent=`≈${fmtKm(a.d)} km `;b.append(bb,document.createTextNode(a.nome));
+    b.onclick=()=>{let n=S[k].findIndex(p=>!p||!p.nome);if(n===-1&&S[k].length<3)n=S[k].length;if(n===-1){toast('Os 3 espaços estão preenchidos: limpe um antes');return}fillSlot(k,n,a);persist();refresh()};el.appendChild(b)}}}
+async function learn(){if(!CAN_ADMIN)return;const list=[];for(const k of ['postos','hospitais'])for(const p of S[k])if(p&&p.nome&&p.lat&&p.lng)list.push({tipo:TIPO[k],nome:String(p.nome).trim(),end:String(p.end||'').trim(),lat:+p.lat,lng:+p.lng,maps:p.maps&&/^https:/.test(p.maps)?p.maps:''});
+  for(const a of list){const id=(a.tipo+'_'+slug(a.nome).toLowerCase()).slice(0,120);const ex=APOIO.find(x=>x.id===id);if(ex&&ex.end===a.end&&ex.lat===a.lat&&ex.lng===a.lng)continue;
+    const body={...a,atualizadoEm:new Date().toISOString()};
+    try{await rpc('apiBaseSet','apoio:'+id,JSON.stringify(body),MPROOF);APOIO=APOIO.filter(x=>x.id!==id).concat([{id,...body}])}catch(e){}}}
+
+/* ---------- Visibilidade e validação ---------- */
+function visible(i){
+  if(!i)return true;
+  if(i._pair&&!visible(i._pair))return false;
+  if(!i.when)return true;
+  const par=ITEMS[i.when[0]];if(par&&!visible(par))return false;
+  const cur=S[i.when[0]];return Array.isArray(cur)?cur.includes(i.when[1]):cur===i.when[1];
+}
+const val=k=>{const p=k.split('.');return p.length===3?((S[p[0]]||[])[p[1]]||{})[p[2]]:S[k]};
+function filled(i){const v=S[i.k];
+  if(i.type==='list')return Array.isArray(v)&&v.some(r=>r&&String(r[i.cols[0][0]]||'').trim());
+  if(i.type==='attach'||i.type==='choice')return Array.isArray(v)&&v.length>0;
+  return v!=null&&String(v).trim()!==''}
+function required(){const r=[];
+  for(const i of ALL){if(!visible(i))continue;
+    if(i.req)r.push({s:i._s,k:i.k,l:i.l,ok:filled(i)});
+    if(i.type==='places')for(const f of PLACE_REQ)r.push({s:i._s,k:`${i.k}.0.${f}`,l:`${i.short} 1 – ${({nome:'nome',end:'endereço',dist:'distância'})[f]}`,ok:!!String(val(`${i.k}.0.${f}`)||'').trim()})}
+  return r}
+function ynq(){return ALL.filter(i=>i.type==='yn'&&visible(i)).map(i=>({s:i._s,k:i.k,l:i.l,ok:!!S[i.k]}))}
+
+/* ---------- Formulário ---------- */
+function field(i){
+  const v=S[i.k]??'';const id='f-'+i.k;
+  const lbl=`<label class="lbl" for="${id}">${esc(i.l)}${i.req?' <em>*</em>':''}${i.hint?` <span class="hint">· ${esc(i.hint)}</span>`:''}</label>`;
+  if(i.type==='area')return lbl+`<textarea id="${id}" data-k="${i.k}">${esc(v)}</textarea>`;
+  if(i.type==='fixed')return lbl+`<div class="fixed">${esc(SEC)}</div>`;
+  if(i.type==='select')return lbl+`<select id="${id}" data-k="${i.k}"><option value="">Escolha a seção…</option>${i.opts.map(o=>`<option ${v===o?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+  const list=i.list?` list="dl-${i.k}"`:'';
+  const dl=i.list?`<datalist id="dl-${i.k}">${i.list.map(o=>`<option value="${esc(o)}">`).join('')}</datalist>`:'';
+  const t=i.type==='number'?'number" inputmode="numeric" min="0':i.type;
+  const extra=i.k==='mapsLink'?`<div class="mapinfo" id="mapinfo"></div>`:(i.k==='dataIni'||i.k==='dataFim'?`<div class="wd" id="wd-${i.k}">${esc(weekday(v))}</div>`:'');
+  return lbl+`<input type="${t}" id="${id}" data-k="${i.k}" value="${esc(v)}"${list}${i.k==='mapsLink'?' placeholder="https://www.google.com/maps/place/… ou -19.92, -43.93"':''}>`+dl+extra;
+}
+function seg(k,opts){return `<div class="seg" role="radiogroup">${opts.map(o=>`<label class="${o==='Sim'?'':'no'}"><input type="radio" name="${k}" value="${esc(o)}" ${S[k]===o?'checked':''}>${esc(o)}</label>`).join('')}</div>`}
+function listHTML(i){
+  const rows=S[i.k].length?S[i.k]:[{}];
+  return `<div class="list" style="--cols:${i.cols.length}">${rows.map((r,n)=>`<div class="lrow">${i.cols.map(([c,l],ci)=>`<div><label for="f-${i.k}.${n}.${c}">${esc(l)}${ci===0?' <em style="color:var(--red);font-style:normal">*</em>':''}</label><input type="text" id="f-${i.k}.${n}.${c}" data-k="${i.k}.${n}.${c}" value="${esc((r||{})[c])}"></div>`).join('')}<button type="button" class="x" data-rm="${i.k}.${n}" aria-label="Remover linha">×</button></div>`).join('')}
+  <button type="button" class="btn ghost sm add" data-add="${i.k}">+ ${esc(i.add)}</button></div>`;
+}
+function attachHTML(i){
+  const files=S[i.k];
+  return `<div class="att" data-drop="${i.k}"><div class="row"><button type="button" class="btn blue sm" data-pick="${i.k}">${files.length?'Adicionar outro arquivo':'Enviar arquivo'}</button><p>Foto ou PDF · arraste aqui</p></div>
+  ${files.length?`<ul>${files.map((f,n)=>`<li><span>${esc(f.name)}</span><small>${fmtSize(f.size||0)}</small><button type="button" class="btn ghost sm" data-unatt="${i.k}.${n}">Remover</button></li>`).join('')}</ul>`:''}
+  <input type="file" data-file="${i.k}" accept="image/*,application/pdf" multiple hidden></div>`;
+}
+function item(i){
+  const vis=i.k?` data-vis="${i.k}"`:'';const sub=i.when?' sub':'';
+  if(i.pair)return `<div class="q pair${sub}"${vis}>${i.pair.map(p=>`<div data-f="${p.k}">${field(p)}</div>`).join('')}</div>`;
+  if(i.type==='grp')return `<div class="grp"${vis}>${esc(i.l)}</div>`;
+  if(i.type==='image')return `<div class="q" data-vis="${i.k}" data-f="${i.k}"><span class="lbl">${esc(i.l)}${i.req?' <em>*</em>':''} <span class="hint">· ${esc(i.hint)}</span></span>
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Enviar imagem do local">${S.imagem?`<img src="${S.imagem}" alt="Imagem do local">`:''}
+    <p>${S.imagem?'':'<b>Clique para enviar</b>, arraste a imagem aqui ou cole com Ctrl+V.<br>'}No Maps, deixe a área da atividade visível na tela e tire um print.</p>
+    <div class="tools"><button type="button" class="btn blue sm" id="img-pick">${S.imagem?'Trocar imagem':'Escolher imagem'}</button>${S.imagem?'<button type="button" class="btn ghost sm" id="img-del">Remover</button>':''}</div></div>
+    <input type="file" id="img-file" accept="image/*" hidden></div>`;
+  if(i.type==='preset')return `<div class="preset"><b>Locais salvos</b><div class="row"><select id="pr-sel" aria-label="Escolher local salvo"><option value="">Escolha um local salvo…</option></select><button type="button" class="btn blue sm" id="pr-use">Usar</button><button type="button" class="btn ghost sm" id="pr-save">Salvar este local</button><button type="button" class="btn ghost sm" id="pr-del" hidden>Excluir</button></div><div class="prinfo" id="pr-info" hidden></div><span class="note" id="pr-note">Cada local salvo guarda: nome, endereço, link do Maps, imagem, como chegar, áreas, perguntas do local e dos riscos, sinal de celular, delegacias e hospitais.</span></div>`;
+  if(i.type==='find')return `<div class="find"><a class="btn ghost sm" id="find-pol" target="_blank" rel="noopener">Procurar delegacias no Maps</a><a class="btn ghost sm" id="find-hos" target="_blank" rel="noopener">Procurar hospitais e UPAs no Maps</a></div><p class="note">Dica no computador: abra a busca, clique no lugar e copie o endereço da barra do navegador; colando no campo “Link do Maps” abaixo, o app preenche nome, endereço e distância. Tudo o que for informado entra na base do grupo e aparece como sugestão nas próximas atividades.</p>`;
+  if(i.type==='dir')return `<div class="q"><div class="dirhead"><span class="lbl" style="margin:0">Diretoria (assina o documento)</span><button type="button" class="btn ghost sm" id="dir-edit">Alterar nomes</button></div><div class="dir" id="dir-box"></div><p class="note" id="dir-note">Os nomes valem para todos os chefes até serem alterados.</p></div>`;
+  if(i.type==='yn'){let m='';
+    if(i.more){const mi={k:i.more.k,l:i.more.l,type:i.more.type||'text'};m=`<div class="more" ${i.more.when?`data-morefor="${i.k}" data-is="${i.more.when}"`:''}>${field(mi)}</div>`}
+    return `<div class="q${sub}"${vis} data-f="${i.k}"><div class="ynrow"><span class="lbl">${esc(i.l)}</span>${seg(i.k,i.opts||SN)}</div>${m}</div>`}
+  if(i.type==='choice')return `<div class="q"${vis} data-f="${i.k}"><span class="lbl">${esc(i.l)}${i.req?' <em>*</em>':''} <span class="hint">· ${esc(i.hint)}</span></span><div class="choice">${i.opts.map(o=>`<label><input type="checkbox" name="${i.k}" value="${esc(o)}" ${S[i.k].includes(o)?'checked':''}>${esc(o)}</label>`).join('')}</div></div>`;
+  if(i.type==='list')return `<div class="q${sub}"${vis} data-f="${i.k}"><div class="${i.alert?'alertbox':''}">${i.alert?'<span class="tag">Informação importante</span>':''}<span class="lbl">${esc(i.l)}${i.req?' <em>*</em>':''}</span>${listHTML(i)}</div></div>`;
+  if(i.type==='attach')return `<div class="q${sub}"${vis} data-f="${i.k}"><span class="lbl">${esc(i.l)}${i.req?' <em>*</em>':''}${i.hint?` <span class="hint">· ${esc(i.hint)}</span>`:''}</span>${attachHTML(i)}</div>`;
+  if(i.type==='places'){let h='';
+    for(let n=0;n<i.n;n++){const p=S[i.k][n]||{};const b=`${i.k}.${n}.`;const r=n===0?' <em>*</em>':'';
+      h+=`<div class="place"><h3><span>${esc(i.l)} ${n+1}${n?' <span class="hint">· opcional</span>':''}</span><button type="button" class="btn ghost sm" data-clr="${i.k}.${n}">Limpar</button></h3>
+      <div class="full"><label class="lbl" for="f-${b}maps">Link do Maps <span class="hint">· cole para preencher nome, endereço e distância</span></label><input type="text" id="f-${b}maps" data-k="${b}maps" value="${esc(p.maps)}" placeholder="https://www.google.com/maps/place/…"></div>
+      <div data-f="${b}nome"><label class="lbl" for="f-${b}nome">Nome${r}</label><input type="text" id="f-${b}nome" data-k="${b}nome" value="${esc(p.nome)}"></div>
+      <div data-f="${b}dist"><label class="lbl" for="f-${b}dist">Distância (km)${r}</label><input type="text" inputmode="decimal" id="f-${b}dist" data-k="${b}dist" value="${esc(p.dist)}"></div>
+      <div class="full auto" id="auto-${i.k}-${n}">${autoTxt(p)}</div>
+      <div class="full" data-f="${b}end"><label class="lbl" for="f-${b}end">Endereço${r}</label><input type="text" id="f-${b}end" data-k="${b}end" value="${esc(p.end)}"></div>
+      <div class="full"><label class="lbl" for="f-${b}obs">Obs.</label><input type="text" id="f-${b}obs" data-k="${b}obs" value="${esc(p.obs)}"></div></div>`}
+    return `<div class="q"><div class="sug" id="sug-${i.k}" hidden></div>${h}</div>`}
+  return `<div class="q${sub}"${vis} data-f="${i.k}">${field(i)}</div>`;
+}
+const F=document.getElementById('f');
+function build(){
+  F.innerHTML=SCHEMA.map((s,n)=>{const nx=SCHEMA[n+1];return `<section class="card" id="${s.id}" style="--c:${COLORS[s.id]}"><h2><b class="num">${n+1}</b>${esc(s.t)}${s.sub?`<span>${esc(s.sub)}</span>`:''}</h2><div class="body">${s.items.map(item).join('')}${nx?`<div class="next"><button type="button" class="btn sm nextbtn" data-next="${nx.id}" style="--c:${COLORS[nx.id]}">Próxima: ${esc(nx.t)} →</button></div>`:''}</div></section>`}).join('');
+  DONE={};for(const s of SCHEMA)DONE[s.id]=secDone(s);observeSections();
+  document.getElementById('pr-use').onclick=usePreset;document.getElementById('pr-save').onclick=savePresetDialog;document.getElementById('pr-del').onclick=delPreset;
+  document.getElementById('pr-sel').onchange=()=>{document.getElementById('pr-del').hidden=!document.getElementById('pr-sel').value||!CAN_ADMIN;presetInfo()};
+  document.getElementById('dir-edit').onclick=editDir;
+  wireImage();renderPresets();renderDir();refresh();
+}
+function rerender(k){const el=F.querySelector(`[data-vis="${k}"]`);if(!el)return;el.outerHTML=item(ITEMS[k]);refresh()}
+document.getElementById('nav').innerHTML=SCHEMA.map(s=>`<a href="#${s.id}" data-s="${s.id}" style="--c:${COLORS[s.id]}">${esc(s.t)}</a>`).join('');
+let DONE={},secObs=null;
+function secDone(s){const qs=[...required(),...ynq()].filter(x=>x.s===s);return qs.length>0&&qs.every(x=>x.ok)}
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let lockUntil=0,activeId='';
+function setActive(id){if(id===activeId)return;activeId=id;document.querySelectorAll('.nav a').forEach(a=>{const on=a.dataset.s===id;a.classList.toggle('on',on);if(on){const nav=a.parentElement;nav.scrollTo({left:a.offsetLeft-nav.clientWidth/2+a.offsetWidth/2,behavior:reduce?'auto':'smooth'})}})}
+function goSection(id){const el=document.getElementById(id);if(!el)return;setActive(id);lockUntil=Date.now()+1400;el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})}
+function currentSection(){const top=document.querySelector('.top').offsetHeight+24;const secs=[...F.querySelectorAll('section.card')];
+  if(window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-4){return secs.at(-1)?.id}
+  let cur=secs[0]?.id;for(const s of secs){if(s.getBoundingClientRect().top<=top)cur=s.id;else break}return cur}
+let scrollRaf=0;
+window.addEventListener('scroll',()=>{if(scrollRaf)return;scrollRaf=requestAnimationFrame(()=>{scrollRaf=0;if(Date.now()<lockUntil)return;const id=currentSection();if(id)setActive(id)})},{passive:true});
+document.getElementById('nav').addEventListener('click',e=>{const a=e.target.closest('a[data-s]');if(!a)return;e.preventDefault();goSection(a.dataset.s)});
+function observeSections(){activeId='';requestAnimationFrame(()=>{const id=currentSection();if(id)setActive(id)})}
+let jumpT;
+const JUMPED=new Set();
+function lastItem(sec){const els=[...sec.querySelector('.body').children].filter(el=>!el.hidden&&!el.classList.contains('next')&&!el.classList.contains('grp'));return els.at(-1)}
+F.addEventListener('change',e=>{const sec=e.target.closest('section.card');if(!sec)return;
+  const block=e.target.closest('.body > *');
+  setTimeout(()=>{const n=SCHEMA.findIndex(s=>s.id===sec.id),s=SCHEMA[n];
+    for(const x of SCHEMA){if(!secDone(x))JUMPED.delete(x.id)}
+    if(!s||!SCHEMA[n+1]||!secDone(s)||JUMPED.has(s.id))return;
+    if(block!==lastItem(sec))return;
+    const nx=SCHEMA[n+1];clearTimeout(jumpT);
+    jumpT=setTimeout(()=>{const a=document.activeElement;if(a&&sec.contains(a)&&(a.tagName==='TEXTAREA'||a.tagName==='SELECT'||(a.tagName==='INPUT'&&a.type!=='radio'&&a.type!=='checkbox')))return;if(JUMPED.has(s.id))return;JUMPED.add(s.id);toast(`Seção concluída: ${s.t} ✓`);goSection(nx.id)},700)},0)});
+
+function refresh(){
+  F.querySelectorAll('[data-vis]').forEach(el=>{el.hidden=!visible(ITEMS[el.dataset.vis])});
+  F.querySelectorAll('[data-morefor]').forEach(el=>{el.hidden=S[el.dataset.morefor]!==el.dataset.is});
+  const all=[...required(),...ynq()],ok=all.filter(x=>x.ok);
+  document.getElementById('prog').style.width=(all.length?ok.length/all.length*100:0)+'%';
+  document.getElementById('prog-t').textContent=`${ok.length} de ${all.length} itens preenchidos`;
+  for(const s of SCHEMA){const qs=all.filter(x=>x.s===s);document.querySelector(`.nav a[data-s="${s.id}"]`).classList.toggle('done',qs.length>0&&qs.every(x=>x.ok))}
+  const okSet=new Set(all.filter(x=>x.ok).map(x=>x.k));
+  F.querySelectorAll('.bad').forEach(el=>{if(okSet.has(el.dataset.f))el.classList.remove('bad')});
+  const fp=document.getElementById('find-pol'),fh=document.getElementById('find-hos');
+  if(fp){fp.href=mapSearch('delegacia de polícia');fh.href=mapSearch('hospital UPA pronto socorro')}
+  for(const k of ['dataIni','dataFim']){const el=document.getElementById('wd-'+k);if(el){const w=weekday(S[k]);el.textContent=w?w[0].toUpperCase()+w.slice(1):''}}
+  const fe=document.getElementById('wd-dataFim');if(fe&&S.dataIni&&S.dataFim&&S.dataFim<S.dataIni)fe.textContent='Atenção: data final antes da inicial';
+  mapInfo();renderSug();
+}
+function mapInfo(){
+  const el=document.getElementById('mapinfo');if(!el)return;const p=parseMaps(S.mapsLink);
+  if(!p){el.textContent='';return}
+  if(p.bad){el.innerHTML='<span>Esse não parece um link do Maps válido (precisa começar com https://) nem coordenadas.</span>';return}
+  let h='';
+  if(p.name)h+=splitPlace(p.name).end?`<span class="ok">Endereço lido do link ✓</span>`:`<span>O link trouxe só o nome do lugar, sem endereço: digite o endereço abaixo.</span>`;
+  else if(p.short)h+=`<span>Link curto: não traz endereço (digite abaixo) nem localização, então o app não consegue sugerir delegacias e hospitais. Use o link do computador ou cole as coordenadas (no Maps, toque e segure no local).</span>`;
+  else if(p.lat)h+=`<span class="ok">Coordenadas lidas ✓</span><span>${esc(p.lat)}, ${esc(p.lng)}</span>`;
+  h+=`<a href="${esc(p.url)}" target="_blank" rel="noopener">Abrir no Maps</a>`;el.innerHTML=h;
+}
+let saveT;function persist(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){toast('Rascunho muito grande para salvar no navegador')}},300)}
+function setVal(k,v){const p=k.split('.');if(p.length===3){S[p[0]]=S[p[0]]||[];S[p[0]][p[1]]=S[p[0]][p[1]]||{};S[p[0]][p[1]][p[2]]=v}else S[k]=v}
+F.addEventListener('input',e=>{const t=e.target;
+  if(t.type==='radio')S[t.name]=t.value;
+  else if(t.type==='checkbox'){S[t.name]=[...F.querySelectorAll(`input[name="${t.name}"]:checked`)].map(x=>x.value)}
+  else if(t.dataset.k){setVal(t.dataset.k,t.value);const pk=t.dataset.k.split('.');
+    const isPlace=pk.length===3&&(pk[0]==='postos'||pk[0]==='hospitais');
+    if(isPlace&&pk[2]==='dist'){S[pk[0]][pk[1]].auto=0;const a=document.getElementById(`auto-${pk[0]}-${pk[1]}`);if(a)a.textContent=''}
+    if(isPlace&&pk[2]==='maps'){const p=parseMaps(t.value),slot=S[pk[0]][pk[1]];
+      if(p&&!p.bad){if(p.lat){slot.lat=+p.lat;slot.lng=+p.lng}
+        if(p.name){const i=p.name.indexOf(',');slot.nome=i>0?p.name.slice(0,i).trim():p.name;if(i>0)slot.end=p.name.slice(i+1).trim()}
+        const c=actCoords();if(c&&slot.lat){slot.dist=fmtKm(hav(c[0],c[1],slot.lat,slot.lng));slot.auto=1}
+        for(const f of ['nome','end','dist']){const el=document.getElementById(`f-${pk[0]}.${pk[1]}.${f}`);if(el)el.value=slot[f]||''}
+        const a=document.getElementById(`auto-${pk[0]}-${pk[1]}`);if(a)a.textContent=slot.auto?autoTxt(slot):(p.short?'Link curto: preencha nome, endereço e distância à mão':'')}}
+    if(t.dataset.k==='mapsLink'){recalcDist();autoFill();const p=parseMaps(t.value);
+      if(p&&p.name){const a=splitPlace(p.name);
+        if(a.nome&&!S.local){S.local=a.nome;const le=document.getElementById('f-local');if(le)le.value=a.nome}
+        if(a.end&&!S.endereco){S.endereco=a.end;const ee=document.getElementById('f-endereco');if(ee)ee.value=a.end}}}}
+  refresh();persist()});
+F.addEventListener('click',e=>{const t=e.target.closest('button,input')||e.target;const d=t.dataset||{};
+  if(d.next){goSection(d.next);return}
+  if(d.clr){const [k,n]=d.clr.split('.');S[k][n]={};setPlaceDom(k,+n);persist();refresh();return}
+  if(d.add){const i=ITEMS[d.add];if(!S[i.k].length)S[i.k].push({});S[i.k].push({});persist();rerender(i.k);const n=S[i.k].length-1;document.getElementById(`f-${i.k}.${n}.${i.cols[0][0]}`)?.focus();return}
+  if(d.rm){const [k,n]=d.rm.split('.');S[k].splice(+n,1);persist();rerender(k);return}
+  if(d.pick){F.querySelector(`input[data-file="${d.pick}"]`).click();return}
+  if(d.unatt){const [k,n]=d.unatt.split('.');const f=S[k][+n];S[k].splice(+n,1);if(f)att.del(f.id);persist();rerender(k);return}
+  if(t.type==='radio'&&t.dataset.was==='1'){delete t.dataset.was;t.checked=false;S[t.name]='';refresh();persist()}});
+F.addEventListener('pointerdown',e=>{const l=e.target.closest('.seg label');if(!l)return;const r=l.querySelector('input');r.dataset.was=r.checked?'1':'0'});
+F.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.file){addFiles(t.dataset.file,[...t.files]);t.value=''}});
+F.addEventListener('dragover',e=>{const z=e.target.closest('[data-drop]');if(z){e.preventDefault();z.classList.add('over')}});
+F.addEventListener('dragleave',e=>{const z=e.target.closest('[data-drop]');if(z)z.classList.remove('over')});
+F.addEventListener('drop',e=>{const z=e.target.closest('[data-drop]');if(z){e.preventDefault();z.classList.remove('over');addFiles(z.dataset.drop,[...e.dataTransfer.files])}});
+F.addEventListener('submit',e=>e.preventDefault());
+
+async function addFiles(k,files){
+  let added=0;
+  for(const f of files){
+    const isPdf=f.type==='application/pdf'||/\.pdf$/i.test(f.name);
+    if(!isPdf&&!/^image\//.test(f.type)){toast('Envie foto (JPG/PNG) ou PDF');continue}
+    if(f.size>25*1048576){toast(`${f.name}: arquivo maior que 25 MB`);continue}
+    try{const id='a'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);let v;
+      if(isPdf)v={type:'pdf',data:await readURL(f)};else{const r=await readImage(f,1200000,2200);v={type:'img',data:r.data,w:r.w,h:r.h}}
+      await att.put(id,v);S[k].push({id,name:f.name,size:isPdf?f.size:Math.round(v.data.length*.75),type:v.type});added++}
+    catch(e){toast(`Não foi possível ler ${f.name}`)}
+  }
+  if(added){persist();rerender(k);toast(added>1?`${added} arquivos anexados ✓`:'Arquivo anexado ✓');if(!idbOk)toast('Atenção: este navegador não guarda anexos; gere o PDF antes de fechar')}
+}
+
+/* ---------- Imagem do local ---------- */
+async function readImage(file,maxLen=190000,maxDim=1600){
+  const url=URL.createObjectURL(file);const img=new Image();
+  try{await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=url});
+    const c=document.createElement('canvas'),ctx=c.getContext('2d');let max=maxDim,q=.82,out='';
+    for(let n=0;n<8;n++){const s=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight));c.width=Math.round(img.naturalWidth*s);c.height=Math.round(img.naturalHeight*s);
+      ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);out=c.toDataURL('image/jpeg',q);
+      if(out.length<=maxLen)break;max=Math.round(max*.82);q=Math.max(.55,q-.06)}
+    return {data:out,w:c.width,h:c.height}}finally{URL.revokeObjectURL(url)}
+}
+async function setImage(file){
+  if(!file||!/^image\//.test(file.type)){toast('Envie um arquivo de imagem (PNG ou JPG)');return}
+  try{const r=await readImage(file);S.imagem=r.data;S.imagemW=r.w;S.imagemH=r.h;persist();rerender('imagem');wireImage();toast('Imagem adicionada ✓')}catch(e){toast('Não foi possível ler essa imagem')}
+}
+function wireImage(){
+  const drop=document.getElementById('drop'),file=document.getElementById('img-file');if(!drop)return;
+  const pick=()=>file.click();
+  drop.onclick=e=>{if(e.target.id==='img-del')return;pick()};
+  drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}};
+  file.onchange=()=>{setImage(file.files[0]);file.value=''};
+  drop.ondragover=e=>{e.preventDefault();e.stopPropagation();drop.classList.add('over')};drop.ondragleave=()=>drop.classList.remove('over');
+  drop.ondrop=e=>{e.preventDefault();e.stopPropagation();drop.classList.remove('over');setImage(e.dataTransfer.files[0])};
+  const del=document.getElementById('img-del');if(del)del.onclick=e=>{e.stopPropagation();S.imagem='';S.imagemW=0;S.imagemH=0;persist();rerender('imagem');wireImage()};
+}
+document.addEventListener('paste',e=>{if(!document.getElementById('prev').hidden)return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'))return;
+  const f=[...(e.clipboardData?.files||[])].find(x=>/^image\//.test(x.type));if(f){e.preventDefault();setImage(f);document.getElementById('local')?.scrollIntoView({behavior:'smooth'})}});
+
+/* ---------- UI ---------- */
+const toastEl=document.getElementById('toast');let tt;
+function toast(m){toastEl.textContent=m;toastEl.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toastEl.classList.remove('on'),3000)}
+const panel=document.getElementById('panel');
+function showPanel(h,p,list,buttons,fields){
+  document.getElementById('p-h').textContent=h;document.getElementById('p-p').textContent=p;
+  const ul=document.getElementById('p-l');ul.innerHTML=(list||[]).map(x=>`<li>${esc(x)}</li>`).join('');ul.hidden=!(list&&list.length);
+  const ff=document.getElementById('p-f');ff.innerHTML=(fields||[]).map(f=>`<div><label for="pf-${f.id}">${esc(f.l)}</label><input type="text" id="pf-${f.id}" value="${esc(f.v)}"></div>`).join('');ff.hidden=!(fields&&fields.length);
+  const b=document.getElementById('p-b');b.innerHTML='';
+  for(const [t,cls,fn] of buttons){const el=document.createElement('button');el.className='btn '+cls;el.textContent=t;
+    el.onclick=async()=>{const vals={};(fields||[]).forEach(f=>vals[f.id]=document.getElementById('pf-'+f.id).value.trim());
+      if(fn){const keep=await fn(vals);if(keep===false)return}panel.hidden=true};b.appendChild(el)}
+  panel.hidden=false;const first=ff.querySelector('input');first&&first.focus();
+}
+
+/* ---------- Dados compartilhados ---------- */
+let CAN_ADMIN=false,MPROOF='',PRESETS=[];
+try{MPROOF=sessionStorage.getItem('rn-seg-dir')||'';CAN_ADMIN=!!MPROOF}catch(e){}
+
+function renderDir(){
+  const box=document.getElementById('dir-box');if(!box)return;box.innerHTML='';
+  for(const [c,n] of [[DIR.metodosCargo,DIR.metodosNome],[DIR.presCargo,DIR.presNome]]){const d=document.createElement('div');const sm=document.createElement('small');sm.textContent=c;const st=document.createElement('strong');st.textContent=n||'—';d.append(sm,st);box.appendChild(d)}
+  const b=document.getElementById('dir-edit');if(b)b.hidden=!CAN_ADMIN;
+  const note=document.getElementById('dir-note');if(note)note.textContent=!CAN_ADMIN?'Definido pela diretoria do grupo. Para alterar, entre no modo diretoria.':'Os nomes valem para todos os chefes até serem alterados.';
+}
+function editDir(){
+  showPanel('Alterar diretoria','Os novos nomes passam a sair no PDF de todos os chefes.',[],[['Cancelar','ghost'],['Salvar','blue',async v=>{
+    const nd={metodosCargo:v.mc||DIR_DEFAULT.metodosCargo,metodosNome:v.mn,presCargo:v.pc||DIR_DEFAULT.presCargo,presNome:v.pn,atualizadoEm:new Date().toISOString()};
+    try{await rpc('apiBaseSet','config:diretoria',JSON.stringify(nd),MPROOF);DIR=nd;renderDir();toast('Diretoria atualizada ✓')}catch(e){toast(e&&e.code==='permission_denied'?'Palavra da diretoria não confere':'Não foi possível salvar. Confira a internet.');return false}
+  }]],[{id:'mc',l:'Cargo 1',v:DIR.metodosCargo},{id:'mn',l:'Nome',v:DIR.metodosNome},{id:'pc',l:'Cargo 2',v:DIR.presCargo},{id:'pn',l:'Nome',v:DIR.presNome}]);
+}
+function renderPresets(){
+  const sel=document.getElementById('pr-sel');if(!sel)return;const cur=sel.value;
+  sel.innerHTML='<option value="">'+(PRESETS.length?'Escolha um local salvo…':'Nenhum local salvo ainda')+'</option>';
+  for(const p of PRESETS){const o=document.createElement('option');o.value=p.id;o.textContent=p.nome;sel.appendChild(o)}
+  if(PRESETS.some(p=>p.id===cur))sel.value=cur;document.getElementById('pr-del').hidden=!sel.value||!CAN_ADMIN;
+  document.getElementById('pr-save').hidden=!CAN_ADMIN;presetInfo();
+}
+const RISK_KEYS=['violencia','agua','raios','peconhentos','gado','buracos','altaTensao','perigosos','freq'];
+function presetSummary(d){
+  const L=[];const add=(l,v)=>{if(v)L.push([l,v])};
+  add('Local',d.local);add('Endereço',d.endereco);
+  const mp=parseMaps(d.mapsLink);add('Link do Maps',mp&&!mp.bad?'salvo':'');
+  add('Imagem do local',d.imagem?'salva':'');
+  const pl=k=>(d[k]||[]).filter(p=>p&&p.nome).map(p=>p.nome+(p.dist?` (${p.dist} km)`:'')).join('; ');
+  add('Delegacias',pl('postos'));add('Hospitais/UPAs',pl('hospitais'));
+  const RN={violencia:'locais com violência por perto',agua:'rio, lagoa ou cachoeira',raios:'raios ou enchentes',peconhentos:'animais peçonhentos',gado:'gado ou outros animais',buracos:'buracos, poços ou valas',altaTensao:'alta tensão',perigosos:'materiais perigosos',freq:'outros frequentadores'};
+  const sim=RISK_KEYS.filter(k=>d[k]==='Sim').map(k=>RN[k]);
+  const answered=RISK_KEYS.filter(k=>d[k]).length;
+  if(answered)add('Riscos marcados como Sim',sim.length?sim.join('; '):'nenhum');
+  const infra=[['abrigo','abrigo coberto'],['banheiros','banheiros'],['potavel','água potável'],['celular','sinal de celular']].filter(([k])=>d[k]).map(([k,l])=>`${l}: ${d[k].toLowerCase()}`).join(' · ');
+  add('Estrutura',infra);
+  return L;
+}
+function presetInfo(){
+  const box=document.getElementById('pr-info'),sel=document.getElementById('pr-sel');if(!box||!sel)return;
+  const p=PRESETS.find(x=>x.id===sel.value);if(!p){box.hidden=true;box.innerHTML='';return}
+  const d=p.dados||{};box.innerHTML='';box.hidden=false;
+  if(d.imagem&&/^data:image\/jpeg;base64,/.test(d.imagem)){const im=document.createElement('img');im.src=d.imagem;im.alt='Imagem do local';box.appendChild(im)}
+  const dl=document.createElement('dl');
+  for(const [l,v] of presetSummary(d)){const dt=document.createElement('dt');dt.textContent=l;const dd=document.createElement('dd');
+    if(l==='Link do Maps'){const mp=parseMaps(d.mapsLink);const a=document.createElement('a');a.href=mp.url;a.target='_blank';a.rel='noopener';a.textContent='Abrir no Maps';dd.appendChild(a)}else dd.textContent=v;
+    dl.append(dt,dd)}
+  box.appendChild(dl);
+}
+async function shrinkDataURL(src,maxLen){const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=src});
+  const c=document.createElement('canvas'),ctx=c.getContext('2d');let max=Math.max(img.naturalWidth,img.naturalHeight),q=.75,out=src;
+  for(let n=0;n<8&&out.length>maxLen;n++){max=Math.round(max*.8);const s=max/Math.max(img.naturalWidth,img.naturalHeight);c.width=Math.round(img.naturalWidth*s);c.height=Math.round(img.naturalHeight*s);
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);out=c.toDataURL('image/jpeg',q);q=Math.max(.55,q-.05)}
+  return {data:out,w:c.width||img.naturalWidth,h:c.height||img.naturalHeight}}
+function localPresets(){try{return JSON.parse(localStorage.getItem(PKEY)||'[]')}catch(e){return []}}
+function usePreset(){
+  const id=document.getElementById('pr-sel').value;const p=PRESETS.find(x=>x.id===id);
+  if(!p){toast('Escolha um local na lista');return}
+  const before=JSON.parse(JSON.stringify(S));
+  const d=p.dados||{};for(const k of PRESET_KEYS)if(d[k]!==undefined)S[k]=JSON.parse(JSON.stringify(d[k]));
+  defaults();persist();build();
+  showPanel(`“${p.nome}” aplicado`,'Confira as respostas: condições do local podem ter mudado desde que foi salvo.',[],[['Desfazer','ghost',()=>{S=before;persist();build()}],['Ok','blue']]);
+}
+function savePresetDialog(){
+  if(!S.local){toast('Preencha o nome do local primeiro');document.getElementById('f-local').focus();return}
+  const preview={};for(const k of PRESET_KEYS)if(S[k]!==undefined&&S[k]!=='')preview[k]=S[k];
+  const warn=[];if(!S.endereco)warn.push('endereço');if(!S.mapsLink)warn.push('link do Maps');if(!S.postos.some(p=>p&&p.nome))warn.push('delegacias');if(!S.hospitais.some(p=>p&&p.nome))warn.push('hospitais');
+  showPanel('Salvar este local',`Vai ficar disponível para todos os chefes. Se já existir um local com o mesmo nome, ele será atualizado.${warn.length?' Ainda não preenchido: '+warn.join(', ')+'.':''}`,presetSummary(preview).map(([l,v])=>`${l}: ${v}`),[['Cancelar','ghost'],['Salvar','blue',async v=>{
+    const nome=v.nome||S.local;const id=slug(nome).toLowerCase().slice(0,80)||('local_'+Date.now());
+    const dados=JSON.parse(JSON.stringify(preview));
+    if(dados.imagem&&JSON.stringify(dados).length>230000){try{const r=await shrinkDataURL(dados.imagem,Math.max(40000,dados.imagem.length-(JSON.stringify(dados).length-225000)));dados.imagem=r.data;dados.imagemW=r.w;dados.imagemH=r.h}catch(e){}}
+    const body={nome,dados,atualizadoEm:new Date().toISOString()};
+    try{await rpc('apiBaseSet','local:'+id,JSON.stringify(body),MPROOF)}catch(e){toast(e&&e.code==='permission_denied'?'Palavra da diretoria não confere':'Não foi possível salvar. Confira a internet.');return false}
+    PRESETS=PRESETS.filter(x=>x.id!==id).concat([{id,nome,dados}]).sort((a,b)=>a.nome.localeCompare(b.nome));renderPresets();
+    setTimeout(()=>{const s=document.getElementById('pr-sel');s.value=id;renderPresets()},300);toast(`Local “${nome}” salvo ✓`);
+  }]],[{id:'nome',l:'Nome do local salvo',v:S.local}]);
+}
+function delPreset(){
+  const id=document.getElementById('pr-sel').value;const p=PRESETS.find(x=>x.id===id);if(!p)return;
+  showPanel(`Excluir “${p.nome}”?`,'O local some da lista de todos os chefes.',[],[['Cancelar','ghost'],['Excluir','',async()=>{
+    try{await rpc('apiBaseDel','local:'+id,MPROOF)}catch(e){toast('Não foi possível excluir');return false}
+    PRESETS=PRESETS.filter(x=>x.id!==id);renderPresets();
+    toast('Local excluído')}]]);
+}
+PRESETS=[];
+async function loadBase(){
+  const note=document.getElementById('pr-note');
+  try{const l=await rpc('apiList','base');PRESETS=[];APOIO=[];
+    for(const x of (l||[])){const id=String(x.id||'');
+      if(id.startsWith('local:'))PRESETS.push({id:id.slice(6),nome:String(x.nome||id.slice(6)),dados:objOr(x.dados)});
+      else if(id.startsWith('apoio:')){const a={id:id.slice(6),tipo:String(x.tipo||''),nome:String(x.nome||''),end:String(x.end||''),lat:+x.lat,lng:+x.lng,maps:typeof x.maps==='string'&&/^https:/.test(x.maps)?x.maps:''};if(a.nome&&isFinite(a.lat)&&isFinite(a.lng))APOIO.push(a)}
+      else if(id==='config:diretoria')DIR={...DIR_DEFAULT,...objOr(x)}}
+    PRESETS.sort((a,b)=>a.nome.localeCompare(b.nome));renderPresets();renderDir();autoFill();renderSug();
+  }catch(e){if(note)note.textContent='Não foi possível carregar os locais salvos agora. Confira a internet.'}
+}
+/* ---------- Downloads e rascunho ---------- */
+function save(filename,data){
+  try{const blob=data instanceof Blob?data:new Blob([data],{type:/\.json$/.test(filename)?'application/json':'application/octet-stream'});
+    const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);toast('Arquivo pronto ✓')}
+  catch(e){showPanel('Não foi possível baixar','Tente novamente.',[],[['Ok','blue']])}
+}
+document.getElementById('exp').onclick=async()=>{
+  const anexos={};for(const i of attachItems())for(const f of S[i.k]){const v=await att.get(f.id);if(v)anexos[f.id]=v}
+  save(`Rascunho_Plano_${slug(secaoNome())||'secao'}_${slug(S.atividade)||'atividade'}.json`,JSON.stringify({tipo:'plano-seguranca-baleia',versao:2,dados:S,anexos}))};
+document.getElementById('imp').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+  try{const j=JSON.parse(await f.text());S=j.dados||j;if(S.secao&&!SECOES.includes(S.secao)){S.secaoOutra=S.secao;S.secao='Outra'}if(j.anexos)for(const [id,v] of Object.entries(j.anexos))if(v&&typeof v.data==='string'&&/^data:/.test(v.data))await att.put(id,v);
+    defaults();persist();build();toast('Rascunho aberto')}catch(err){toast('Arquivo inválido')}e.target.value=''};
+document.getElementById('clr').onclick=()=>showPanel('Limpar o formulário?','Todas as respostas e anexos serão apagados deste navegador. Locais salvos e diretoria não são afetados.',[],[['Cancelar','ghost'],['Limpar tudo','',()=>{
+  for(const i of attachItems())for(const f of (S[i.k]||[]))att.del(f.id);S={};defaults();persist();build();window.scrollTo(0,0)}]]);
+
+/* ---------- Gerar ---------- */
+function goTo(k){const box=F.querySelector(`[data-f="${k}"]`);const el=document.getElementById('f-'+k)||F.querySelector(`[name="${k}"]`)||(k==='imagem'?document.getElementById('drop'):box);
+  if(box)box.classList.add('bad');if(el){el.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>el.focus&&el.focus({preventScroll:true}),400)}}
+document.getElementById('gen').onclick=()=>{
+  const miss=required().filter(x=>!x.ok);
+  if(miss.length){miss.forEach(x=>{const b=F.querySelector(`[data-f="${x.k}"]`);b&&b.classList.add('bad')});
+    showPanel(`Faltam ${miss.length} campo${miss.length>1?'s':''} obrigatório${miss.length>1?'s':''}`,'Preencha estes itens para gerar o documento:',miss.map(x=>`${x.s.t}: ${x.l}`),[['Ir para o primeiro','blue',()=>goTo(miss[0].k)]]);return}
+  const open=ynq().filter(x=>!x.ok);
+  if(!open.length)return preview();
+  showPanel(`${open.length} pergunta${open.length>1?'s':''} sem resposta`,'Você pode responder agora ou gerar assim mesmo — elas saem em branco no PDF.',open.slice(0,40).map(x=>`${x.s.t}: ${x.l}`),
+   [['Ir para a primeira','ghost',()=>goTo(open[0].k)],['Gerar assim mesmo','',preview]]);
+};
+
+/* ---------- Prévia ---------- */
+const prevEl=document.getElementById('prev'),pagesEl=document.getElementById('pages');let lastPdf=null;
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+let pdfjsReady=null,pdfLibReady=null;
+function pdfjs(){if(!pdfjsReady)pdfjsReady=(async()=>{const base='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';await loadScript(base+'pdf.worker.min.js');await loadScript(base+'pdf.min.js');return window.pdfjsLib})();return pdfjsReady}
+function pdfLib(){if(!pdfLibReady)pdfLibReady=loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js').then(()=>window.PDFLib);return pdfLibReady}
+async function buildFinal(){
+  const files=[];for(const i of attachItems())if(visible(i))for(const f of S[i.k]){const v=await att.get(f.id);files.push({item:i,meta:f,v})}
+  const missing=files.filter(x=>!x.v).map(x=>x.meta.name);
+  const pdfs=files.filter(x=>x.v&&x.v.type==='pdf');let lib=null,srcs=[],extra=0;const failed=[];
+  if(pdfs.length){lib=await pdfLib();for(const x of pdfs){try{const d=await lib.PDFDocument.load(x.v.data,{ignoreEncryption:true});srcs.push({x,d});extra+=d.getPageCount()}catch(e){failed.push(x.meta.name)}}}
+  const r=makePdf(files.filter(x=>x.v&&x.v.type==='img'),extra,files);
+  if(!srcs.length)return {...r,blob:r.doc.output('blob'),failed:failed.concat(missing)};
+  const out=await lib.PDFDocument.load(r.doc.output('arraybuffer'));const font=await out.embedFont(lib.StandardFonts.Helvetica);
+  let pn=r.pages;const N=r.pages+extra;
+  for(const {x,d} of srcs){const pages=await out.copyPages(d,d.getPageIndices());
+    for(const p of pages){out.addPage(p);pn++;const {width}=p.getSize();
+      const label=`Anexo · ${x.item.l} · ${x.meta.name}`.slice(0,110).replace(/[^\x20-\xFF]/g,'');
+      p.drawText(label,{x:20,y:12,size:7,font,color:lib.rgb(.4,.4,.4)});
+      const pt=`Página ${pn} de ${N}`;p.drawText(pt,{x:width-20-font.widthOfTextAtSize(pt,7),y:12,size:7,font,color:lib.rgb(.4,.4,.4)})}}
+  const bytes=await out.save();
+  return {...r,blob:new Blob([bytes],{type:'application/pdf'}),failed:failed.concat(missing)};
+}
+async function preview(){
+  if(!window.jspdf){toast('Carregando gerador de PDF… tente de novo');return}
+  prevEl.hidden=false;document.body.style.overflow='hidden';pagesEl.innerHTML='<p>Montando o documento…</p>';
+  try{lastPdf=await buildFinal()}catch(e){pagesEl.innerHTML='<p>Não foi possível montar o PDF. Tente novamente.</p>';return}
+  learn();savePlan(true);
+  if(lastPdf.failed.length)showPanel('Alguns anexos ficaram de fora',`Não foi possível ler: ${lastPdf.failed.join(', ')}. Se for PDF protegido por senha, envie uma foto do documento.`,[],[['Ok','blue']]);
+  try{
+    const lib=await pdfjs();const buf=await lastPdf.blob.arrayBuffer();
+    const pdf=await lib.getDocument({data:new Uint8Array(buf),isEvalSupported:false}).promise;
+    pagesEl.innerHTML='';
+    const w=Math.min(794,pagesEl.clientWidth-24),dpr=Math.min(window.devicePixelRatio||1,2);
+    for(let n=1;n<=pdf.numPages;n++){const pg=await pdf.getPage(n);const vp0=pg.getViewport({scale:1});const vp=pg.getViewport({scale:w/vp0.width*dpr});
+      const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;c.setAttribute('aria-label','Página '+n);pagesEl.appendChild(c);
+      await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise}
+  }catch(e){pagesEl.innerHTML='<p>Não foi possível mostrar a prévia neste aparelho, mas o PDF está pronto: use “Baixar PDF”.</p>'}
+}
+document.getElementById('pv-back').onclick=()=>{prevEl.hidden=true;document.body.style.overflow=''};
+document.getElementById('pv-dl').onclick=()=>{if(lastPdf)save(lastPdf.name,lastPdf.blob)};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!panel.hidden)panel.hidden=true;else if(!prevEl.hidden)document.getElementById('pv-back').click()}});
+
+/* ---------- PDF ---------- */
+const fmtD=d=>{if(!d)return '';const [y,m,dd]=d.split('-');return `${dd}/${m}/${y}`};
+const MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+function makePdf(imgAtts,extraPages,allFiles){
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:'mm',format:'a4'});
+  const M=12,W=210-2*M,PH=297,BOT=282;let y=0;
+  const RED=[236,39,42],BLUE=[57,85,164];
+  const txt=s=>String(s??'').replace(/[^\x00-\xFF–—‘’“”•…]/g,'');
+  const FS=9,LH=4.1;
+  function header(){
+    doc.addImage(LOGO_U,'JPEG',M,8,13,17.4);doc.addImage(LOGO_B,'JPEG',210-M-22,7.5,22,19.3);
+    doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(0);
+    doc.text('PLANO DE SEGURANÇA',105,15,{align:'center'});doc.text('ATIVIDADES',105,20.5,{align:'center'});
+    doc.setFillColor(...RED);doc.rect(M,28,W/2,1.6,'F');doc.setFillColor(...BLUE);doc.rect(M+W/2,28,W/2,1.6,'F');y=34;
+  }
+  function ensure(h){if(y+h>BOT){doc.addPage();header()}}
+  const rgb=h=>[1,3,5].map(n=>parseInt(h.slice(n,n+2),16));
+  function sect(t,color='#4A5568',num){
+    const first=y<=36;ensure(30);if(!first&&y>36)y+=4;
+    const c=rgb(color),H=8;
+    doc.setFillColor(...c);doc.roundedRect(M,y,W,H,1.2,1.2,'F');
+    let x=M+3;
+    if(num){doc.setFillColor(255,255,255);doc.circle(x+2.6,y+H/2,2.6,'F');doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...c);doc.text(String(num),x+2.6,y+H/2+1.05,{align:'center'});x+=7.6}
+    doc.setFont('helvetica','bold');doc.setFontSize(10.5);doc.setTextColor(255,255,255);doc.text(txt(t).toUpperCase(),x,y+H/2+1.3);
+    doc.setTextColor(0);y+=H+2.6}
+  function line(){doc.setDrawColor(215,219,228);doc.setLineWidth(.2);doc.line(M,y,M+W,y)}
+  function flow(parts,x0=M,w=W){
+    doc.setFontSize(FS);
+    const meas=(s,b)=>{doc.setFont('helvetica',b?'bold':'normal');return doc.getTextWidth(s)};
+    const toks=[];
+    for(const p of parts){
+      if(p.u){const pcs=p.u.map(([s,b])=>{s=txt(s);return [s,b,meas(s,b)]});const tw=pcs.reduce((a,x)=>a+x[2],0);
+        if(tw<=w){toks.push({pcs,w:tw});continue}
+        for(const [s,b] of p.u)for(const tk of txt(s).split(/([ \t]+)/).filter(Boolean))toks.push({pcs:[[tk,b,meas(tk,b)]],w:meas(tk,b),sp:/^[ \t]+$/.test(tk)});continue}
+      const [s,b]=p;
+      for(const tk of txt(s).replace(/\r/g,'').split(/(\n|[ \t]+)/).filter(Boolean)){
+        if(tk==='\n'){toks.push({br:1});continue}
+        const sp=/^[ \t]+$/.test(tk);const tw=meas(tk,b);
+        if(!sp&&tw>w){let chunk='';for(const ch of tk){if(meas(chunk+ch,b)>w&&chunk){toks.push({pcs:[[chunk,b,meas(chunk,b)]],w:meas(chunk,b)});chunk=''}chunk+=ch}if(chunk)toks.push({pcs:[[chunk,b,meas(chunk,b)]],w:meas(chunk,b)});continue}
+        toks.push({pcs:[[tk,b,tw]],w:tw,sp})}
+    }
+    const lines=[[]];let cur=0;
+    const trim=()=>{const l=lines.at(-1);while(l.length&&l.at(-1).sp){cur-=l.pop().w}};
+    for(const tk of toks){
+      if(tk.br){trim();lines.push([]);cur=0;continue}
+      if(tk.sp){if(cur===0)continue;lines.at(-1).push(tk);cur+=tk.w;continue}
+      if(cur+tk.w>w+0.01&&cur>0){trim();lines.push([]);cur=0}
+      lines.at(-1).push(tk);cur+=tk.w}
+    ensure(lines.length*LH+2);doc.setFontSize(FS);doc.setTextColor(0);
+    for(const l of lines){let x=x0;for(const tk of l)for(const [s,b,pw] of tk.pcs){doc.setFont('helvetica',b?'bold':'normal');doc.text(s,x,y+3.2);x+=pw}y+=LH}
+  }
+  const isSel=(v,o)=>Array.isArray(v)?v.includes(o):v===o;
+  function ynRow(label,v,opts,more){
+    const u=[];opts.forEach((o,n)=>{u.push([o+' ',0],[isSel(v,o)?'( X )':'(   )',isSel(v,o)]);if(n<opts.length-1)u.push(['     ',0])});
+    const parts=[[label+'  ',0],{u}];
+    if(more){parts.push(['     ',0]);if(more[1])parts.push({u:[[more[0]+' ',0]]},[more[1],1]);else parts.push({u:[[more[0]+' ',0],['____________________',0]]})}
+    y+=1.4;flow(parts);y+=1.4;line();
+  }
+  const lab=i=>i.pre?i.pre+i.l[0].toLowerCase()+i.l.slice(1):i.l;
+  function kv(l,v,x,w){flow([[l+(/[?:]$/.test(l)?' ':': '),0],[v||'',1]],x,w)}
+  function pairRow(a,b){const y0=y;kv(a[0],a[1],M,W/2-4);const y1=y;y=y0;kv(b[0],b[1],M+W/2,W/2);y=Math.max(y1,y)}
+  function area(l,v,minLines=3){
+    doc.setFontSize(FS);doc.setFont('helvetica','bold');
+    const ls=v?doc.splitTextToSize(txt(v).replace(/\r/g,''),W-4):[];while(ls.length<minLines)ls.push('');
+    ensure(LH*(1+Math.min(ls.length,4))+8);y+=1.4;flow([[l+(/[?:]$/.test(l)?'':':'),0]]);
+    while(ls.length){let fit=Math.floor((BOT-y-3)/LH);if(fit<2){doc.addPage();header();fit=Math.floor((BOT-y-3)/LH)}
+      const chunk=ls.splice(0,fit),h=chunk.length*LH+3;
+      doc.setFontSize(FS);doc.setFont('helvetica','bold');doc.setTextColor(0);doc.setDrawColor(200,205,216);doc.setLineWidth(.2);doc.rect(M,y,W,h);
+      chunk.forEach((s,n)=>doc.text(s,M+2,y+4.4+n*LH));y+=h;if(ls.length){doc.addPage();header()}}
+    y+=2.4;
+  }
+  function mapsQuery(arr){const q=arr.filter(Boolean).join(', ');return q?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q):''}
+  function linkLine(label,url,text){
+    ensure(LH+2);doc.setFontSize(FS);doc.setFont('helvetica','normal');doc.setTextColor(0);const lb=label+': ';doc.text(lb,M,y+3.2);
+    const lw=doc.getTextWidth(lb);let shown=text;if(!shown){shown=url;try{shown=decodeURIComponent(url).replace(/\+/g,' ')}catch(e){}}
+    shown=txt(shown);doc.setFont('helvetica','bold');const full=shown;while(doc.getTextWidth(shown+'…')>W-lw&&shown.length>10)shown=shown.slice(0,-1);if(shown!==full)shown+='…';
+    doc.setTextColor(...BLUE);doc.textWithLink(shown,M+lw,y+3.2,{url});const tw=doc.getTextWidth(shown);doc.setDrawColor(...BLUE);doc.setLineWidth(.15);doc.line(M+lw,y+3.8,M+lw+tw,y+3.8);
+    doc.setTextColor(0);y+=LH}
+  function table(i){
+    const rows=S[i.k].filter(r=>r&&Object.values(r).some(v=>String(v||'').trim()));
+    const AL=!!i.alert,AC=[200,30,60],BG=[253,236,240];
+    const n=i.cols.length,ws=i.cols.map((c,ci)=>ci===0?W*.3:W*.7/(n-1));
+    const pad=AL?2:0,X=M+pad,TW=W-2*pad,wsx=ws.map(w=>w*TW/W);
+    ensure(24);y+=1.4;
+    let segTop=y;
+    const label=()=>{if(AL){doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(...AC);doc.text('INFORMAÇÃO IMPORTANTE',X,y+4.2);
+        const lw=doc.getTextWidth('INFORMAÇÃO IMPORTANTE  ');doc.setTextColor(0);doc.setFontSize(FS);doc.text(txt(i.l),X+lw,y+4.2);y+=6.4}
+      else{flow([[i.l+':',0]]);y+=.6}};
+    const bgFill=h=>{if(AL){doc.setFillColor(...BG);doc.rect(M,y,W,h,'F')}};
+    const frame=()=>{if(AL){doc.setDrawColor(...AC);doc.setLineWidth(.6);doc.rect(M,segTop,W,y-segTop+pad)}};
+    if(AL){bgFill(6.4+pad);y+=pad}
+    label();
+    const head=()=>{bgFill(6);doc.setFillColor(...(AL?[247,205,214]:[236,239,245]));doc.rect(X,y,TW,6,'F');doc.setFont('helvetica','bold');doc.setFontSize(8.3);doc.setTextColor(0);
+      let x=X;i.cols.forEach(([,l],ci)=>{doc.text(doc.splitTextToSize(txt(l),wsx[ci]-3)[0],x+1.5,y+4.1);x+=wsx[ci]});y+=6};
+    head();
+    if(!rows.length){bgFill(6);doc.setFont('helvetica','normal');doc.setFontSize(FS);doc.text('—',X+1.5,y+4);y+=6}
+    for(const r of rows){doc.setFont('helvetica','normal');doc.setFontSize(8.6);
+      const cells=i.cols.map(([c],ci)=>doc.splitTextToSize(txt(r[c]||''),wsx[ci]-3));const h=Math.max(...cells.map(c=>c.length),1)*3.8+2.6;
+      if(y+h+pad>BOT){frame();doc.addPage();header();segTop=y;if(AL){bgFill(pad);y+=pad}head();doc.setFont('helvetica','normal');doc.setFontSize(8.6)}
+      bgFill(h);let x=X;
+      cells.forEach((c,ci)=>{doc.setFont('helvetica',ci===0?'bold':'normal');doc.setTextColor(...(ci===0&&AL?AC:[0,0,0]));c.forEach((s,li)=>doc.text(s,x+1.5,y+4+li*3.8));x+=wsx[ci]});
+      doc.setTextColor(0);doc.setDrawColor(...(AL?[240,190,200]:[215,219,228]));doc.setLineWidth(.2);doc.line(X,y+h,X+TW,y+h);y+=h}
+    if(AL){bgFill(pad);frame();y+=pad}
+    y+=3;line();
+  }
+  function places(i){
+    const has=S[i.k].some(p=>p&&p.nome);
+    ynRow(i.k==='postos'?'Existem postos policiais ou delegacias próximas?':'Há hospitais, UPAs, postos de saúde ou pronto-socorro próximos ao local da atividade?',has?'Sim':'',SN);
+    for(let n=0;n<i.n;n++){const p=S[i.k][n]||{};
+      if(n>0&&!p.nome)continue;
+      ensure(22);y+=1.2;
+      pairRow([`${i.short} ${n+1} – Nome`,p.nome],['Distância do local da atividade',p.dist?(p.auto?'~':'')+String(p.dist).replace(/\s*km$/i,'')+' km'+(p.auto?' (linha reta)':''):'_____ km']);
+      kv('Endereço',p.end);
+      const u=p.maps&&/^https:/.test(p.maps)?p.maps:(p.lat&&p.lng?`https://www.google.com/maps?q=${p.lat},${p.lng}`:(p.nome||p.end?mapsQuery([p.nome,p.end]):''));
+      if(u)linkLine('Google Maps',u,'Abrir no Google Maps');
+      if(p.obs)kv('Obs.',p.obs);y+=1.2;line()}
+  }
+  function render(i){
+    if(!visible(i))return;
+    if(i.pair){y+=1.2;pairRow([i.pair[0].l,i.pair[0].type==='date'?fmtD(S[i.pair[0].k]):S[i.pair[0].k]],[i.pair[1].l,i.pair[1].type==='date'?fmtD(S[i.pair[1].k]):S[i.pair[1].k]]);y+=1.2;line();return}
+    switch(i.type){
+      case 'preset':case 'find':case 'dir':return;
+      case 'grp':ensure(12);y+=2;doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(...BLUE);doc.text(txt(i.l),M,y+3.4);doc.setTextColor(0);y+=5.5;return;
+      case 'yn':return ynRow(lab(i),S[i.k],i.opts||SN,i.more&&(!i.more.when||S[i.k]===i.more.when)?[i.more.l,S[i.more.k]]:null);
+      case 'choice':return ynRow(i.l,S[i.k],i.opts);
+      case 'area':return area(i.l,S[i.k],i.min||3);
+      case 'list':return table(i);
+      case 'places':return places(i);
+      case 'attach':{const fs=S[i.k];y+=1.2;kv(i.l,fs.length?fs.map(f=>f.name).join(', ')+' (anexo ao final)':'não anexado');y+=1.2;line();return}
+      case 'image':{if(!S.imagem)return;const iw=S.imagemW||4,ih=S.imagemH||3;let w=W,h=w*ih/iw;const mh=112;if(h>mh){h=mh;w=h*iw/ih}
+        y+=1.4;ensure(h+LH+6);flow([['Imagem do local:',0]]);y+=.8;const x=M+(W-w)/2;
+        try{doc.addImage(S.imagem,'JPEG',x,y,w,h)}catch(e){}doc.setDrawColor(200,205,216);doc.setLineWidth(.2);doc.rect(x,y,w,h);y+=h+3;line();return}
+      default:
+        if(i.k==='mapsLink'){const mp=parseMaps(S.mapsLink);const u=mp&&!mp.bad?mp.url:mapsQuery([S.local,S.endereco]);if(u){y+=1.2;linkLine('Google Maps',u);y+=1.2;line()}return}
+        y+=1.2;kv(i.l,i.type==='date'?fmtD(S[i.k]):S[i.k]);y+=1.2;line();
+    }
+  }
+  header();
+  const fd=d=>d?`${fmtD(d)} (${weekday(d)})`:'';const dataAtv=S.dataFim&&S.dataFim!==S.dataIni?`${fd(S.dataIni)} a ${fd(S.dataFim)}`:fd(S.dataIni);
+  sect('Identificação',COLORS.identificacao,1);
+  pairRow(['Seção',secaoNome()],['Atividade',S.atividade]);y+=1;line();y+=1;
+  pairRow(['Data da atividade',dataAtv],['Chefe de Seção',S.chefe]);y+=1;line();y+=1;
+  pairRow(['Elaborado por',S.elaborador],['Telefone',S.elabTel]);y+=1.5;
+  for(const s of SCHEMA.slice(1)){
+    if(s.id==='assinaturas')break;
+    sect(s.t,COLORS[s.id],SCHEMA.indexOf(s)+1);for(const i of s.items)render(i);
+  }
+  const vis=(allFiles||[]).filter(x=>x.v);
+  if(vis.length){sect('Anexos deste plano');
+    const groups={};for(const x of vis)(groups[x.item.l]=groups[x.item.l]||[]).push(x.meta.name);
+    for(const [l,ns] of Object.entries(groups)){y+=1;kv(l,ns.join(', '));y+=1;line()}
+    y+=1;flow([['Os anexos estão nas páginas finais deste documento.',0]]);}
+  ensure(40);sect('Autorização/Deferimento da Diretoria do Grupo');
+  ynRow('Esta atividade foi aprovada?','',['Sim, aprovada','Sim, aprovada mas há ressalvas','Não aprovada']);
+  area('Ressalvas','',3);
+  ensure(64);y+=8;
+  let dia='_____',mes='____________________',ano='______';
+  if(S.dataDoc){const [yy,mm,dd]=S.dataDoc.split('-');dia=String(+dd);mes=MESES[+mm-1];ano=yy}
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(0);
+  doc.text(txt(`${S.cidade||'Belo Horizonte'}, ${dia} de ${mes} de ${ano}.`),105,y,{align:'center'});y+=20;
+  function sig(cx,role,name){doc.setDrawColor(0);doc.setLineWidth(.3);doc.line(cx-38,y,cx+38,y);doc.setFont('helvetica','normal');doc.setFontSize(9);
+    if(name)doc.text(txt(name),cx,y+4.2,{align:'center'});doc.setFont('helvetica','bold');doc.text(txt(role),cx,y+(name?8.4:4.2),{align:'center'})}
+  sig(105,'Chefe de Seção',S.chefe);y+=24;
+  sig(53,DIR.metodosCargo,DIR.metodosNome);sig(157,DIR.presCargo,DIR.presNome);
+  for(const x of imgAtts){doc.addPage();header();sect('Anexo · '+x.item.l);y+=1;kv('Arquivo',x.meta.name);y+=2;
+    const v=x.v,iw=v.w||4,ih=v.h||3;let w=W,h=w*ih/iw;const mh=BOT-y-2;if(h>mh){h=mh;w=h*iw/ih}
+    try{doc.addImage(v.data,'JPEG',M+(W-w)/2,y,w,h)}catch(e){}}
+  const pages=doc.getNumberOfPages(),N=pages+(extraPages||0);
+  for(let p=1;p<=pages;p++){doc.setPage(p);doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(110);
+    let ft=txt([secaoNome(),S.atividade].filter(Boolean).join(' · ')||'Plano de Segurança');while(doc.getTextWidth(ft)>W-28&&ft.length>10)ft=ft.slice(0,-2);doc.text(ft,M,PH-8);
+    doc.text(`Página ${p} de ${N}`,210-M,PH-8,{align:'right'})}
+  const name=`Plano_de_Seguranca_${slug(secaoNome())||'Secao'}_${slug(S.atividade)||'Atividade'}${S.dataIni?'_'+S.dataIni:''}.pdf`;
+  return {doc,name,pages};
+}
+window.__buildFinal=buildFinal;window.__S=()=>S;
+/* ---------- Servidor do grupo ---------- */
+const objOr=x=>x&&typeof x==='object'&&!Array.isArray(x)?x:{};
+async function rpc(fn,...args){
+  const r=await fetch('/api/rpc',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fn,args})});
+  let j=null;try{j=await r.json()}catch(e){}
+  if(!r.ok||!j||j.erro){const m=String((j&&j.erro)||('HTTP '+r.status));throw {code:/codigo/i.test(m)?'permission_denied':/not_found/.test(m)?'not_found':'net',message:m}}
+  return j.resultado===undefined?null:j.resultado}
+
+/* ---------- Palavras-código (mesmas do app de reuniões) ---------- */
+const CP=__CRYPTO_PARAMS__;
+const TE8=new TextEncoder(),TD8=new TextDecoder();
+const b64e=u=>{u=new Uint8Array(u);let s='';for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(s)};
+const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const normCode=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const hex=u=>Array.from(new Uint8Array(u)).map(b=>b.toString(16).padStart(2,'0')).join('');
+async function derive(sec,code,it){const base=await crypto.subtle.importKey('raw',TE8.encode(normCode(code)),'PBKDF2',false,['deriveBits']);
+  const bits=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt:TE8.encode('baleia-rn|'+sec),iterations:it||CP.it||120000,hash:'SHA-256'},base,512));
+  const ver=hex(await crypto.subtle.digest('SHA-256',bits.slice(32)));const key=await crypto.subtle.importKey('raw',bits.slice(0,32),'AES-GCM',false,['encrypt','decrypt']);return {key,ver,proof:hex(bits.slice(32))}}
+async function decWith(key,s){const [a,b]=String(s).split('.');return JSON.parse(TD8.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64d(a)},key,b64d(b))))}
+let KEY_SEC=null,PROOF_SEC='';
+async function encSec(obj){const iv=crypto.getRandomValues(new Uint8Array(12));return b64e(iv)+'.'+b64e(await crypto.subtle.encrypt({name:'AES-GCM',iv},KEY_SEC,TE8.encode(JSON.stringify(obj))))}
+let CODES={};try{CODES=JSON.parse(localStorage.getItem('rn-codigos-v1')||'{}')||{}}catch(e){CODES={}}
+const saveCodes=()=>{try{localStorage.setItem('rn-codigos-v1',JSON.stringify(CODES))}catch(e){}};
+async function useCode(code){const d=await derive(SEC,code);if(d.ver!==CP.ver[SEC])return false;KEY_SEC=d.key;PROOF_SEC=d.proof;CODES[SEC]=normCode(code);saveCodes();return true}
+async function useMaster(code){const d=await derive('__diretoria__',code);if(d.ver!==CP.mver)return false;
+  MPROOF=d.proof;CAN_ADMIN=true;try{sessionStorage.setItem('rn-seg-dir',MPROOF)}catch(e){}
+  if(!KEY_SEC){try{const all=await decWith(d.key,CP.wrap);for(const [s,c] of Object.entries(all)){CODES[s]=c}saveCodes();if(all[SEC])await useCode(all[SEC])}catch(e){}}
+  return true}
+
+/* ---------- Telas: lista de planos e formulário ---------- */
+const LOGO_FILE={'Ninhada 1':'filhotes','Ninhada 2':'filhotes','Alcateia Lobo Guará':'loboguara','Alcateia Sabiá':'sabia','Alcateia Túnel do Morcego':'tunel','Tropa Escoteira Hussardos':'hussardos','Tropa Escoteira Lis de Ouro':'lisdeouro','Tropa Escoteira Scorpions':'scorpions','Tropa Sênior Botocudos Pankas':'botocudos','Tropa Sênior Kakremaan':'kakremaan','Clã Zulu Mac Smyth':'cla'};
+const RAMO_COR=s=>/^Ninhada/.test(s)?'#0F8A9D':/^Alcateia/.test(s)?'#C08A00':/^Tropa Escoteira/.test(s)?'#2E8B57':/^Tropa Sênior/.test(s)?'#8B1E3F':/^Clã/.test(s)?'#C62828':'#3955A4';
+const CREDITO='<p class="credito">Desenvolvido e elaborado por <b>Erika Cristine</b> · Escoteiros do Baleia<br><a href="mailto:erika-cristine@escoteiros.org.br">erika-cristine@escoteiros.org.br</a></p>';
+const listaEl=document.getElementById('lista');
+let PLANS=[],plansState='loading',SAVED_SIG='';
+const sig=()=>{try{return JSON.stringify(S)}catch(e){return ''}};
+const hasContent=()=>!!(String(S.atividade||'').trim()||String(S.local||'').trim()||String(S.comoChegar||'').trim());
+function setView(v){document.body.dataset.view=v;window.scrollTo(0,0);if(v==='form'){build()}else renderLista()}
+function dLong(d){if(!d)return 'Sem data';const w=weekday(d);return fmtD(d)+(w?' ('+w+')':'')}
+function renderLista(){
+  const col=RAMO_COR(SEC),lg=LOGO_FILE[SEC];
+  let h=`<div class="hero" style="--c:${col}">${lg?`<img src="/logos/${lg}.jpg" alt="" onerror="this.remove()">`:''}<div><small>Planos de segurança</small><h2>${esc(SEC||'Seção não informada')}</h2></div></div>`;
+  if(!SEC||!CP.ver[SEC]){listaEl.innerHTML=h+`<p class="note">Seção não encontrada. <a href="/">Voltar para o app</a> e escolha a sua seção.</p>`+CREDITO;return}
+  if(!KEY_SEC){listaEl.innerHTML=h+`<section class="card lock"><h3>Digite a palavra-código da seção</h3><p class="note">É a mesma palavra usada nas reuniões. Peça à diretoria se não tiver.</p>
+    <form id="lk-f" class="row"><input type="password" id="lk-in" autocomplete="off" aria-label="Palavra-código"><button class="btn" id="lk-ok">Entrar</button></form><p class="err" id="lk-err"></p>
+    <button type="button" class="btn ghost sm" data-master="1">Sou da diretoria</button></section>`+CREDITO;
+    document.getElementById('lk-f').onsubmit=async e=>{e.preventDefault();const b=document.getElementById('lk-ok'),er=document.getElementById('lk-err'),v=document.getElementById('lk-in').value;
+      if(normCode(v).length<4){er.textContent='Digite a palavra do código.';return}b.disabled=true;b.textContent='Conferindo…';
+      let ok=false;try{ok=await useCode(v)}catch(err){er.textContent='Não foi possível conferir neste navegador. Atualize a página.'}b.disabled=false;b.textContent='Entrar';
+      if(ok){toast('Seção liberada neste aparelho ✓');loadPlans();renderLista()}else if(!er.textContent)er.textContent='Código incorreto. Confira e tente de novo.'};
+    return}
+  const draft=hasContent()&&sig()!==SAVED_SIG;
+  h+=`<div class="hacts"><button type="button" class="btn big" style="background:${col}" data-novo="1">+ Novo plano de segurança</button>${draft?`<button type="button" class="btn big ghost" data-cont="1">Continuar rascunho${S.atividade?': '+esc(S.atividade):''}</button>`:''}</div>`;
+  h+=`<section class="card plist"><h3>Planos salvos<small>${plansState==='ok'?PLANS.length+' plano'+(PLANS.length===1?'':'s'):plansState==='err'?'sem conexão':'carregando…'}</small></h3>`;
+  if(plansState==='err')h+=`<p class="note">Não foi possível falar com o servidor. Confira a internet. <button type="button" class="btn ghost sm" data-reload="1">Tentar de novo</button></p>`;
+  else if(plansState==='ok'&&!PLANS.length)h+=`<p class="note">Nenhum plano salvo ainda. Toque em <b>+ Novo plano de segurança</b>, preencha e toque em <b>Salvar plano</b>.</p>`;
+  else h+=PLANS.map(p=>`<div class="pi"><div><b>${esc(p.atividade||'Sem nome')}</b><small>${esc(dLong(p.dataIni))}${p.dataFim&&p.dataFim!==p.dataIni?' a '+esc(dLong(p.dataFim)):''}${p.local?' · '+esc(p.local):''}</small><small>${p.elaborador?'Elaborado por '+esc(p.elaborador)+' · ':''}${p.atualizadoEm?'salvo em '+esc(new Date(p.atualizadoEm).toLocaleDateString('pt-BR')):''}</small></div>
+    <div class="tools"><button type="button" class="btn sm" style="background:${col}" data-open="${esc(p.id)}">Abrir</button><button type="button" class="btn ghost sm" data-copy="${esc(p.id)}">Usar como modelo</button><button type="button" class="btn ghost sm del" data-del="${esc(p.id)}">Excluir</button></div></div>`).join('');
+  h+=`</section><p class="note dirline">${CAN_ADMIN?'Modo diretoria ligado neste aparelho: pode salvar locais, alimentar a base de delegacias e hospitais e alterar a diretoria. <button type="button" class="btn ghost sm" data-sairdir="1">Sair do modo diretoria</button>':'<button type="button" class="btn ghost sm" data-master="1">Modo diretoria</button>'}</p>`;
+  listaEl.innerHTML=h+CREDITO;
+}
+async function loadPlans(){if(!KEY_SEC)return;plansState=plansState==='ok'?'ok':'loading';renderLista();
+  try{const l=await rpc('apiList','seguranca');const out=[];
+    for(const x of (l||[])){if(x.secao!==SEC||!x.r)continue;try{out.push({id:String(x.id),...objOr(await decWith(KEY_SEC,x.r))})}catch(e){}}
+    PLANS=out.sort((a,b)=>String(b.dataIni||'').localeCompare(String(a.dataIni||'')));plansState='ok'}
+  catch(e){plansState='err'}
+  if(document.body.dataset.view!=='form')renderLista()}
+async function fetchPlan(id){const x=await rpc('apiGet','seguranca',id);if(!x||!x.s)throw {code:'not_found'};return objOr(await decWith(KEY_SEC,x.s))}
+function clearAttachments(){for(const i of attachItems())for(const f of (S[i.k]||[]))att.del(f.id)}
+function startPlan(data,keepId){S=data;S.secao=SEC;if(!keepId){delete S.planoId;delete S.atualizadoEm}defaults();persist();SAVED_SIG=keepId?sig():'';setView('form')}
+listaEl.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+  if(d.master){showPanel('Modo diretoria','Digite a palavra da diretoria. Fica ligado só neste navegador até fechar a aba.',[],[['Cancelar','ghost'],['Entrar','blue',async v=>{let ok=false;try{ok=await useMaster(v.code)}catch(err){}if(!ok){toast('Palavra da diretoria incorreta');return false}toast('Modo diretoria ligado ✓');renderPresets();renderDir();loadPlans();renderLista()}]],[{id:'code',l:'Palavra da diretoria',v:''}]);return}
+  if(d.sairdir){MPROOF='';CAN_ADMIN=false;try{sessionStorage.removeItem('rn-seg-dir')}catch(err){}renderLista();return}
+  if(d.reload){loadPlans();return}
+  if(d.cont){setView('form');return}
+  if(d.novo){const go=()=>{clearAttachments();startPlan({},false)};if(hasContent()&&sig()!==SAVED_SIG)showPanel('Começar um plano novo?','O rascunho que está neste aparelho será apagado. Se quiser guardá-lo, abra e toque em Salvar plano antes.',[],[['Cancelar','ghost'],['Começar novo','',go]]);else go();return}
+  if(d.open||d.copy){const id=d.open||d.copy;b.disabled=true;try{const p=await fetchPlan(id);
+      if(d.copy){for(const k of ['dataIni','dataFim','dataDoc','qJovens','qEscotistas','medicList','alimList','alergList','condList','fichasFaltam','previsao'])delete p[k];
+        for(const i of attachItems())p[i.k]=[];clearAttachments();startPlan(p,false);toast('Modelo carregado: confira datas, participantes e saúde')}
+      else{clearAttachments();startPlan(p,true)}}catch(err){toast(err&&err.code==='net'?'Sem conexão com o servidor':'Não foi possível abrir este plano')}b.disabled=false;return}
+  if(d.del){const p=PLANS.find(x=>x.id===d.del);if(!p)return;showPanel(`Excluir “${p.atividade||'plano'}”?`,'Apaga este plano de segurança da seção para todos os chefes. Não dá para desfazer.',[],[['Cancelar','ghost'],['Excluir','',async()=>{
+      try{await rpc('apiDelete','seguranca',p.id,PROOF_SEC);PLANS=PLANS.filter(x=>x.id!==p.id);if(S.planoId===p.id){delete S.planoId;persist()}renderLista();toast('Plano excluído')}catch(err){toast('Não foi possível excluir');return false}}]]);return}
+});
+let SAVING=false;
+async function savePlan(quiet){
+  if(SAVING)return false;if(!KEY_SEC){toast('Seção bloqueada neste aparelho');return false}
+  if(!String(S.atividade||'').trim()||!S.dataIni){if(!quiet){showPanel('Falta pouco para salvar','Preencha pelo menos o nome da atividade e a data para salvar o plano na seção.',[],[['Ok','blue',()=>goTo(!String(S.atividade||'').trim()?'atividade':'dataIni')]])}return false}
+  SAVING=true;const btn=document.getElementById('save-plan');if(btn){btn.disabled=true;btn.textContent='Salvando…'}
+  try{const id=S.planoId||(slug(SEC).toLowerCase()+'_'+Date.now().toString(36)).slice(0,120);S.planoId=id;S.atualizadoEm=new Date().toISOString();
+    const resumo={atividade:S.atividade||'',dataIni:S.dataIni||'',dataFim:S.dataFim||'',local:S.local||'',elaborador:S.elaborador||'',atualizadoEm:S.atualizadoEm};
+    await rpc('apiSet','seguranca',id,JSON.stringify({secao:SEC,r:await encSec(resumo),s:await encSec(S)}),PROOF_SEC);
+    persist();SAVED_SIG=sig();PLANS=PLANS.filter(x=>x.id!==id).concat([{id,...resumo}]).sort((a,b)=>String(b.dataIni||'').localeCompare(String(a.dataIni||'')));
+    if(!quiet)toast('Plano salvo na seção ✓');return true}
+  catch(e){if(!quiet)toast(e&&e.code==='permission_denied'?'A palavra-código da seção não confere':'Não foi possível salvar. Confira a internet; o rascunho continua neste aparelho.');return false}
+  finally{SAVING=false;if(btn){btn.disabled=false;btn.textContent='Salvar plano'}}}
+document.getElementById('save-plan').onclick=()=>savePlan(false);
+document.getElementById('bk').onclick=()=>{if(document.body.dataset.view==='form'){loadPlans();setView('lista')}else{try{localStorage.setItem('rn-secao-home',SEC)}catch(e){}location.href='/'}};
+
+(async()=>{
+  try{if(SEC&&CODES[SEC]&&CP.ver[SEC]){if(!(await useCode(CODES[SEC]))){delete CODES[SEC];saveCodes()}}}catch(e){}
+  if(MPROOF&&!KEY_SEC){/* diretoria sem a seção liberada: pede a palavra */}
+  document.getElementById('hdr-sec').textContent=SEC;
+  const lg=LOGO_FILE[SEC];if(lg)document.getElementById('hdr-logo').src='/logos/'+lg+'.jpg';
+  SAVED_SIG='';setView('lista');loadPlans();loadBase();
+})();
+
+}
+
+</script>
+</body>
+</html>

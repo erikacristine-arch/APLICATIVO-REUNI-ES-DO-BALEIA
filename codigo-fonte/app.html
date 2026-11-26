@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reuniões do Baleia</title>
+<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#3955A4"><link rel="apple-touch-icon" href="/icones/icone-192.png">
+<title>Escoteiros do Baleia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -139,6 +140,36 @@ body[data-view=form] #home,body[data-view=form] #home-t{display:none}
 #home{max-width:880px;margin:0 auto;padding:22px 16px 80px}
 .cap{display:flex;gap:14px;align-items:center;margin:4px 0 6px}.cap h2{font-size:clamp(28px,5vw,40px)}
 .capsub{color:var(--mute);margin:0 0 6px;max-width:60ch}
+.tree{position:relative;max-width:820px;margin:18px auto 0;padding-top:30px}
+.tree:before{content:"";position:absolute;left:50%;top:40px;bottom:150px;width:16px;margin-left:-8px;background:#8B5E3C;border-radius:8px;box-shadow:inset -4px 0 0 rgba(0,0,0,.12)}
+.canopy{position:absolute;left:50%;top:0;width:min(560px,92%);height:220px;transform:translateX(-50%);pointer-events:none}
+.canopy i{position:absolute;border-radius:50%;background:#2E8B57;opacity:.13}
+.canopy i:nth-child(1){width:46%;height:100%;left:27%;top:0}.canopy i:nth-child(2){width:38%;height:80%;left:4%;top:18%}.canopy i:nth-child(3){width:38%;height:80%;right:4%;top:18%}
+.trow{position:relative;display:flex;margin:0 0 18px}
+.trow.l{padding-right:calc(50% + 26px)}.trow.r{padding-left:calc(50% + 26px)}
+.trow:after{content:"";position:absolute;top:30px;height:9px;width:30px;background:#8B5E3C;border-radius:5px}
+.trow.l:after{right:calc(50% - 4px);transform:rotate(-8deg)}.trow.r:after{left:calc(50% - 4px);transform:rotate(8deg)}
+.tcard{flex:1;border:2px solid var(--c);border-radius:18px;background:var(--card);padding:10px 10px 12px;position:relative;z-index:1}
+.tcard h3{font:700 19px "Barlow Semi Condensed",Barlow,sans-serif;color:var(--c);margin:2px 4px 4px}
+.leaf{display:flex;gap:10px;align-items:center;width:100%;border:0;border-radius:14px;padding:6px 10px 6px 6px;margin-top:6px;background:color-mix(in srgb,var(--c) 12%,var(--card));color:var(--ink);cursor:pointer;text-align:left;min-height:56px;font:inherit}
+.leaf:hover{background:color-mix(in srgb,var(--c) 22%,var(--card))}.leaf:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+.leaf img,.leaf .dot{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#fff;flex:none;border:2px solid var(--c)}
+.leaf b{display:block;font:600 17px "Barlow Semi Condensed",Barlow,sans-serif;line-height:1.1}.leaf small{display:block;color:var(--mute);font-size:12.5px}
+.troot{position:relative;z-index:1;text-align:center;padding-top:6px}
+.troot img{width:118px;height:118px;border-radius:50%;object-fit:cover;background:#fff;border:5px solid #8B5E3C;display:block;margin:0 auto 8px}
+.troot b{display:block;font:700 20px "Barlow Semi Condensed",Barlow,sans-serif}.troot small{color:var(--mute)}
+.hl{display:flex;gap:14px;align-items:center}.hlogo{width:64px;height:64px;border-radius:50%;object-fit:cover;background:#fff;border:3px solid rgba(255,255,255,.7);flex:none}
+.choose{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin-top:8px}
+.chc{display:flex;gap:16px;align-items:center;text-align:left;border:2px solid var(--c);border-radius:18px;background:var(--card);color:var(--ink);padding:18px;min-height:110px;cursor:pointer;font:inherit}
+.chc:hover{background:color-mix(in srgb,var(--c) 8%,var(--card))}.chc:focus-visible{outline:3px solid var(--c);outline-offset:2px}
+.chc .ic{width:58px;height:58px;border-radius:50%;background:var(--c);display:grid;place-items:center;flex:none}
+.chc svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.chc b{display:block;font:700 22px "Barlow Semi Condensed",Barlow,sans-serif}.chc small{display:block;color:var(--mute);font-size:14px;margin-top:2px}
+@media(min-width:521px){.tree{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:60px;align-items:start}
+.trow.l,.trow.r{padding:0;margin:0 0 20px}.trow.l{grid-column:1}.trow.r{grid-column:2;margin-top:80px}
+.trow.l:after{right:-32px}.trow.r:after{left:-32px}.troot{grid-column:1/-1;grid-row:9}}
+@media(max-width:520px){.tree:before{left:22px;margin-left:0;bottom:150px}.trow.l,.trow.r{padding:0 0 0 52px}.trow.l:after,.trow.r:after{left:30px;right:auto;transform:none;width:24px}.canopy{display:none}}
+.credito{text-align:center;font-size:12.5px;color:var(--mute);margin:28px 0 8px;line-height:1.5}.credito a{color:var(--mute)}
 .cgroup h3{font:600 15px Barlow,sans-serif;color:var(--mute);margin:22px 0 8px}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
 .cpick{display:flex;flex-direction:column;justify-content:center;text-align:left;font:600 18px "Barlow Semi Condensed",Barlow,sans-serif;padding:12px 16px;min-height:68px;border-radius:14px;border:1.5px solid var(--line);border-left:7px solid var(--c);background:var(--card);color:var(--ink);cursor:pointer}
@@ -284,6 +315,7 @@ window.addEventListener('error',function(e){var s='';try{if(e.lineno){var L=docu
   errs.push((e.message||'erro')+(e.lineno?' (linha '+e.lineno+', coluna '+(e.colno||'?')+')':'')+(e.filename&&e.filename.indexOf('http')===0&&e.filename.indexOf(location.host)<0?' em '+e.filename.slice(0,80):'')+(s?' · trecho'+s:'')+' · navegador: '+navigator.userAgent.replace(/.*(Firefox\/[\d.]+|Chrome\/[\d.]+|Version\/[\d.]+ Safari).*/,'$1'));});
 setTimeout(function(){if(window.__rnOk)return;show(errs.length?'O app não carregou. Erro: '+errs[0]+'. Mande um print desta mensagem para quem cuida do app.':'O app não terminou de carregar. Confira se o arquivo index foi colado inteiro (a última linha deve ser </html>), salve e implante uma nova versão.')},5000);})();
 </script>
+<script>window.addEventListener('load',function(){if((window.RN_API!==undefined||location.pathname.indexOf('/seguranca')===0)&&'serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){})})</script>
 </head>
 <body>
 <header class="top">
@@ -291,7 +323,7 @@ setTimeout(function(){if(window.__rnOk)return;show(errs.length?'O app não carre
   <div class="bar">
     <button class="btn ghost sm" id="back">← Reuniões</button>
     <img id="logo-top" alt="Escoteiros do Baleia">
-    <div class="ttl"><h1>Reuniões do Baleia</h1><small id="home-t">23º/MG G.E. Antônio Mourão Guimarães</small><small id="prog-t">Programação de sábado · 23º/MG G.E. Antônio Mourão Guimarães</small><div class="meter"><b id="prog"></b></div></div>
+    <div class="ttl"><h1>Escoteiros do Baleia</h1><small id="home-t">23º/MG G.E. Antônio Mourão Guimarães</small><small id="prog-t">Programação de sábado · 23º/MG G.E. Antônio Mourão Guimarães</small><div class="meter"><b id="prog"></b></div></div>
     <button class="btn" id="gen">Gerar PDF</button>
   </div>
   <nav class="nav" id="nav"></nav>
@@ -943,7 +975,12 @@ bdBody.addEventListener('change',e=>{if(e.target.dataset.itv){const r=REUN.find(
 
 /* ---------- Capa e tela da seção ---------- */
 const GRUPOS=[['Ninhadas','#0F8A9D',['Ninhada 1','Ninhada 2']],['Alcateias','#C08A00',['Alcateia Lobo Guará','Alcateia Sabiá','Alcateia Túnel do Morcego']],
- ['Tropas Escoteiras','#2E8B57',['Tropa Escoteira Hussardos','Tropa Escoteira Lis de Ouro','Tropa Escoteira Scorpions']],['Tropas Sênior','#8B1E3F',['Tropa Sênior Botocudos Pankas','Tropa Sênior Kakremaan']],['Clã','#C62828',['Clã Zulu Mac Smyth']]];
+ ['Escoteiros','#2E8B57',['Tropa Escoteira Hussardos','Tropa Escoteira Lis de Ouro','Tropa Escoteira Scorpions']],['Sêniors','#8B1E3F',['Tropa Sênior Botocudos Pankas','Tropa Sênior Kakremaan']],['Pioneiros','#C62828',['Clã Zulu Mac Smyth']]];
+const LOGO_FILE={'Ninhada 1':'filhotes','Ninhada 2':'filhotes','Alcateia Lobo Guará':'loboguara','Alcateia Sabiá':'sabia','Alcateia Túnel do Morcego':'tunel','Tropa Escoteira Hussardos':'hussardos','Tropa Escoteira Lis de Ouro':'lisdeouro','Tropa Escoteira Scorpions':'scorpions','Tropa Sênior Botocudos Pankas':'botocudos','Tropa Sênior Kakremaan':'kakremaan','Clã Zulu Mac Smyth':'cla'};
+const logoImg=(s,cls)=>LOGO_FILE[s]&&IN_API?`<img class="${cls||''}" src="/logos/${LOGO_FILE[s]}.jpg" alt="" loading="lazy" onerror="this.remove()">`:'';
+const CREDITO='<p class="credito">Desenvolvido e elaborado por <b>Erika Cristine</b> · Escoteiros do Baleia<br><a href="mailto:erika-cristine@escoteiros.org.br">erika-cristine@escoteiros.org.br</a></p>';
+const shortSec=s=>s.replace(/^Alcateia |^Tropa Escoteira |^Tropa Sênior /,'');
+let SEG_COUNT={};
 const secColor=s=>(GRUPOS.find(g=>g[2].includes(s))||[0,'#3955A4'])[1];
 const homeEl=document.getElementById('home');
 let HOME_SEC='';try{HOME_SEC=localStorage.getItem('rn-secao-home')||''}catch(e){}
@@ -955,12 +992,23 @@ function setView(v){VIEW=v;clearTimeout(jumpT);toastEl.classList.remove('on');do
 function updTrpBtn(){const b=document.getElementById('trp-pont');if(!b)return;const r=REUN.find(x=>x.id===reuId(secaoNome(),S.data));b.hidden=!(r&&PON())}
 function renderHome(){
   if(VIEW==='capa'){
-    homeEl.innerHTML=`<div class="cap"><h2>Selecione a sua seção</h2></div><p class="capsub">Cada seção tem uma palavra-código. Digite uma vez e este aparelho fica liberado para a sua seção; as outras continuam fechadas.</p>`+
-      GRUPOS.map(([g,c,ss])=>`<div class="cgroup"><h3>${g}</h3><div class="cgrid">${ss.map(s=>{const n=COUNTS[s]||0,u=unlocked(s);return `<button type="button" class="cpick" style="--c:${c}" data-pick="${esc(s)}">${esc(s)}<small>${u?'liberada neste aparelho · ':'pede o código da seção · '}${n?n+(n===1?' reunião':' reuniões'):'nenhuma reunião'}</small></button>`}).join('')}</div></div>`).join('')+`<p style="margin-top:26px"><button type="button" class="btn ghost sm" data-master="1">Tenho o código da diretoria</button></p><p class="note" style="margin-top:18px">Versão de 24/11/2026, 13h40 · códigos de uma palavra</p>`;return}
+    homeEl.innerHTML=`<div class="cap"><h2>Escolha a sua seção</h2></div><p class="capsub">Cada seção tem uma palavra-código. Digite uma vez e este aparelho fica liberado para a sua seção; as outras continuam fechadas.</p>
+    <div class="tree"><div class="canopy" aria-hidden="true"><i></i><i></i><i></i></div>`+
+      GRUPOS.map(([g,c,ss],gi)=>`<div class="trow ${gi%2?'r':'l'}" style="--c:${c};grid-row:${Math.floor(gi/2)+1}"><div class="tcard"><h3>${g}</h3>${ss.map(s=>{const n=COUNTS[s]||0,u=unlocked(s);
+        return `<button type="button" class="leaf" data-pick="${esc(s)}">${logoImg(s)||'<span class="dot"></span>'}<span><b>${esc(shortSec(s))}</b><small>${u?'liberada':'pede o código'}${n?' · '+n+(n===1?' reunião':' reuniões'):''}</small></span></button>`}).join('')}</div></div>`).join('')+
+      `<div class="troot">${IN_API?'<img src="/logos/baleia.jpg" alt="Escoteiros do Baleia" onerror="this.remove()">':''}<b>Escoteiros do Baleia</b><small>23º/MG G.E. Antônio Mourão Guimarães</small></div></div>
+      <p style="margin-top:26px;text-align:center"><button type="button" class="btn ghost sm" data-master="1">Tenho o código da diretoria</button></p><p class="note" style="margin-top:18px;text-align:center">Versão de 26/11/2026 · códigos de uma palavra</p>`+CREDITO;return}
+  if(VIEW==='secao'){const sec=HOME_SEC,col=secColor(sec),nr=REUN.filter(r=>r.secao===sec).length,ns=SEG_COUNT[sec];
+    homeEl.innerHTML=`<div class="hero" style="--c:${col}"><div class="hl">${logoImg(sec,'hlogo')}<div><small>${esc((GRUPOS.find(g=>g[2].includes(sec))||[''])[0])}</small><h2>${esc(sec)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-trocar="1">Trocar seção</button><button type="button" class="btn sm" data-lock="1">Bloquear</button></div></div>
+    <p class="capsub" style="margin-top:18px">O que vamos fazer?</p>
+    <div class="choose"><button type="button" class="chc" style="--c:${col}" data-preparar="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span><b>Preparar reunião</b><small>Programação, jogos e pontuação · ${nr} salva${nr===1?'':'s'}</small></span></button>
+    ${IN_API?`<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de segurança</b><small>Acampamentos, saídas e atividades fora da sede${ns!=null?' · '+ns+' salvo'+(ns===1?'':'s'):''}</small></span></button>`:''}</div>`+CREDITO;
+    if(IN_API&&ns==null)gsr('apiCount','seguranca').then(c=>{SEG_COUNT=objOr(c);Object.keys(SEG_COUNT).forEach(k=>SEG_COUNT[k]=+SEG_COUNT[k]||0);for(const g of GRUPOS)for(const s of g[2])if(SEG_COUNT[s]==null)SEG_COUNT[s]=0;if(VIEW==='secao')renderHome()}).catch(()=>{});
+    return}
   const sec=HOME_SEC,col=secColor(sec),pont=!!PATRULHAS[sec];
   const rs=REUN.filter(r=>r.secao===sec).sort((a,b)=>b.data.localeCompare(a.data));
   const draft=S.secao===sec&&hasContent()&&UNSAVED;
-  let h=`<div class="hero" style="--c:${col}"><div><small>Reuniões da seção</small><h2>${esc(sec)}</h2></div><div class="tools"><button type="button" class="btn sm" data-trocar="1">Trocar seção</button><button type="button" class="btn sm" data-lock="1">Bloquear</button></div></div>`;
+  let h=`<div class="hero" style="--c:${col}"><div><small>Reuniões da seção</small><h2>${esc(sec)}</h2></div><div class="tools"><button type="button" class="btn sm" data-escolha="1">‹ Voltar</button><button type="button" class="btn sm" data-trocar="1">Trocar seção</button></div></div>`;
   h+=statusHTML();
   const td=iso(new Date());const tr=rs.find(r=>r.data===td)||rs.find(r=>r.data<td&&(pd(td)-pd(r.data))<=2*864e5);
   if(tr){const c=calc(tr),np=pont&&tr.atividades.length&&tr.equipes.length;
@@ -978,7 +1026,7 @@ function renderHome(){
     <button type="button" class="btn ghost sm" data-hopen="${esc(r.id)}">Abrir reunião</button>${np?`<button type="button" class="btn sm" style="background:#E07B00" data-hpont="${esc(r.id)}">Pontuação da reunião</button>`:''}<button type="button" class="btn ghost sm del" data-hdel="${esc(r.id)}" aria-label="Excluir reunião de ${esc(fmtD(r.data))}">Excluir</button></div>`}).join(''):
     `<p class="note">Nenhuma reunião salva ainda. Toque em <b>+ Nova reunião</b>, monte a programação e toque em <b>Salvar reunião</b>.</p>`;
   h+=`</div></div></section>`;
-  homeEl.innerHTML=h;
+  homeEl.innerHTML=h+CREDITO;
 }
 async function loadPlan(id){let p=null;
   const sec=(REUN.find(x=>x.id===id)||{}).secao;
@@ -1008,6 +1056,9 @@ homeEl.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)ret
   if(d.master){askCode('','Código da diretoria','Libera todas as seções neste aparelho.',async c=>{const ok=await tryMaster(c);if(ok){await decodeAll();renderHome();toast('Todas as seções liberadas ✓')}return ok});return}
   if(d.lock){const s=HOME_SEC;showPanel(`Bloquear ${s} neste aparelho?`,'Para abrir de novo será preciso digitar o código. Use isso em celular emprestado ou compartilhado.',[],[['Cancelar','ghost'],['Bloquear','',()=>{lockSec(s);HOME_SEC='';try{localStorage.removeItem('rn-secao-home')}catch(e){}decodeAll();setView('capa')}]]);return}
   if(d.trocar){setView('capa');return}
+  if(d.escolha){setView('secao');return}
+  if(d.preparar){setView('reunioes');return}
+  if(d.seguranca){try{localStorage.setItem('rn-secao-home',HOME_SEC)}catch(e){}location.href='/seguranca.html?secao='+encodeURIComponent(HOME_SEC);return}
   if(d.novo){novaReuniao();return}
   if(d.cont){setView('form');return}
   if(d.hdeldraft){delDraft();return}
@@ -1016,7 +1067,7 @@ homeEl.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)ret
   if(d.hdel){const r=REUN.find(x=>x.id===d.hdel);if(!r)return;const c=calc(r);
     showPanel(`Excluir a reunião de ${fmtD(r.data)}?`,`Apaga a programação${c.any?' e a pontuação':''} desta reunião da ${r.secao} para todos os chefes. Não dá para desfazer.${c.any?' O ranking do ciclo será recalculado sem ela.':''}`,[],[['Cancelar','ghost'],['Excluir reunião','',()=>delReuniao(r.id)]]);return}
   if(d.premio!=null){openBoard(HOME_SEC,d.premio);return}});
-document.getElementById('back').onclick=()=>{const go=()=>{if(S.secao&&GRUPOS.some(g=>g[2].includes(S.secao))){HOME_SEC=S.secao;try{localStorage.setItem('rn-secao-home',HOME_SEC)}catch(e){}}setView(HOME_SEC?'secao':'capa')};
+document.getElementById('back').onclick=()=>{const go=()=>{if(S.secao&&GRUPOS.some(g=>g[2].includes(S.secao))){HOME_SEC=S.secao;try{localStorage.setItem('rn-secao-home',HOME_SEC)}catch(e){}}setView(HOME_SEC?'reunioes':'capa')};
   if(UNSAVED&&hasContent()&&secaoNome()&&S.data)showPanel('Salvar esta reunião na tropa?','Assim os outros chefes veem a reunião e dá para lançar a pontuação. O rascunho continua guardado neste aparelho de qualquer jeito.',[],[['Continuar editando','ghost'],['Sair sem salvar','',go],['Salvar e sair','blue',async()=>{if(await saveTropa(false))go()}]]);else go()};
 document.getElementById('m-save').onclick=()=>saveTropa(false);document.getElementById('m-gen').onclick=()=>document.getElementById('gen').click();
 document.getElementById('trp-pont').onclick=()=>{const id=reuId(secaoNome(),S.data);if(REUN.some(r=>r.id===id)){HOME_SEC=S.secao;openScore(id)}};

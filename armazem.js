@@ -4,7 +4,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { createClient } from '@supabase/supabase-js'
 
-const TABELAS = { reunioes: 'reunioes', planos: 'formularios', jogos: 'jogos' }
+const TABELAS = { reunioes: 'reunioes', planos: 'formularios', jogos: 'jogos', seguranca: 'planos_seguranca', base: 'base_seguranca' }
 
 function armazemSupabase(url, chave) {
     const db = createClient(url, chave, { auth: { autoRefreshToken: false, persistSession: false } })
@@ -33,7 +33,7 @@ function armazemSupabase(url, chave) {
 }
 
 function armazemLocal(arquivo) {
-    let mem = { reunioes: {}, planos: {}, jogos: {} }
+    let mem = { reunioes: {}, planos: {}, jogos: {}, seguranca: {}, base: {} }
     if (existsSync(arquivo)) mem = { ...mem, ...JSON.parse(readFileSync(arquivo, 'utf8')) }
     const salvar = () => writeFileSync(arquivo, JSON.stringify(mem))
     return {

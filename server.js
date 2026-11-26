@@ -10,8 +10,9 @@ import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { criarArmazem } from './armazem.js'
 
-const VER = JSON.parse(readFileSync(new URL('./codigo-fonte/conferencia-codigos.json', import.meta.url), 'utf8')).ver
-const COLECOES = new Set(['reunioes', 'planos', 'jogos'])
+const CONF = JSON.parse(readFileSync(new URL('./codigo-fonte/conferencia-codigos.json', import.meta.url), 'utf8'))
+const VER = CONF.ver, MVER = CONF.mver
+const COLECOES = new Set(['reunioes', 'planos', 'jogos', 'seguranca', 'base'])
 const armazem = criarArmazem()
 const app = new Hono()
 
@@ -38,6 +39,15 @@ function confere(secao, prova) {
     if (createHash('sha256').update(Buffer.from(p, 'hex')).digest('hex') !== esperado) throw new Error('codigo: palavra-código não confere')
 }
 
+// Palavra da diretoria: só ela grava na base compartilhada do plano de segurança
+// (locais salvos, delegacias/hospitais e nomes da diretoria).
+function confereDiretoria(prova) {
+    const p = String(prova || '')
+    if (!MVER || !/^[0-9a-f]{64}$/.test(p)) throw new Error('codigo: palavra da diretoria ausente')
+    if (createHash('sha256').update(Buffer.from(p, 'hex')).digest('hex') !== MVER) throw new Error('codigo: palavra da diretoria não confere')
+}
+const ID_BASE = /^(local|apoio|config):[a-z0-9_:-]{1,140}$/
+
 function colecao(c) {
     if (!COLECOES.has(c)) throw new Error('coleção inválida')
     return c
@@ -56,7 +66,15 @@ function emFila(chave, fn) {
 const api = {
     async apiList(c) {
         const linhas = await armazem.listar(colecao(c))
+        // Planos de segurança: a lista leva só o resumo (embaralhado); o plano completo vem pelo apiGet.
+        if (c === 'seguranca') return linhas.map(r => ({ id: r.id, secao: r.secao, r: r.dados && r.dados.r }))
         return linhas.map(r => ({ ...r.dados, id: r.id, secao: r.secao }))
+    },
+    async apiCount(c) {
+        const linhas = await armazem.listar(colecao(c))
+        const n = {}
+        for (const r of linhas) n[r.secao] = (n[r.secao] || 0) + 1
+        return n
     },
     async apiGet(c, id) {
         const r = await armazem.pegar(colecao(c), String(id))
@@ -64,6 +82,7 @@ const api = {
     },
     async apiSet(c, id, json, prova) {
         colecao(c)
+        if (c === 'base') throw new Error('coleção inválida')
         const o = JSON.parse(json)
         const secao = String(o.secao || '')
         confere(secao, prova)
@@ -78,6 +97,7 @@ const api = {
     },
     async apiUpdate(c, id, json, prova) {
         colecao(c)
+        if (c === 'base') throw new Error('coleção inválida')
         const parte = JSON.parse(json)
         return emFila(c + ':' + id, async () => {
             const r = await armazem.pegar(c, String(id))
@@ -90,6 +110,7 @@ const api = {
     },
     async apiDelete(c, id, prova) {
         colecao(c)
+        if (c === 'base') throw new Error('coleção inválida')
         return emFila(c + ':' + id, async () => {
             const r = await armazem.pegar(c, String(id))
             if (!r) return true
@@ -97,6 +118,22 @@ const api = {
             await armazem.apagar(c, String(id))
             return true
         })
+    },
+    // Base compartilhada do plano de segurança: todos leem (apiList('base')); só a diretoria grava.
+    async apiBaseSet(id, json, provaDiretoria) {
+        confereDiretoria(provaDiretoria)
+        id = String(id)
+        if (!ID_BASE.test(id)) throw new Error('id inválido')
+        const o = JSON.parse(json)
+        if (!o || typeof o !== 'object' || Array.isArray(o)) throw new Error('dados inválidos')
+        if (JSON.stringify(o).length > 600000) throw new Error('dados grandes demais')
+        return emFila('base:' + id, async () => { await armazem.gravar('base', id, 'diretoria', o); return true })
+    },
+    async apiBaseDel(id, provaDiretoria) {
+        confereDiretoria(provaDiretoria)
+        id = String(id)
+        if (!ID_BASE.test(id)) throw new Error('id inválido')
+        return emFila('base:' + id, async () => { await armazem.apagar('base', id); return true })
     },
     // Salva a reunião e o formulário numa chamada só.
     async apiSaveReuniao(id, resumoJson, pontosJson, planoJson, prova) {

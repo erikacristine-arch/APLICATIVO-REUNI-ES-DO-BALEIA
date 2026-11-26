@@ -9,6 +9,7 @@ Gera:
     ../public/index.html       -> app servido pelo servidor Node.js (Railway + Supabase)
     ../apps-script/index.html  -> colar no arquivo "index" do Apps Script (versão Google)
     ../apps-script/Code.gs     -> colar no arquivo "Código.gs" do Apps Script (versão Google)
+    ../public/seguranca.html   -> página dos planos de segurança (só na versão servidor)
 
 Precisa de Python 3 e Node.js (o esbuild é baixado pelo npx na primeira vez).
 O esbuild converte o JavaScript para uma versão mais antiga e só com
@@ -88,7 +89,18 @@ def main():
         f.write(html)
     with open(os.path.join(SAIDA, 'Code.gs'), 'w', encoding='utf-8') as f:
         f.write(code)
-    print('Pronto: public/index.html, apps-script/index.html e apps-script/Code.gs atualizados.')
+    # Página dos planos de segurança (só na versão servidor)
+    seg = ler('seguranca.html')
+    b64 = lambda n: 'data:image/jpeg;base64,' + base64.b64encode(ler(n, 'rb')).decode()
+    seg = seg.replace('__BALEIA__', b64('logo-baleia.jpg')).replace('__UEB__', b64('logo-ueb.jpg'))
+    seg = seg.replace('__CRYPTO_PARAMS__', json_js('conferencia-codigos.json'))
+    for marca in ('__BALEIA__', '__UEB__', '__CRYPTO_PARAMS__'):
+        if marca in seg:
+            sys.exit('Marcador não substituído em seguranca.html: ' + marca)
+    seg = converter_script(seg)
+    with open(os.path.join(publico, 'seguranca.html'), 'w', encoding='utf-8') as f:
+        f.write(seg)
+    print('Pronto: public/index.html, public/seguranca.html, apps-script/index.html e apps-script/Code.gs atualizados.')
 
 
 if __name__ == '__main__':
