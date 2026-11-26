@@ -10,7 +10,7 @@
     "montar": "python3 codigo-fonte/montar.py"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "repository": {
     "type": "git",
