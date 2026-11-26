@@ -169,6 +169,7 @@ body[data-view=form] #home,body[data-view=form] #home-t{display:none}
 .trow.l,.trow.r{padding:0;margin:0 0 20px}.trow.l{grid-column:1}.trow.r{grid-column:2;margin-top:80px}
 .trow.l:after{right:-32px}.trow.r:after{left:-32px}.troot{grid-column:1/-1;grid-row:9}}
 @media(max-width:520px){.tree:before{left:22px;margin-left:0;bottom:150px}.trow.l,.trow.r{padding:0 0 0 52px}.trow.l:after,.trow.r:after{left:30px;right:auto;transform:none;width:24px}.canopy{display:none}}
+.inst{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--blueBg);border:1.5px solid #3955A4;border-radius:16px;padding:12px 14px;margin:6px 0 16px}.inst b{display:block;font:700 17px "Barlow Semi Condensed",Barlow,sans-serif}.inst small{display:block;color:var(--mute);font-size:13px}.inst .btn{background:#3955A4}
 .credito{text-align:center;font-size:12.5px;color:var(--mute);margin:28px 0 8px;line-height:1.5}.credito a{color:var(--mute)}
 .cgroup h3{font:600 15px Barlow,sans-serif;color:var(--mute);margin:22px 0 8px}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
@@ -981,6 +982,18 @@ const logoImg=(s,cls)=>LOGO_FILE[s]&&IN_API?`<img class="${cls||''}" src="/logos
 const CREDITO='<p class="credito">Desenvolvido e elaborado por <b>Erika Cristine</b> · Escoteiros do Baleia<br><a href="mailto:erika-cristine@escoteiros.org.br">erika-cristine@escoteiros.org.br</a></p>';
 const shortSec=s=>s.replace(/^Alcateia |^Tropa Escoteira |^Tropa Sênior /,'');
 let SEG_COUNT={};
+let INSTALL_EVT=null;
+const IS_STANDALONE=()=>{try{return matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(e){return false}};
+const IS_IOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INSTALL_EVT=e;if(document.body.dataset.view==='home')renderHome()});
+window.addEventListener('appinstalled',()=>{INSTALL_EVT=null;toast('App instalado ✓ Procure o ícone do Baleia na tela do celular');if(document.body.dataset.view==='home')renderHome()});
+const installHTML=()=>IN_API&&!IS_STANDALONE()?`<div class="inst"><div><b>Instale o app no celular</b><small>Fica com o ícone do Baleia na tela, como um app comum.</small></div><button type="button" class="btn" data-instalar="1">Instalar o app</button></div>`:'';
+async function instalar(){
+  if(INSTALL_EVT){const ev=INSTALL_EVT;INSTALL_EVT=null;try{await ev.prompt();const r=await ev.userChoice;if(r&&r.outcome==='accepted')toast('Instalando…')}catch(e){}renderHome();return}
+  if(IS_IOS){const safari=/safari/i.test(navigator.userAgent)&&!/crios|fxios|edgios/i.test(navigator.userAgent);
+    showPanel('Instalar no iPhone',safari?'Siga os passos abaixo aqui no Safari:':'No iPhone, a instalação só funciona pelo Safari. Copie o link, abra no Safari e siga os passos:',
+      ['Toque no botão Compartilhar (quadrado com a seta para cima), embaixo da tela','Role a lista e toque em “Adicionar à Tela de Início”','Toque em Adicionar. O ícone do Baleia aparece na tela'],[['Entendi','blue']]);return}
+  showPanel('Instalar o app','Se a janela de instalação não abriu, faça pelo menu do navegador:',['No Chrome, toque nos três pontinhos ⋮ no canto de cima','Toque em “Instalar app” (ou “Adicionar à tela inicial”)','Confirme em Instalar. O ícone do Baleia aparece na tela'],[['Entendi','blue']])}
 const secColor=s=>(GRUPOS.find(g=>g[2].includes(s))||[0,'#3955A4'])[1];
 const homeEl=document.getElementById('home');
 let HOME_SEC='';try{HOME_SEC=localStorage.getItem('rn-secao-home')||''}catch(e){}
@@ -992,7 +1005,7 @@ function setView(v){VIEW=v;clearTimeout(jumpT);toastEl.classList.remove('on');do
 function updTrpBtn(){const b=document.getElementById('trp-pont');if(!b)return;const r=REUN.find(x=>x.id===reuId(secaoNome(),S.data));b.hidden=!(r&&PON())}
 function renderHome(){
   if(VIEW==='capa'){
-    homeEl.innerHTML=`<div class="cap"><h2>Escolha a sua seção</h2></div><p class="capsub">Cada seção tem uma palavra-código. Digite uma vez e este aparelho fica liberado para a sua seção; as outras continuam fechadas.</p>
+    homeEl.innerHTML=installHTML()+`<div class="cap"><h2>Escolha a sua seção</h2></div><p class="capsub">Cada seção tem uma palavra-código. Digite uma vez e este aparelho fica liberado para a sua seção; as outras continuam fechadas.</p>
     <div class="tree"><div class="canopy" aria-hidden="true"><i></i><i></i><i></i></div>`+
       GRUPOS.map(([g,c,ss],gi)=>`<div class="trow ${gi%2?'r':'l'}" style="--c:${c};grid-row:${Math.floor(gi/2)+1}"><div class="tcard"><h3>${g}</h3>${ss.map(s=>{const n=COUNTS[s]||0,u=unlocked(s);
         return `<button type="button" class="leaf" data-pick="${esc(s)}">${logoImg(s)||'<span class="dot"></span>'}<span><b>${esc(shortSec(s))}</b><small>${u?'liberada':'pede o código'}${n?' · '+n+(n===1?' reunião':' reuniões'):''}</small></span></button>`}).join('')}</div></div>`).join('')+
@@ -1002,7 +1015,7 @@ function renderHome(){
     homeEl.innerHTML=`<div class="hero" style="--c:${col}"><div class="hl">${logoImg(sec,'hlogo')}<div><small>${esc((GRUPOS.find(g=>g[2].includes(sec))||[''])[0])}</small><h2>${esc(sec)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-trocar="1">Trocar seção</button><button type="button" class="btn sm" data-lock="1">Bloquear</button></div></div>
     <p class="capsub" style="margin-top:18px">O que vamos fazer?</p>
     <div class="choose"><button type="button" class="chc" style="--c:${col}" data-preparar="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span><b>Preparar reunião</b><small>Programação, jogos e pontuação · ${nr} salva${nr===1?'':'s'}</small></span></button>
-    ${IN_API?`<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de segurança</b><small>Acampamentos, saídas e atividades fora da sede${ns!=null?' · '+ns+' salvo'+(ns===1?'':'s'):''}</small></span></button>`:''}</div>`+CREDITO;
+    ${IN_API?`<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de segurança</b><small>Acampamentos, saídas e atividades fora da sede${ns!=null?' · '+ns+' salvo'+(ns===1?'':'s'):''}</small></span></button>`:''}</div>`+installHTML()+CREDITO;
     if(IN_API&&ns==null)gsr('apiCount','seguranca').then(c=>{SEG_COUNT=objOr(c);Object.keys(SEG_COUNT).forEach(k=>SEG_COUNT[k]=+SEG_COUNT[k]||0);for(const g of GRUPOS)for(const s of g[2])if(SEG_COUNT[s]==null)SEG_COUNT[s]=0;if(VIEW==='secao')renderHome()}).catch(()=>{});
     return}
   const sec=HOME_SEC,col=secColor(sec),pont=!!PATRULHAS[sec];
@@ -1055,6 +1068,7 @@ homeEl.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)ret
     if(unlocked(s)){go();return}askCode(s,'Código da seção',`Digite a palavra-código da ${s}. Peça à diretoria se não tiver.`,async c=>{const ok=await tryUnlock(s,c);if(ok){await decodeAll();go();toast('Seção liberada neste aparelho ✓')}return ok});return}
   if(d.master){askCode('','Código da diretoria','Libera todas as seções neste aparelho.',async c=>{const ok=await tryMaster(c);if(ok){await decodeAll();renderHome();toast('Todas as seções liberadas ✓')}return ok});return}
   if(d.lock){const s=HOME_SEC;showPanel(`Bloquear ${s} neste aparelho?`,'Para abrir de novo será preciso digitar o código. Use isso em celular emprestado ou compartilhado.',[],[['Cancelar','ghost'],['Bloquear','',()=>{lockSec(s);HOME_SEC='';try{localStorage.removeItem('rn-secao-home')}catch(e){}decodeAll();setView('capa')}]]);return}
+  if(d.instalar){instalar();return}
   if(d.trocar){setView('capa');return}
   if(d.escolha){setView('secao');return}
   if(d.preparar){setView('reunioes');return}

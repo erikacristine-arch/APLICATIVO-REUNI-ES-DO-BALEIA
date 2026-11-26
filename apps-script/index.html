@@ -169,6 +169,7 @@ body[data-view=form] #home,body[data-view=form] #home-t{display:none}
 .trow.l,.trow.r{padding:0;margin:0 0 20px}.trow.l{grid-column:1}.trow.r{grid-column:2;margin-top:80px}
 .trow.l:after{right:-32px}.trow.r:after{left:-32px}.troot{grid-column:1/-1;grid-row:9}}
 @media(max-width:520px){.tree:before{left:22px;margin-left:0;bottom:150px}.trow.l,.trow.r{padding:0 0 0 52px}.trow.l:after,.trow.r:after{left:30px;right:auto;transform:none;width:24px}.canopy{display:none}}
+.inst{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--blueBg);border:1.5px solid #3955A4;border-radius:16px;padding:12px 14px;margin:6px 0 16px}.inst b{display:block;font:700 17px "Barlow Semi Condensed",Barlow,sans-serif}.inst small{display:block;color:var(--mute);font-size:13px}.inst .btn{background:#3955A4}
 .credito{text-align:center;font-size:12.5px;color:var(--mute);margin:28px 0 8px;line-height:1.5}.credito a{color:var(--mute)}
 .cgroup h3{font:600 15px Barlow,sans-serif;color:var(--mute);margin:22px 0 8px}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
@@ -992,7 +993,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     b.hidden = !(r && PON());
   }, renderHome2 = function() {
     if (VIEW === "capa") {
-      homeEl.innerHTML = `<div class="cap"><h2>Escolha a sua se\xE7\xE3o</h2></div><p class="capsub">Cada se\xE7\xE3o tem uma palavra-c\xF3digo. Digite uma vez e este aparelho fica liberado para a sua se\xE7\xE3o; as outras continuam fechadas.</p>
+      homeEl.innerHTML = installHTML() + `<div class="cap"><h2>Escolha a sua se\xE7\xE3o</h2></div><p class="capsub">Cada se\xE7\xE3o tem uma palavra-c\xF3digo. Digite uma vez e este aparelho fica liberado para a sua se\xE7\xE3o; as outras continuam fechadas.</p>
     <div class="tree"><div class="canopy" aria-hidden="true"><i></i><i></i><i></i></div>` + GRUPOS.map(([g, c, ss], gi) => `<div class="trow ${gi % 2 ? "r" : "l"}" style="--c:${c};grid-row:${Math.floor(gi / 2) + 1}"><div class="tcard"><h3>${g}</h3>${ss.map((s) => {
         const n = COUNTS[s] || 0, u = unlocked(s);
         return `<button type="button" class="leaf" data-pick="${esc(s)}">${logoImg(s) || '<span class="dot"></span>'}<span><b>${esc(shortSec(s))}</b><small>${u ? "liberada" : "pede o c\xF3digo"}${n ? " \xB7 " + n + (n === 1 ? " reuni\xE3o" : " reuni\xF5es") : ""}</small></span></button>`;
@@ -1005,7 +1006,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       homeEl.innerHTML = `<div class="hero" style="--c:${col2}"><div class="hl">${logoImg(sec2, "hlogo")}<div><small>${esc((GRUPOS.find((g) => g[2].includes(sec2)) || [""])[0])}</small><h2>${esc(sec2)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-trocar="1">Trocar se\xE7\xE3o</button><button type="button" class="btn sm" data-lock="1">Bloquear</button></div></div>
     <p class="capsub" style="margin-top:18px">O que vamos fazer?</p>
     <div class="choose"><button type="button" class="chc" style="--c:${col2}" data-preparar="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span><b>Preparar reuni\xE3o</b><small>Programa\xE7\xE3o, jogos e pontua\xE7\xE3o \xB7 ${nr} salva${nr === 1 ? "" : "s"}</small></span></button>
-    ${IN_API ? `<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de seguran\xE7a</b><small>Acampamentos, sa\xEDdas e atividades fora da sede${ns != null ? " \xB7 " + ns + " salvo" + (ns === 1 ? "" : "s") : ""}</small></span></button>` : ""}</div>` + CREDITO;
+    ${IN_API ? `<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de seguran\xE7a</b><small>Acampamentos, sa\xEDdas e atividades fora da sede${ns != null ? " \xB7 " + ns + " salvo" + (ns === 1 ? "" : "s") : ""}</small></span></button>` : ""}</div>` + installHTML() + CREDITO;
       if (IN_API && ns == null) gsr2("apiCount", "seguranca").then((c) => {
         SEG_COUNT = objOr(c);
         Object.keys(SEG_COUNT).forEach((k) => SEG_COUNT[k] = +SEG_COUNT[k] || 0);
@@ -3102,6 +3103,51 @@ ${hhmm(t + d)}` : "";
   const CREDITO = '<p class="credito">Desenvolvido e elaborado por <b>Erika Cristine</b> \xB7 Escoteiros do Baleia<br><a href="mailto:erika-cristine@escoteiros.org.br">erika-cristine@escoteiros.org.br</a></p>';
   const shortSec = (s) => s.replace(/^Alcateia |^Tropa Escoteira |^Tropa Sênior /, "");
   let SEG_COUNT = {};
+  let INSTALL_EVT = null;
+  const IS_STANDALONE = () => {
+    try {
+      return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+    } catch (e) {
+      return false;
+    }
+  };
+  const IS_IOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    INSTALL_EVT = e;
+    if (document.body.dataset.view === "home") renderHome2();
+  });
+  window.addEventListener("appinstalled", () => {
+    INSTALL_EVT = null;
+    toast2("App instalado \u2713 Procure o \xEDcone do Baleia na tela do celular");
+    if (document.body.dataset.view === "home") renderHome2();
+  });
+  const installHTML = () => IN_API && !IS_STANDALONE() ? `<div class="inst"><div><b>Instale o app no celular</b><small>Fica com o \xEDcone do Baleia na tela, como um app comum.</small></div><button type="button" class="btn" data-instalar="1">Instalar o app</button></div>` : "";
+  async function instalar() {
+    if (INSTALL_EVT) {
+      const ev = INSTALL_EVT;
+      INSTALL_EVT = null;
+      try {
+        await ev.prompt();
+        const r = await ev.userChoice;
+        if (r && r.outcome === "accepted") toast2("Instalando\u2026");
+      } catch (e) {
+      }
+      renderHome2();
+      return;
+    }
+    if (IS_IOS) {
+      const safari = /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios/i.test(navigator.userAgent);
+      showPanel2(
+        "Instalar no iPhone",
+        safari ? "Siga os passos abaixo aqui no Safari:" : "No iPhone, a instala\xE7\xE3o s\xF3 funciona pelo Safari. Copie o link, abra no Safari e siga os passos:",
+        ["Toque no bot\xE3o Compartilhar (quadrado com a seta para cima), embaixo da tela", "Role a lista e toque em \u201CAdicionar \xE0 Tela de In\xEDcio\u201D", "Toque em Adicionar. O \xEDcone do Baleia aparece na tela"],
+        [["Entendi", "blue"]]
+      );
+      return;
+    }
+    showPanel2("Instalar o app", "Se a janela de instala\xE7\xE3o n\xE3o abriu, fa\xE7a pelo menu do navegador:", ["No Chrome, toque nos tr\xEAs pontinhos \u22EE no canto de cima", "Toque em \u201CInstalar app\u201D (ou \u201CAdicionar \xE0 tela inicial\u201D)", "Confirme em Instalar. O \xEDcone do Baleia aparece na tela"], [["Entendi", "blue"]]);
+  }
   const secColor = (s) => (GRUPOS.find((g) => g[2].includes(s)) || [0, "#3955A4"])[1];
   const homeEl = document.getElementById("home");
   let HOME_SEC = "";
@@ -3248,6 +3294,10 @@ ${hhmm(t + d)}` : "";
         decodeAll();
         setView2("capa");
       }]]);
+      return;
+    }
+    if (d.instalar) {
+      instalar();
       return;
     }
     if (d.trocar) {
