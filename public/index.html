@@ -318,18 +318,18 @@ table.tot tr.win td{background:color-mix(in srgb,#E07B00 12%,var(--card));font-w
 .pg-et span.fim{background:var(--c);color:#fff}.pg-et span.fim b{color:#fff}
 .pg-q{margin:14px 0 6px}
 .pg-eixo{margin-top:22px}.pg-eixo>h3{font-size:18px;margin:0 0 8px;color:color-mix(in srgb,var(--c) 80%,var(--ink))}
-.pg-b{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;margin-bottom:10px}
-.pg-b>summary{cursor:pointer;padding:14px 16px;font-weight:700;font-size:17px;list-style:none;display:flex;gap:10px;align-items:center;justify-content:space-between;min-height:44px}
+.pg-b{background:var(--card);border:1.5px solid color-mix(in srgb,var(--c) 45%,var(--line));border-left:6px solid var(--c);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.pg-b>summary{cursor:pointer;padding:14px 16px;background:color-mix(in srgb,var(--c) 14%,var(--card));color:color-mix(in srgb,var(--c) 70%,var(--ink));font-weight:700;font-size:17px;list-style:none;display:flex;gap:10px;align-items:center;justify-content:space-between;min-height:44px}
 .pg-b>summary::-webkit-details-marker{display:none}
 .pg-b>summary small{display:block;font-weight:500;color:var(--mute);font-size:13px}
 .pg-b>summary::after{content:'▾';flex:none;color:var(--mute);transition:transform .15s}.pg-b[open]>summary::after{transform:rotate(180deg)}
-.pg-in{padding:0 16px 16px}
-.pg-in h4{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin:14px 0 6px}
-.pg-in p{margin:0 0 6px}.pg-in ul{margin:0;padding-left:20px}.pg-in li{margin:4px 0}
+.pg-in{padding:2px 16px 16px}
+.pg-in h4{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:var(--c);display:inline-block;border-radius:999px;padding:3px 10px;margin:16px 0 8px}
+.pg-in p{margin:0 0 6px}.pg-in ul{margin:0;padding-left:20px}.pg-in li{margin:4px 0}.pg-in li::marker{color:var(--c)}
 .pg-int{background:color-mix(in srgb,var(--c) 10%,var(--card));border-radius:10px;padding:10px 12px;font-style:italic}
 .pg-mod{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px;margin-right:6px;vertical-align:1px;color:#fff;background:#3955A4}
 .pg-mod.Mar{background:#0F6FA8}.pg-mod.Ar{background:#6A5ACD}
-.pg-tags{display:flex;flex-wrap:wrap;gap:6px}.pg-tags span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:14px}
+.pg-tags{display:flex;flex-wrap:wrap;gap:6px}.pg-tags span{border:1px solid color-mix(in srgb,var(--c) 50%,var(--line));border-radius:999px;padding:2px 10px;font-size:14px}
 .pg-ou{font-weight:700;color:var(--mute);text-align:center;margin:12px 0 4px}
 .pg-none{color:var(--mute);padding:20px 0;text-align:center}
 mark{background:light-dark(#ffe58a,#7a6200);color:inherit;border-radius:3px}
@@ -1017,7 +1017,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     carregarProg();
   }, renderProg2 = function() {
     const sec = HOME_SEC, col = secColor(sec), r = ramoDe(sec), d = PG.cache[r];
-    let h = `<div class="hero" style="--c:${col}"><div class="hl">${logoImg(sec, "hlogo")}<div><small>Progress\xE3o \xB7 ${esc(d ? d.ramo : "")}</small><h2>${esc(sec)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-escolha="1">\u2039 Voltar</button></div></div>`;
+    let h = `<div class="hero" style="--c:${col}"><div class="hl">${logoImg(sec, "hlogo")}<div><small>Blocos de aprendizagem \xB7 ${esc(d ? d.ramo : "")}</small><h2>${esc(sec)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-escolha="1">\u2039 Voltar</button></div></div>`;
     if (!d) {
       homeEl.innerHTML = h + `<p class="pg-none">${PG.erro ? esc(PG.erro) + '<br><br><button type="button" class="btn sm" data-prog="1">Tentar de novo</button>' : "Carregando os blocos\u2026"}</p>` + CREDITO;
       return;
@@ -1072,10 +1072,10 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       el.innerHTML = `<p class="pg-none">Nada encontrado para \u201C${esc(PG.q)}\u201D.</p>`;
       return;
     }
-    el.innerHTML = eixos.map((e) => `<div class="pg-eixo" style="--c:${col}"><h3>${esc(e.n)}</h3>${e.bs.map((b) => {
+    el.innerHTML = eixos.map((e) => `<div class="pg-eixo" style="--c:${e.bs[0] && e.bs[0].cor || col}"><h3>${esc(e.n)}</h3>${e.bs.map((b) => {
       const nv = (b.variaveis || []).length, fx = b.fixas || [];
       const resumo = [fx.length ? fx.length + " fixa" + (fx.length > 1 ? "s" : "") : "", b.variaveisMin ? b.variaveisMin + " de " + nv + " vari\xE1veis" : nv ? nv + " sugest" + (nv > 1 ? "\xF5es" : "\xE3o") : ""].filter(Boolean).join(" \xB7 ");
-      return `<details class="pg-b"${q || PG.all ? " open" : ""}><summary><span>${hl(b.nome)}<small>${resumo}</small></span></summary><div class="pg-in">
+      return `<details class="pg-b" style="--c:${b.cor || col}"${q || PG.all ? " open" : ""}><summary><span>${hl(b.nome)}<small>${resumo}</small></span></summary><div class="pg-in">
     ${b.intencionalidade ? `<h4>Intencionalidade educativa</h4><p class="pg-int">${hl(b.intencionalidade)}</p>` : ""}
     ${fx.length ? `<h4>A\xE7\xF5es educativas fixas \xB7 fazer todas</h4><ul>${fx.map((x) => `<li>${mod(x)}${item3(x.t)}</li>`).join("")}</ul>` : ""}
     ${nv ? `<h4>A\xE7\xF5es educativas vari\xE1veis${b.variaveisMin ? " \xB7 realizar " + b.variaveisMin : ""}</h4>${b.nota ? `<p>${hl(b.nota)}</p>` : ""}<ul>${b.variaveis.map((x) => `<li>${item3(x)}</li>`).join("")}</ul>` : ""}
@@ -1117,8 +1117,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       homeEl.innerHTML = `<div class="hero" style="--c:${col2}"><div class="hl">${logoImg(sec2, "hlogo")}<div><small>${esc((GRUPOS.find((g) => g[2].includes(sec2)) || [""])[0])}</small><h2>${esc(sec2)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-trocar="1">Trocar se\xE7\xE3o</button><button type="button" class="btn sm" data-lock="1">Bloquear</button></div></div>
     <p class="capsub" style="margin-top:18px">O que vamos fazer?</p>
     <div class="choose"><button type="button" class="chc" style="--c:${col2}" data-preparar="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span><b>Preparar reuni\xE3o</b><small>Programa\xE7\xE3o, jogos e pontua\xE7\xE3o \xB7 ${nr} salva${nr === 1 ? "" : "s"}</small></span></button>
-    ${IN_API ? `<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de seguran\xE7a</b><small>Acampamentos, sa\xEDdas e atividades fora da sede${ns != null ? " \xB7 " + ns + " salvo" + (ns === 1 ? "" : "s") : ""}</small></span></button>` : ""}
-    ${IN_API && ramoDe(sec2) ? `<button type="button" class="chc" style="--c:#2E8B57" data-prog="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><path d="M6 16l4-5 3 3 5-7"/><path d="M15 7h3v3"/></svg></span><span><b>Progress\xE3o</b><small>${ramoDe(sec2) === "filhotes" ? "Blocos de aprendizagem e distintivos dos personagens" : "Eixos, blocos de aprendizagem e etapas do ramo"}</small></span></button>` : ""}</div>` + installHTML() + CREDITO;
+    ${IN_API ? `<button type="button" class="chc" style="--c:#D9480F" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de seguran\xE7a</b><small>Acampamentos, sa\xEDdas e atividades fora da sede${ns != null ? " \xB7 " + ns + " salvo" + (ns === 1 ? "" : "s") : ""}</small></span></button>` : ""}
+    ${IN_API && ramoDe(sec2) ? `<button type="button" class="chc" style="--c:#6B3FA0" data-prog="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><path d="M6 16l4-5 3 3 5-7"/><path d="M15 7h3v3"/></svg></span><span><b>Blocos de aprendizagem</b><small>${ramoDe(sec2) === "filhotes" ? "Blocos dos personagens e distintivos" : "Eixos, blocos e etapas do ramo"}</small></span></button>` : ""}</div>` + installHTML() + CREDITO;
       if (IN_API && ns == null) gsr2("apiCount", "seguranca").then((c) => {
         SEG_COUNT = objOr(c);
         Object.keys(SEG_COUNT).forEach((k) => SEG_COUNT[k] = +SEG_COUNT[k] || 0);
@@ -3244,7 +3244,7 @@ ${hhmm(t + d)}` : "";
       if (!d) throw new Error("vazio");
       PG.cache[r] = d;
     } catch (e) {
-      PG.erro = /codigo/.test(String(e && e.message || e)) ? "A palavra-c\xF3digo desta se\xE7\xE3o n\xE3o confere. Bloqueie e entre de novo." : "N\xE3o consegui carregar a progress\xE3o agora. Confira a internet e tente de novo.";
+      PG.erro = /codigo/.test(String(e && e.message || e)) ? "A palavra-c\xF3digo desta se\xE7\xE3o n\xE3o confere. Bloqueie e entre de novo." : "N\xE3o consegui carregar os blocos agora. Confira a internet e tente de novo.";
     }
     if (VIEW === "prog") renderProg2();
   }
