@@ -240,9 +240,10 @@ body[data-view=form] .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
 .jsheet{position:fixed;inset:0;z-index:34;background:rgba(10,20,40,.45);display:flex;align-items:flex-end;justify-content:center}
 .jbox{background:var(--card);width:min(720px,100%);max-height:92vh;height:92vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
 @media(min-width:760px){.jsheet{align-items:center}.jbox{border-radius:18px;height:84vh}}
-.jbox>header,#js-q{flex:0 0 auto}
-.jbox header{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px 8px}.jbox header h3{font-size:21px}.jbox header small{color:var(--mute);font-size:13px}
-#js-q{margin:0 16px;width:calc(100% - 32px);font:16px Barlow,sans-serif;min-height:48px;padding:10px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--field);color:var(--ink)}
+.jbox>header,#js-q,#bs-q{flex:0 0 auto}
+#bs-l .pg-eixo{margin-top:12px}#bs-l .pg-eixo>h3{font-size:16px}
+.jbox header>button{flex:none}.jbox header{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px 8px}.jbox header h3{font-size:21px}.jbox header small{color:var(--mute);font-size:13px}
+#js-q,#bs-q{margin:0 16px 8px;width:calc(100% - 32px);font:16px Barlow,sans-serif;min-height:48px;padding:10px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--field);color:var(--ink)}
 .jtipos{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none;flex:0 0 auto}
 .jtipos button{flex:none;font:600 13px Barlow,sans-serif;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 12px;min-height:36px;cursor:pointer}
 .jtipos button[aria-pressed=true]{background:#2E8B57;border-color:#2E8B57;color:#fff}
@@ -365,7 +366,7 @@ document.addEventListener('DOMContentLoaded',function(){window.rnTemaBtn()})})()
   <div class="intro">
     <p>Monte a programação da reunião, confira a prévia e baixe o PDF no modelo do grupo, com a grade de pontuação das patrulhas e os anexos ao final. Campos com <b style="color:var(--red)">*</b> são obrigatórios. O rascunho fica salvo neste navegador.</p>
     <div class="tools">
-      <button class="btn blue sm" id="trp">Salvar reunião</button><button class="btn sm" id="trp-pont" style="background:#E07B00" hidden>Pontuação desta reunião</button><button class="btn ghost sm" id="week" hidden>Nova semana</button>
+      <button class="btn blue sm" id="trp">Salvar reunião</button><button class="btn sm" id="trp-pont" style="background:#E07B00" hidden>Pontuação desta reunião</button><button type="button" class="btn sm" id="trp-blocos" style="background:#6B3FA0" hidden>Blocos de aprendizagem</button><button class="btn ghost sm" id="week" hidden>Nova semana</button>
       <details class="moretools"><summary class="btn ghost sm">Mais opções</summary><div class="mt">
       <button class="btn ghost sm" id="exp">Salvar rascunho</button>
       <label class="btn ghost sm">Abrir rascunho<input type="file" id="imp" accept=".json,application/json" hidden></label>
@@ -387,6 +388,10 @@ document.addEventListener('DOMContentLoaded',function(){window.rnTemaBtn()})})()
   <header><div><h3 id="js-h">Banco de jogos</h3><small id="js-for"></small></div><button type="button" class="btn ghost sm" id="js-x">Fechar</button></header>
   <input type="search" id="js-q" placeholder="Buscar por nome, tipo ou material…" autocomplete="off" enterkeyhint="search">
   <div class="jtipos" id="js-t"></div><div class="jlist" id="js-l"></div></div></div>
+<div class="jsheet" id="bsheet" hidden role="dialog" aria-modal="true" aria-labelledby="bs-h"><div class="jbox">
+  <header><div><h3 id="bs-h">Blocos de aprendizagem</h3><small id="bs-for"></small></div><button type="button" class="btn ghost sm" id="bs-x">Fechar</button></header>
+  <input type="search" id="bs-q" class="bs-q" placeholder="Buscar nos blocos (ex.: nós, primeiros socorros)" autocomplete="off" enterkeyhint="search">
+  <div class="jlist" id="bs-l" style="padding-top:4px"></div></div></div>
 <div class="panel" id="codebox" hidden role="dialog" aria-modal="true" aria-labelledby="cb-h">
   <h3 id="cb-h"></h3><p id="cb-p"></p>
   <form id="cb-f" autocomplete="off"><input type="text" id="cb-in" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="palavra-código" style="width:100%;font:600 22px Barlow,sans-serif;text-align:center;min-height:52px;border:1.5px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);text-transform:lowercase">
@@ -1012,33 +1017,34 @@ const ramoDe=s=>{s=String(s||'');return s.startsWith('Ninhada')?'filhotes':s.sta
 const PG={cache:{},q:'',all:false,erro:''};
 const semAc=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
 function abrirProg(){PG.q='';PG.all=false;PG.erro='';setView('prog');carregarProg()}
-async function carregarProg(){const sec=HOME_SEC,r=ramoDe(sec);if(!r||PG.cache[r])return;
+async function carregarProg(sec){sec=sec||HOME_SEC;const r=ramoDe(sec);if(!r||PG.cache[r])return;PG.erro='';
   try{const d=await gsr('apiProgressao',sec,PROOF[sec]||'');if(!d)throw new Error('vazio');PG.cache[r]=d}
   catch(e){PG.erro=/codigo/.test(String(e&&e.message||e))?'A palavra-código desta seção não confere. Bloqueie e entre de novo.':'Não consegui carregar os blocos agora. Confira a internet e tente de novo.'}
-  if(VIEW==='prog')renderProg()}
+  if(VIEW==='prog')renderProg();if(!bsEl.hidden)renderBlocosSheet()}
+const ORDEM_TXT=r=>r==='filhotes'?'Não há ordem obrigatória: o filhote recebe o distintivo de um personagem quando completa os blocos dele, em qualquer ordem.':'Não há ordem obrigatória: os blocos podem ser feitos em qualquer ordem.';
 function renderProg(){const sec=HOME_SEC,col=secColor(sec),r=ramoDe(sec),d=PG.cache[r];
   let h=`<div class="hero" style="--c:${col}"><div class="hl">${logoImg(sec,'hlogo')}<div><small>Blocos de aprendizagem · ${esc(d?d.ramo:'')}</small><h2>${esc(sec)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-escolha="1">‹ Voltar</button></div></div>`;
   if(!d){homeEl.innerHTML=h+`<p class="pg-none">${PG.erro?esc(PG.erro)+'<br><br><button type="button" class="btn sm" data-prog="1">Tentar de novo</button>':'Carregando os blocos…'}</p>`+CREDITO;return}
   const et=d.etapas;
-  h+=`<div style="--c:${col}"><div class="pg-et">${et.itens.map(x=>`<span><b>${esc(x.nome)}</b>${esc(x.desc)}</span>`).join('')}${et.final?`<span class="fim"><b>${esc(et.final)}</b>ao concluir os ${d.blocos.length} blocos</span>`:''}</div>
+  h+=`<div style="--c:${col}"><div class="pg-et">${et.itens.map(x=>`<span><b>${esc(x.nome)}</b>${esc(x.desc)}</span>`).join('')}${et.final?`<span class="fim"><b>${esc(et.final)}</b>ao concluir os ${d.blocos.length} blocos</span>`:''}</div><p class="note" style="margin:6px 0 0">${ORDEM_TXT(r)}</p>
   <div class="pg-q"><input type="text" id="pg-q" placeholder="Buscar nos blocos (ex.: nós, primeiros socorros, horta)" value="${esc(PG.q)}" autocomplete="off" aria-label="Buscar nos blocos"></div>
   <p style="text-align:right;margin:0"><button type="button" class="btn ghost sm" data-pgall="1">${PG.all?'Fechar todos':'Abrir todos'}</button></p>
   <div id="pg-list"></div></div>`;
   homeEl.innerHTML=h+`<p class="note" style="margin-top:20px">Fonte: Manual do Escotista do ${esc(d.ramo)} (UEB), capítulo do Sistema de Progressão Pessoal. Material de consulta só para os chefes do grupo.</p>`+CREDITO;
   document.getElementById('pg-q').addEventListener('input',e=>{PG.q=e.target.value;listaProg()});
   listaProg()}
-function listaProg(){const sec=HOME_SEC,col=secColor(sec),d=PG.cache[ramoDe(sec)],el=document.getElementById('pg-list');if(!d||!el)return;
-  const q0=PG.q.trim().toLowerCase(),acento=/[^\x00-\x7f]/.test(q0),nz=acento?(t=>String(t||'').toLowerCase()):semAc,q=nz(q0);
+function listaProg(el,sec,qs,all){sec=sec||HOME_SEC;el=el||document.getElementById('pg-list');qs=qs==null?PG.q:qs;all=all==null?PG.all:all;const col=secColor(sec),d=PG.cache[ramoDe(sec)];if(!d||!el)return;
+  const q0=qs.trim().toLowerCase(),acento=/[^\x00-\x7f]/.test(q0),nz=acento?(t=>String(t||'').toLowerCase()):semAc,q=nz(q0);
   const ini=(n,k)=>k===0||!/[a-z0-9\u00e0-\u00ff]/.test(n[k-1]);const tem=n=>{let k=-1;while((k=n.indexOf(q,k+1))>=0)if(ini(n,k))return true;return false};
   const hl=t=>{t=esc(t);if(!q)return t;const n=nz(t);let out='',i=0,k=-1;while((k=n.indexOf(q,k+1))>=0){if(!ini(n,k)||k<i)continue;out+=t.slice(i,k)+'<mark>'+t.slice(k,k+q.length)+'</mark>';i=k+q.length}return out+t.slice(i)};
   const txt=b=>nz([b.nome,b.eixo,b.intencionalidade,...(b.fixas||[]).map(x=>x.t),...(b.variaveis||[]),...(b.modalidade||[]).map(x=>x.t),...(b.especialidades||[]),...(b.insignias||[]),...(b.especialidadesComplementares||[]),...(b.observar||[]),b.nota].join(' '));
   const item=t=>{const p=String(t).split(/\s*•\s*/);return p.length>1?hl(p[0])+'<ul>'+p.slice(1).map(x=>`<li>${hl(x.replace(/;$/,''))}</li>`).join('')+'</ul>':hl(t)};
   const mod=x=>x.mod?`<span class="pg-mod ${x.mod}">${x.mod==='Ar'?'Modalidade do Ar':'Modalidade do Mar'}</span>`:'';
   const eixos=[];for(const b of d.blocos){if(q&&!tem(txt(b)))continue;let e=eixos.find(x=>x.n===b.eixo);if(!e)eixos.push(e={n:b.eixo,bs:[]});e.bs.push(b)}
-  if(!eixos.length){el.innerHTML=`<p class="pg-none">Nada encontrado para “${esc(PG.q)}”.</p>`;return}
+  if(!eixos.length){el.innerHTML=`<p class="pg-none">Nada encontrado para “${esc(qs)}”.</p>`;return}
   el.innerHTML=eixos.map(e=>`<div class="pg-eixo" style="--c:${(e.bs[0]&&e.bs[0].cor)||col}"><h3>${esc(e.n)}</h3>${e.bs.map(b=>{const nv=(b.variaveis||[]).length,fx=b.fixas||[];
     const resumo=[fx.length?fx.length+' fixa'+(fx.length>1?'s':''):'',b.variaveisMin?b.variaveisMin+' de '+nv+' variáveis':nv?nv+' sugest'+(nv>1?'ões':'ão'):''].filter(Boolean).join(' · ');
-    return `<details class="pg-b" style="--c:${b.cor||col}"${q||PG.all?' open':''}><summary><span>${hl(b.nome)}<small>${resumo}</small></span></summary><div class="pg-in">
+    return `<details class="pg-b" style="--c:${b.cor||col}"${q||all?' open':''}><summary><span>${hl(b.nome)}<small>${resumo}</small></span></summary><div class="pg-in">
     ${b.intencionalidade?`<h4>Intencionalidade educativa</h4><p class="pg-int">${hl(b.intencionalidade)}</p>`:''}
     ${fx.length?`<h4>Ações educativas fixas · fazer todas</h4><ul>${fx.map(x=>`<li>${mod(x)}${item(x.t)}</li>`).join('')}</ul>`:''}
     ${nv?`<h4>Ações educativas variáveis${b.variaveisMin?' · realizar '+b.variaveisMin:''}</h4>${b.nota?`<p>${hl(b.nota)}</p>`:''}<ul>${b.variaveis.map(x=>`<li>${item(x)}</li>`).join('')}</ul>`:''}
@@ -1077,7 +1083,7 @@ if(!HOME_SEC&&GRUPOS.some(g=>g[2].includes(S.secao))&&unlocked(S.secao))HOME_SEC
 let VIEW=HOME_SEC?'secao':'capa';
 const hasContent=()=>!!(String(S.objetivos||'').trim()||acts().some(a=>a.desc||a.mat||a.int));
 function setView(v){VIEW=v;clearTimeout(jumpT);toastEl.classList.remove('on');document.body.dataset.view=v==='form'?'form':'home';if(v!=='form')renderHome();else{build();updTrpBtn()}window.scrollTo(0,0)}
-function updTrpBtn(){const b=document.getElementById('trp-pont');if(!b)return;const r=REUN.find(x=>x.id===reuId(secaoNome(),S.data));b.hidden=!(r&&PON())}
+function updTrpBtn(){const bb=document.getElementById('trp-blocos');if(bb)bb.hidden=!(IN_API&&ramoDe(S.secao)&&unlocked(S.secao));const b=document.getElementById('trp-pont');if(!b)return;const r=REUN.find(x=>x.id===reuId(secaoNome(),S.data));b.hidden=!(r&&PON())}
 function renderHome(){
   if(VIEW==='capa'){
     homeEl.innerHTML=installHTML()+`<div class="cap"><h2>Escolha a sua seção</h2></div><p class="capsub">Cada seção tem uma palavra-código. Digite uma vez e este aparelho fica liberado para a sua seção; as outras continuam fechadas.</p>
@@ -1203,6 +1209,17 @@ function openJogos(n){JS.n=n;JS.open='';const a=S.atividades[n]||{};const nm=Str
   document.getElementById('js-for').textContent=`Para a atividade ${n+1}${actLabel(a)?' · '+actTitle(a):''}`;jsEl.hidden=false;document.body.style.overflow='hidden';renderJogos();loadJogos().then(renderJogos);setTimeout(()=>jsQ.focus(),60)}
 function closeJogos(){jsEl.hidden=true;document.body.style.overflow=''}
 document.getElementById('js-x').onclick=closeJogos;
+const bsEl=document.getElementById('bsheet'),bsQ=document.getElementById('bs-q'),bsL=document.getElementById('bs-l');
+function abrirBlocosSheet(){const sec=S.secao;if(!ramoDe(sec))return;bsEl.hidden=false;document.body.style.overflow='hidden';renderBlocosSheet();carregarProg(sec)}
+function renderBlocosSheet(){const sec=S.secao,d=PG.cache[ramoDe(sec)];
+  document.getElementById('bs-for').textContent=(d?d.ramo+' · ':'')+sec+' · em qualquer ordem';
+  if(!d){bsL.innerHTML=`<p class="pg-none">${PG.erro?esc(PG.erro):'Carregando os blocos…'}</p>`;return}
+  listaProg(bsL,sec,bsQ.value,false)}
+function closeBlocosSheet(){bsEl.hidden=true;document.body.style.overflow=''}
+document.getElementById('bs-x').onclick=closeBlocosSheet;
+bsEl.addEventListener('click',e=>{if(e.target===bsEl)closeBlocosSheet()});
+bsQ.addEventListener('input',()=>{if(PG.cache[ramoDe(S.secao)])listaProg(bsL,S.secao,bsQ.value,false)});
+document.getElementById('trp-blocos').onclick=abrirBlocosSheet;
 jsEl.addEventListener('click',e=>{if(e.target===jsEl)closeJogos()});
 jsQ.addEventListener('input',()=>{JS.open='';renderJogos()});
 function renderJogos(){
@@ -1307,7 +1324,7 @@ async function preview(){
 }
 document.getElementById('pv-back').onclick=()=>{prevEl.hidden=true;document.body.style.overflow=''};
 document.getElementById('pv-dl').onclick=()=>{if(lastPdf)save(lastPdf.name,lastPdf.blob)};
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!jsEl.hidden&&panel.hidden)closeJogos();else if(!cb.hidden)cb.hidden=true;else if(!panel.hidden)panel.hidden=true;else if(!prevEl.hidden)document.getElementById('pv-back').click();else if(!board.hidden)document.getElementById('bd-close').click()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!bsEl.hidden&&panel.hidden)closeBlocosSheet();else if(!jsEl.hidden&&panel.hidden)closeJogos();else if(!cb.hidden)cb.hidden=true;else if(!panel.hidden)panel.hidden=true;else if(!prevEl.hidden)document.getElementById('pv-back').click();else if(!board.hidden)document.getElementById('bd-close').click()}});
 
 /* ---------- PDF (A4 paisagem, como a planilha) ---------- */
 function makePdf(imgAtts,extraPages,allFiles,RES){

@@ -240,9 +240,10 @@ body[data-view=form] .toast{bottom:calc(84px + env(safe-area-inset-bottom))}
 .jsheet{position:fixed;inset:0;z-index:34;background:rgba(10,20,40,.45);display:flex;align-items:flex-end;justify-content:center}
 .jbox{background:var(--card);width:min(720px,100%);max-height:92vh;height:92vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 -10px 40px rgba(0,0,0,.25)}
 @media(min-width:760px){.jsheet{align-items:center}.jbox{border-radius:18px;height:84vh}}
-.jbox>header,#js-q{flex:0 0 auto}
-.jbox header{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px 8px}.jbox header h3{font-size:21px}.jbox header small{color:var(--mute);font-size:13px}
-#js-q{margin:0 16px;width:calc(100% - 32px);font:16px Barlow,sans-serif;min-height:48px;padding:10px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--field);color:var(--ink)}
+.jbox>header,#js-q,#bs-q{flex:0 0 auto}
+#bs-l .pg-eixo{margin-top:12px}#bs-l .pg-eixo>h3{font-size:16px}
+.jbox header>button{flex:none}.jbox header{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px 8px}.jbox header h3{font-size:21px}.jbox header small{color:var(--mute);font-size:13px}
+#js-q,#bs-q{margin:0 16px 8px;width:calc(100% - 32px);font:16px Barlow,sans-serif;min-height:48px;padding:10px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--field);color:var(--ink)}
 .jtipos{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none;flex:0 0 auto}
 .jtipos button{flex:none;font:600 13px Barlow,sans-serif;border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 12px;min-height:36px;cursor:pointer}
 .jtipos button[aria-pressed=true]{background:#2E8B57;border-color:#2E8B57;color:#fff}
@@ -365,7 +366,7 @@ document.addEventListener('DOMContentLoaded',function(){window.rnTemaBtn()})})()
   <div class="intro">
     <p>Monte a programação da reunião, confira a prévia e baixe o PDF no modelo do grupo, com a grade de pontuação das patrulhas e os anexos ao final. Campos com <b style="color:var(--red)">*</b> são obrigatórios. O rascunho fica salvo neste navegador.</p>
     <div class="tools">
-      <button class="btn blue sm" id="trp">Salvar reunião</button><button class="btn sm" id="trp-pont" style="background:#E07B00" hidden>Pontuação desta reunião</button><button class="btn ghost sm" id="week" hidden>Nova semana</button>
+      <button class="btn blue sm" id="trp">Salvar reunião</button><button class="btn sm" id="trp-pont" style="background:#E07B00" hidden>Pontuação desta reunião</button><button type="button" class="btn sm" id="trp-blocos" style="background:#6B3FA0" hidden>Blocos de aprendizagem</button><button class="btn ghost sm" id="week" hidden>Nova semana</button>
       <details class="moretools"><summary class="btn ghost sm">Mais opções</summary><div class="mt">
       <button class="btn ghost sm" id="exp">Salvar rascunho</button>
       <label class="btn ghost sm">Abrir rascunho<input type="file" id="imp" accept=".json,application/json" hidden></label>
@@ -387,6 +388,10 @@ document.addEventListener('DOMContentLoaded',function(){window.rnTemaBtn()})})()
   <header><div><h3 id="js-h">Banco de jogos</h3><small id="js-for"></small></div><button type="button" class="btn ghost sm" id="js-x">Fechar</button></header>
   <input type="search" id="js-q" placeholder="Buscar por nome, tipo ou material…" autocomplete="off" enterkeyhint="search">
   <div class="jtipos" id="js-t"></div><div class="jlist" id="js-l"></div></div></div>
+<div class="jsheet" id="bsheet" hidden role="dialog" aria-modal="true" aria-labelledby="bs-h"><div class="jbox">
+  <header><div><h3 id="bs-h">Blocos de aprendizagem</h3><small id="bs-for"></small></div><button type="button" class="btn ghost sm" id="bs-x">Fechar</button></header>
+  <input type="search" id="bs-q" class="bs-q" placeholder="Buscar nos blocos (ex.: nós, primeiros socorros)" autocomplete="off" enterkeyhint="search">
+  <div class="jlist" id="bs-l" style="padding-top:4px"></div></div></div>
 <div class="panel" id="codebox" hidden role="dialog" aria-modal="true" aria-labelledby="cb-h">
   <h3 id="cb-h"></h3><p id="cb-p"></p>
   <form id="cb-f" autocomplete="off"><input type="text" id="cb-in" inputmode="text" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="palavra-código" style="width:100%;font:600 22px Barlow,sans-serif;text-align:center;min-height:52px;border:1.5px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);text-transform:lowercase">
@@ -1022,7 +1027,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       return;
     }
     const et = d.etapas;
-    h += `<div style="--c:${col}"><div class="pg-et">${et.itens.map((x) => `<span><b>${esc(x.nome)}</b>${esc(x.desc)}</span>`).join("")}${et.final ? `<span class="fim"><b>${esc(et.final)}</b>ao concluir os ${d.blocos.length} blocos</span>` : ""}</div>
+    h += `<div style="--c:${col}"><div class="pg-et">${et.itens.map((x) => `<span><b>${esc(x.nome)}</b>${esc(x.desc)}</span>`).join("")}${et.final ? `<span class="fim"><b>${esc(et.final)}</b>ao concluir os ${d.blocos.length} blocos</span>` : ""}</div><p class="note" style="margin:6px 0 0">${ORDEM_TXT(r)}</p>
   <div class="pg-q"><input type="text" id="pg-q" placeholder="Buscar nos blocos (ex.: n\xF3s, primeiros socorros, horta)" value="${esc(PG.q)}" autocomplete="off" aria-label="Buscar nos blocos"></div>
   <p style="text-align:right;margin:0"><button type="button" class="btn ghost sm" data-pgall="1">${PG.all ? "Fechar todos" : "Abrir todos"}</button></p>
   <div id="pg-list"></div></div>`;
@@ -1032,10 +1037,14 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       listaProg2();
     });
     listaProg2();
-  }, listaProg2 = function() {
-    const sec = HOME_SEC, col = secColor(sec), d = PG.cache[ramoDe(sec)], el = document.getElementById("pg-list");
+  }, listaProg2 = function(el, sec, qs, all) {
+    sec = sec || HOME_SEC;
+    el = el || document.getElementById("pg-list");
+    qs = qs == null ? PG.q : qs;
+    all = all == null ? PG.all : all;
+    const col = secColor(sec), d = PG.cache[ramoDe(sec)];
     if (!d || !el) return;
-    const q0 = PG.q.trim().toLowerCase(), acento = /[^\x00-\x7f]/.test(q0), nz = acento ? (t) => String(t || "").toLowerCase() : semAc, q = nz(q0);
+    const q0 = qs.trim().toLowerCase(), acento = /[^\x00-\x7f]/.test(q0), nz = acento ? (t) => String(t || "").toLowerCase() : semAc, q = nz(q0);
     const ini = (n, k) => k === 0 || !/[a-z0-9\u00e0-\u00ff]/.test(n[k - 1]);
     const tem = (n) => {
       let k = -1;
@@ -1068,13 +1077,13 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       e.bs.push(b);
     }
     if (!eixos.length) {
-      el.innerHTML = `<p class="pg-none">Nada encontrado para \u201C${esc(PG.q)}\u201D.</p>`;
+      el.innerHTML = `<p class="pg-none">Nada encontrado para \u201C${esc(qs)}\u201D.</p>`;
       return;
     }
     el.innerHTML = eixos.map((e) => `<div class="pg-eixo" style="--c:${e.bs[0] && e.bs[0].cor || col}"><h3>${esc(e.n)}</h3>${e.bs.map((b) => {
       const nv = (b.variaveis || []).length, fx = b.fixas || [];
       const resumo = [fx.length ? fx.length + " fixa" + (fx.length > 1 ? "s" : "") : "", b.variaveisMin ? b.variaveisMin + " de " + nv + " vari\xE1veis" : nv ? nv + " sugest" + (nv > 1 ? "\xF5es" : "\xE3o") : ""].filter(Boolean).join(" \xB7 ");
-      return `<details class="pg-b" style="--c:${b.cor || col}"${q || PG.all ? " open" : ""}><summary><span>${hl(b.nome)}<small>${resumo}</small></span></summary><div class="pg-in">
+      return `<details class="pg-b" style="--c:${b.cor || col}"${q || all ? " open" : ""}><summary><span>${hl(b.nome)}<small>${resumo}</small></span></summary><div class="pg-in">
     ${b.intencionalidade ? `<h4>Intencionalidade educativa</h4><p class="pg-int">${hl(b.intencionalidade)}</p>` : ""}
     ${fx.length ? `<h4>A\xE7\xF5es educativas fixas \xB7 fazer todas</h4><ul>${fx.map((x) => `<li>${mod(x)}${item3(x.t)}</li>`).join("")}</ul>` : ""}
     ${nv ? `<h4>A\xE7\xF5es educativas vari\xE1veis${b.variaveisMin ? " \xB7 realizar " + b.variaveisMin : ""}</h4>${b.nota ? `<p>${hl(b.nota)}</p>` : ""}<ul>${b.variaveis.map((x) => `<li>${item3(x)}</li>`).join("")}</ul>` : ""}
@@ -1097,6 +1106,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
     window.scrollTo(0, 0);
   }, updTrpBtn2 = function() {
+    const bb = document.getElementById("trp-blocos");
+    if (bb) bb.hidden = !(IN_API && ramoDe(S.secao) && unlocked(S.secao));
     const b = document.getElementById("trp-pont");
     if (!b) return;
     const r = REUN.find((x) => x.id === reuId(secaoNome(), S.data));
@@ -1250,6 +1261,24 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     setTimeout(() => jsQ.focus(), 60);
   }, closeJogos2 = function() {
     jsEl.hidden = true;
+    document.body.style.overflow = "";
+  }, abrirBlocosSheet2 = function() {
+    const sec = S.secao;
+    if (!ramoDe(sec)) return;
+    bsEl.hidden = false;
+    document.body.style.overflow = "hidden";
+    renderBlocosSheet2();
+    carregarProg(sec);
+  }, renderBlocosSheet2 = function() {
+    const sec = S.secao, d = PG.cache[ramoDe(sec)];
+    document.getElementById("bs-for").textContent = (d ? d.ramo + " \xB7 " : "") + sec + " \xB7 em qualquer ordem";
+    if (!d) {
+      bsL.innerHTML = `<p class="pg-none">${PG.erro ? esc(PG.erro) : "Carregando os blocos\u2026"}</p>`;
+      return;
+    }
+    listaProg2(bsL, sec, bsQ.value, false);
+  }, closeBlocosSheet2 = function() {
+    bsEl.hidden = true;
     document.body.style.overflow = "";
   }, renderJogos2 = function() {
     const cnt = {};
@@ -1937,7 +1966,7 @@ ${hhmm(t + d)}` : "";
     const name = `RN_${slug(secaoNome()) || "Secao"}${S.data ? "_" + S.data : ""}.pdf`;
     return { doc, name, pages };
   };
-  var markSaved = markSaved2, defaults = defaults2, visible = visible2, filled = filled2, required = required2, soft = soft2, cicloOpts = cicloOpts2, field = field2, seg = seg2, listHTML = listHTML2, attachHTML = attachHTML2, teamsHTML = teamsHTML2, actHTML = actHTML2, clocks = clocks2, actsHTML = actsHTML2, item = item2, build = build2, rerender = rerender2, secDone = secDone2, setActive = setActive2, goSection = goSection2, currentSection = currentSection2, lastItem = lastItem2, refresh = refresh2, persist = persist2, saveMemo = saveMemo2, setVal = setVal2, applyMemo = applyMemo2, addTeam = addTeam2, toast = toast2, showPanel = showPanel2, delDraft = delDraft2, goTo = goTo2, lockSec = lockSec2, loadLocal = loadLocal2, gsr = gsr2, reuSummary = reuSummary2, saveBusy = saveBusy2, calc = calc2, ranking = ranking2, openBoard = openBoard2, statusHTML = statusHTML2, renderBoard = renderBoard2, actDone = actDone2, actCount = actCount2, renderScore = renderScore2, sbarHTML = sbarHTML2, itemsCard = itemsCard2, totHTML = totHTML2, markDirty = markDirty2, svText = svText2, schedRetry = schedRetry2, abrirProg = abrirProg2, renderProg = renderProg2, listaProg = listaProg2, setView = setView2, updTrpBtn = updTrpBtn2, renderHome = renderHome2, guard = guard2, askLoad = askLoad2, novaReuniao = novaReuniao2, askCode = askCode2, searchJ = searchJ2, openJogos = openJogos2, closeJogos = closeJogos2, renderJogos = renderJogos2, useJogo = useJogo2, jHint = jHint2, saveToBank = saveToBank2, loadScript = loadScript2, pdfjs = pdfjs2, pdfLib = pdfLib2, makePdf = makePdf2;
+  var markSaved = markSaved2, defaults = defaults2, visible = visible2, filled = filled2, required = required2, soft = soft2, cicloOpts = cicloOpts2, field = field2, seg = seg2, listHTML = listHTML2, attachHTML = attachHTML2, teamsHTML = teamsHTML2, actHTML = actHTML2, clocks = clocks2, actsHTML = actsHTML2, item = item2, build = build2, rerender = rerender2, secDone = secDone2, setActive = setActive2, goSection = goSection2, currentSection = currentSection2, lastItem = lastItem2, refresh = refresh2, persist = persist2, saveMemo = saveMemo2, setVal = setVal2, applyMemo = applyMemo2, addTeam = addTeam2, toast = toast2, showPanel = showPanel2, delDraft = delDraft2, goTo = goTo2, lockSec = lockSec2, loadLocal = loadLocal2, gsr = gsr2, reuSummary = reuSummary2, saveBusy = saveBusy2, calc = calc2, ranking = ranking2, openBoard = openBoard2, statusHTML = statusHTML2, renderBoard = renderBoard2, actDone = actDone2, actCount = actCount2, renderScore = renderScore2, sbarHTML = sbarHTML2, itemsCard = itemsCard2, totHTML = totHTML2, markDirty = markDirty2, svText = svText2, schedRetry = schedRetry2, abrirProg = abrirProg2, renderProg = renderProg2, listaProg = listaProg2, setView = setView2, updTrpBtn = updTrpBtn2, renderHome = renderHome2, guard = guard2, askLoad = askLoad2, novaReuniao = novaReuniao2, askCode = askCode2, searchJ = searchJ2, openJogos = openJogos2, closeJogos = closeJogos2, abrirBlocosSheet = abrirBlocosSheet2, renderBlocosSheet = renderBlocosSheet2, closeBlocosSheet = closeBlocosSheet2, renderJogos = renderJogos2, useJogo = useJogo2, jHint = jHint2, saveToBank = saveToBank2, loadScript = loadScript2, pdfjs = pdfjs2, pdfLib = pdfLib2, makePdf = makePdf2;
   const LOGO_B = [
     "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCAFcAY0DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD7+ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoqtqGo2GladLqGqXtvZWkQ3ST3EgjRB6ljwK8Z8QftP+BrHWodH8M29z4hvJZlhWRG+z2wYkDmRxnqeoUj3rooYStiHalFv+",
     "u5E6kYfEz2+ms6Jt3uq7jtGTjJ9K+VP2ivjH468OfEmXwh4a1U6VZRWsTySQIvmys4LE7yMqACB8uOnXmuG/Z/vdY8U/tK6TqGvXt9q5tIri5knvJXm8rETAOSxOAGZQD6kV6dPJJvDvEzkkrXtuznli4qp7NLU+tfEXxX+HXhS/ksNe8Xada3cWBJbK5lkjJ7MiAkHvgiqPhT4z+APG3iaTQ/DOp3N7PHC1w8n2SWONI1xlmZ1GBkgc45NfH2t/Df4meOfiJreuaZ4L1qWHUdQnuIpp7c26MryMykNJgYwR3r2b4P/AAY+IHgvwb4vvL6zs7bW9Usf7PsbSW6Uqm770jum4DGQQBknafUGt6+WYOjRu6l56aXW78t9CIYirOduXQ63UP2qPhXY6jLawvrN8qEr59raDy2+m9lOPwrqfBfxp8GeOrPU73ShqNtZ6XB9ovLq+gEUUK88FgxGcBjj0Br5ouP2TPifDKFju/D1wCM74ruQAe3zRg16rYfBfxr4Z/ZpvvAeiPpVzrOsXJn1G5M7RpEny4jjJXL5CAc4A3N9a580pYDD4WU8NLmn0V7/AKHZlUKmKxdOjiGoQbV29LLq9eyO2sv2hvhJe3BhHigwHs1xaTIp/Hbgfjiu40DxX4a8U28k/hzXbDU0ix5n2WZXMeem4Dlc4PX0NfFl/wDs7fFqylVE8NJdqxwHtruEjPvlgR9cV3fxCh1b4Wfs+ab8OdI0/UE1C6/0vWtUtbdxBgkkx+cAAxztX/dTB618TTzHERTlWhZLya9EfqeYcH5NVlSo5ViuedSVvijJRXWTsk9Oi6tn1hRX5zeG/HXjjw5dxJ4b8R6pasSES3ilZ0Y9APLOVb2GK+stb+MNz8LPB2h23xCzrHia/i+0S2+nxLAIE/28nBOcjIABIbgY53w+a06ibmuW3zX9fI8rOuAMZl9WnSozVWU78qV1J2V27bJLvzHs9FedeC/jf8PfG7R21lq4sL9+BY6ji",
@@ -3235,9 +3264,11 @@ ${hhmm(t + d)}` : "";
   };
   const PG = { cache: {}, q: "", all: false, erro: "" };
   const semAc = (t) => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-  async function carregarProg() {
-    const sec = HOME_SEC, r = ramoDe(sec);
+  async function carregarProg(sec) {
+    sec = sec || HOME_SEC;
+    const r = ramoDe(sec);
     if (!r || PG.cache[r]) return;
+    PG.erro = "";
     try {
       const d = await gsr2("apiProgressao", sec, PROOF[sec] || "");
       if (!d) throw new Error("vazio");
@@ -3246,7 +3277,9 @@ ${hhmm(t + d)}` : "";
       PG.erro = /codigo/.test(String(e && e.message || e)) ? "A palavra-c\xF3digo desta se\xE7\xE3o n\xE3o confere. Bloqueie e entre de novo." : "N\xE3o consegui carregar os blocos agora. Confira a internet e tente de novo.";
     }
     if (VIEW === "prog") renderProg2();
+    if (!bsEl.hidden) renderBlocosSheet2();
   }
+  const ORDEM_TXT = (r) => r === "filhotes" ? "N\xE3o h\xE1 ordem obrigat\xF3ria: o filhote recebe o distintivo de um personagem quando completa os blocos dele, em qualquer ordem." : "N\xE3o h\xE1 ordem obrigat\xF3ria: os blocos podem ser feitos em qualquer ordem.";
   const GRUPOS = [
     ["Ninhadas", "#0F8A9D", ["Ninhada 1", "Ninhada 2"]],
     ["Alcateias", "#C08A00", ["Alcateia Lobo Guar\xE1", "Alcateia Sabi\xE1", "Alcateia T\xFAnel do Morcego"]],
@@ -3994,6 +4027,15 @@ ${hhmm(t + d)}` : "";
   const jsEl = document.getElementById("jsheet"), jsQ = document.getElementById("js-q"), jsL = document.getElementById("js-l"), jsT = document.getElementById("js-t");
   const JS = { n: 0, tipo: "", open: "" };
   document.getElementById("js-x").onclick = closeJogos2;
+  const bsEl = document.getElementById("bsheet"), bsQ = document.getElementById("bs-q"), bsL = document.getElementById("bs-l");
+  document.getElementById("bs-x").onclick = closeBlocosSheet2;
+  bsEl.addEventListener("click", (e) => {
+    if (e.target === bsEl) closeBlocosSheet2();
+  });
+  bsQ.addEventListener("input", () => {
+    if (PG.cache[ramoDe(S.secao)]) listaProg2(bsL, S.secao, bsQ.value, false);
+  });
+  document.getElementById("trp-blocos").onclick = abrirBlocosSheet2;
   jsEl.addEventListener("click", (e) => {
     if (e.target === jsEl) closeJogos2();
   });
@@ -4167,7 +4209,8 @@ ${hhmm(t + d)}` : "";
   };
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      if (!jsEl.hidden && panel.hidden) closeJogos2();
+      if (!bsEl.hidden && panel.hidden) closeBlocosSheet2();
+      else if (!jsEl.hidden && panel.hidden) closeJogos2();
       else if (!cb.hidden) cb.hidden = true;
       else if (!panel.hidden) panel.hidden = true;
       else if (!prevEl.hidden) document.getElementById("pv-back").click();
