@@ -43,8 +43,10 @@ a{color:var(--blue)}
 .nav a.on{background:var(--c);color:#fff;border-color:var(--c)}
 .nav a.done::after{content:" ✓"}
 .nav-bl{flex:none;font:700 14px Barlow,sans-serif;color:#fff;background:#6B3FA0;border:1.5px solid #6B3FA0;line-height:1.5;border-radius:99px;padding:6px 12px;cursor:pointer;margin:0 0 10px 16px}
-.navrow{max-width:880px;margin:0 auto;display:flex;align-items:flex-start}.navrow .nav{flex:1;min-width:0;margin:0}.nav-bl:not([hidden])+.nav{padding-left:8px}
-.nav-bl .lg{display:none}@media(min-width:620px){.nav-bl .lg{display:inline}}
+.navrow{max-width:880px;margin:0 auto;display:flex;align-items:flex-start}.navrow .nav{flex:1;min-width:0;margin:0}.nav-bl:not([hidden])+.nav{padding-left:10px}
+.nav{--fl:#000;--fr:#000;-webkit-mask-image:linear-gradient(to right,var(--fl) 0,#000 22px,#000 calc(100% - 22px),var(--fr));mask-image:linear-gradient(to right,var(--fl) 0,#000 22px,#000 calc(100% - 22px),var(--fr))}
+.nav.sl{--fl:transparent}.nav.sr{--fr:transparent}
+
 .nav-bl[hidden]{display:none}
 main{max-width:880px;margin:0 auto;padding:20px 16px 80px}
 .intro{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:18px}
@@ -364,7 +366,7 @@ document.addEventListener('DOMContentLoaded',function(){window.rnTemaBtn()})})()
     <button class="btn" id="gen">Gerar PDF</button>
     <button type="button" class="tema" id="tema-btn" onclick="rnTema()" aria-label="Mudar tema da tela"></button>
   </div>
-  <div class="navrow"><button type="button" class="nav-bl" id="nav-blocos" hidden aria-label="Blocos de aprendizagem">Blocos<span class="lg"> de aprendizagem</span></button><nav class="nav" id="nav"></nav></div>
+  <div class="navrow"><button type="button" class="nav-bl" id="nav-blocos" hidden aria-label="Blocos de aprendizagem">Blocos</button><nav class="nav" id="nav"></nav></div>
 </header>
 <section id="home"></section>
 <main id="formMain">
@@ -604,8 +606,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       const on = a.dataset.s === id;
       a.classList.toggle("on", on);
       if (on) {
-        const nav = a.parentElement;
-        nav.scrollTo({ left: a.offsetLeft - nav.clientWidth / 2 + a.offsetWidth / 2, behavior: reduce ? "auto" : "smooth" });
+        const nav = a.parentElement, ra = a.getBoundingClientRect(), rn = nav.getBoundingClientRect();
+        nav.scrollTo({ left: Math.max(0, nav.scrollLeft + ra.left - rn.left - nav.clientWidth / 2 + ra.width / 2), behavior: reduce ? "auto" : "smooth" });
       }
     });
   }, goSection2 = function(id) {
@@ -1111,6 +1113,7 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
     }
     window.scrollTo(0, 0);
   }, updTrpBtn2 = function() {
+    setTimeout(() => window.navBordas && navBordas(), 50);
     const vb = !(IN_API && ramoDe(S.secao) && unlocked(S.secao));
     for (const i of ["trp-blocos", "nav-blocos"]) {
       const bb = document.getElementById(i);
@@ -2243,6 +2246,17 @@ ${hhmm(t + d)}` : "";
       if (id) setActive2(id);
     });
   }, { passive: true });
+  {
+    const nv = document.getElementById("nav");
+    const bordas = () => {
+      nv.classList.toggle("sl", nv.scrollLeft > 2);
+      nv.classList.toggle("sr", nv.scrollLeft + nv.clientWidth < nv.scrollWidth - 2);
+    };
+    nv.addEventListener("scroll", bordas, { passive: true });
+    addEventListener("resize", bordas);
+    setTimeout(bordas, 300);
+    window.navBordas = bordas;
+  }
   document.getElementById("nav").addEventListener("click", (e) => {
     const a = e.target.closest("a[data-s]");
     if (!a) return;
