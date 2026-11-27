@@ -179,8 +179,15 @@ body[data-view=form] #lista{display:none}
 .bar .bk{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
 .bar img{border-radius:50%;object-fit:cover}
 @media(max-width:600px){body[data-view=form] .bar .ttl{display:none}body[data-view=form] .bar img{display:none}.bar .btn{padding:0 12px;font-size:15px}.bar{gap:8px}body[data-view=form] .bar #gen{margin-left:auto}}
+.tema{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}.tema svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.tema:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 </style>
 <script>window.addEventListener('load',function(){if((window.RN_API!==undefined||location.pathname.indexOf('/seguranca')===0)&&'serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(function(){})})</script>
+<script>(function(){try{var t=localStorage.getItem('rn-tema');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}
+window.rnTema=function(){var r=document.documentElement,cur=r.dataset.theme||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'),n=cur==='dark'?'light':'dark';r.dataset.theme=n;try{localStorage.setItem('rn-tema',n)}catch(e){}window.rnTemaBtn()};
+window.rnTemaBtn=function(){var b=document.getElementById('tema-btn');if(!b)return;var r=document.documentElement,dark=(r.dataset.theme||((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'))==='dark';
+b.innerHTML=dark?'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>';
+b.setAttribute('aria-label',dark?'Mudar para tela clara':'Mudar para tela escura');b.title=dark?'Tela clara':'Tela escura'};
+document.addEventListener('DOMContentLoaded',function(){window.rnTemaBtn()})})();</script>
 </head>
 <body>
 <header class="top">
@@ -191,6 +198,7 @@ body[data-view=form] #lista{display:none}
     <div class="ttl"><h1>Plano de Segurança</h1><small id="hdr-sec"></small><div class="meter formonly"><b id="prog"></b></div><small class="formonly" id="prog-t" style="display:none"></small></div>
     <button class="btn ghost formonly" id="save-plan">Salvar plano</button>
     <button class="btn formonly" id="gen">Gerar PDF</button>
+    <button type="button" class="tema" id="tema-btn" onclick="rnTema()" aria-label="Mudar tema da tela"></button>
   </div>
   <nav class="nav formonly" id="nav"></nav>
 </header>
