@@ -42,6 +42,10 @@ a{color:var(--blue)}
 .nav a.done{color:color-mix(in srgb,var(--c) 85%,var(--ink));background:color-mix(in srgb,var(--c) 13%,var(--card))}
 .nav a.on{background:var(--c);color:#fff;border-color:var(--c)}
 .nav a.done::after{content:" ✓"}
+.nav-bl{flex:none;font:700 14px Barlow,sans-serif;color:#fff;background:#6B3FA0;border:1.5px solid #6B3FA0;line-height:1.5;border-radius:99px;padding:6px 12px;cursor:pointer;margin:0 0 10px 16px}
+.navrow{max-width:880px;margin:0 auto;display:flex;align-items:flex-start}.navrow .nav{flex:1;min-width:0;margin:0}.nav-bl:not([hidden])+.nav{padding-left:8px}
+.nav-bl .lg{display:none}@media(min-width:620px){.nav-bl .lg{display:inline}}
+.nav-bl[hidden]{display:none}
 main{max-width:880px;margin:0 auto;padding:20px 16px 80px}
 .intro{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:18px}
 .intro p{margin:0;color:var(--mute);max-width:60ch}
@@ -135,7 +139,7 @@ textarea{min-height:92px;resize:vertical}
 @media(max-width:600px){body[data-view=form] .bar img{display:none}.bar img{height:36px}.bar h1{font-size:19px}.bar small{display:none}.q.pair{grid-template-columns:minmax(0,1fr)}.body{padding:4px 14px 12px}.card>h2{padding:12px 14px}.btn{padding:0 14px}.prev header h2{flex-basis:100%}
  .lrow{grid-template-columns:minmax(0,1fr)}.lrow .x{justify-self:end}.act .g{grid-template-columns:96px minmax(0,1fr)}.act .g>div:nth-child(n+3){grid-column:1/-1}}
 /* capa e tela da seção */
-body[data-view=home] .nav,body[data-view=home] .meter,body[data-view=home] #gen,body[data-view=home] #back,body[data-view=home] #formMain,body[data-view=home] #prog-t{display:none}
+body[data-view=home] .navrow,body[data-view=home] .meter,body[data-view=home] #gen,body[data-view=home] #back,body[data-view=home] #formMain,body[data-view=home] #prog-t{display:none}
 body[data-view=form] #home,body[data-view=form] #home-t{display:none}
 #home{max-width:880px;margin:0 auto;padding:22px 16px 80px}
 .cap{display:flex;gap:14px;align-items:center;margin:4px 0 6px}.cap h2{font-size:clamp(28px,5vw,40px)}
@@ -359,7 +363,7 @@ document.addEventListener('DOMContentLoaded',function(){window.rnTemaBtn()})})()
     <button class="btn" id="gen">Gerar PDF</button>
     <button type="button" class="tema" id="tema-btn" onclick="rnTema()" aria-label="Mudar tema da tela"></button>
   </div>
-  <nav class="nav" id="nav"></nav>
+  <div class="navrow"><button type="button" class="nav-bl" id="nav-blocos" hidden aria-label="Blocos de aprendizagem">Blocos<span class="lg"> de aprendizagem</span></button><nav class="nav" id="nav"></nav></div>
 </header>
 <section id="home"></section>
 <main id="formMain">
@@ -1083,7 +1087,7 @@ if(!HOME_SEC&&GRUPOS.some(g=>g[2].includes(S.secao))&&unlocked(S.secao))HOME_SEC
 let VIEW=HOME_SEC?'secao':'capa';
 const hasContent=()=>!!(String(S.objetivos||'').trim()||acts().some(a=>a.desc||a.mat||a.int));
 function setView(v){VIEW=v;clearTimeout(jumpT);toastEl.classList.remove('on');document.body.dataset.view=v==='form'?'form':'home';if(v!=='form')renderHome();else{build();updTrpBtn()}window.scrollTo(0,0)}
-function updTrpBtn(){const bb=document.getElementById('trp-blocos');if(bb)bb.hidden=!(IN_API&&ramoDe(S.secao)&&unlocked(S.secao));const b=document.getElementById('trp-pont');if(!b)return;const r=REUN.find(x=>x.id===reuId(secaoNome(),S.data));b.hidden=!(r&&PON())}
+function updTrpBtn(){const vb=!(IN_API&&ramoDe(S.secao)&&unlocked(S.secao));for(const i of ['trp-blocos','nav-blocos']){const bb=document.getElementById(i);if(bb)bb.hidden=vb}const b=document.getElementById('trp-pont');if(!b)return;const r=REUN.find(x=>x.id===reuId(secaoNome(),S.data));b.hidden=!(r&&PON())}
 function renderHome(){
   if(VIEW==='capa'){
     homeEl.innerHTML=installHTML()+`<div class="cap"><h2>Escolha a sua seção</h2></div><p class="capsub">Cada seção tem uma palavra-código. Digite uma vez e este aparelho fica liberado para a sua seção; as outras continuam fechadas.</p>
@@ -1219,7 +1223,7 @@ function closeBlocosSheet(){bsEl.hidden=true;document.body.style.overflow=''}
 document.getElementById('bs-x').onclick=closeBlocosSheet;
 bsEl.addEventListener('click',e=>{if(e.target===bsEl)closeBlocosSheet()});
 bsQ.addEventListener('input',()=>{if(PG.cache[ramoDe(S.secao)])listaProg(bsL,S.secao,bsQ.value,false)});
-document.getElementById('trp-blocos').onclick=abrirBlocosSheet;
+document.getElementById('trp-blocos').onclick=abrirBlocosSheet;document.getElementById('nav-blocos').onclick=abrirBlocosSheet;
 jsEl.addEventListener('click',e=>{if(e.target===jsEl)closeJogos()});
 jsQ.addEventListener('input',()=>{JS.open='';renderJogos()});
 function renderJogos(){
