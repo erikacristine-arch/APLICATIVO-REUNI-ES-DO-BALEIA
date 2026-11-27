@@ -310,6 +310,29 @@ table.tot tr.win td{background:color-mix(in srgb,#E07B00 12%,var(--card));font-w
 @media(max-width:600px){.itrow{grid-template-columns:minmax(0,1fr) 110px}.itrow input[data-itd]{grid-column:1/2}.ajrow{grid-template-columns:minmax(0,1fr) 96px}.ajrow input[data-ajm]{grid-column:1/-1}.board>header select{flex-basis:100%}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 .tema{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}.tema svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.tema:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+/* Progressão */
+.pg-et{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
+.pg-et span{border:1.5px solid var(--c);border-radius:12px;padding:6px 12px;background:var(--card);font-size:14px;line-height:1.25}
+.pg-et span b{display:block;color:color-mix(in srgb,var(--c) 80%,var(--ink))}
+.pg-et span.fim{background:var(--c);color:#fff}.pg-et span.fim b{color:#fff}
+.pg-q{margin:14px 0 6px}
+.pg-eixo{margin-top:22px}.pg-eixo>h3{font-size:18px;margin:0 0 8px;color:color-mix(in srgb,var(--c) 80%,var(--ink))}
+.pg-b{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;margin-bottom:10px}
+.pg-b>summary{cursor:pointer;padding:14px 16px;font-weight:700;font-size:17px;list-style:none;display:flex;gap:10px;align-items:center;justify-content:space-between;min-height:44px}
+.pg-b>summary::-webkit-details-marker{display:none}
+.pg-b>summary small{display:block;font-weight:500;color:var(--mute);font-size:13px}
+.pg-b>summary::after{content:'▾';flex:none;color:var(--mute);transition:transform .15s}.pg-b[open]>summary::after{transform:rotate(180deg)}
+.pg-in{padding:0 16px 16px}
+.pg-in h4{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin:14px 0 6px}
+.pg-in p{margin:0 0 6px}.pg-in ul{margin:0;padding-left:20px}.pg-in li{margin:4px 0}
+.pg-int{background:color-mix(in srgb,var(--c) 10%,var(--card));border-radius:10px;padding:10px 12px;font-style:italic}
+.pg-mod{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px;margin-right:6px;vertical-align:1px;color:#fff;background:#3955A4}
+.pg-mod.Mar{background:#0F6FA8}.pg-mod.Ar{background:#6A5ACD}
+.pg-tags{display:flex;flex-wrap:wrap;gap:6px}.pg-tags span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:14px}
+.pg-ou{font-weight:700;color:var(--mute);text-align:center;margin:12px 0 4px}
+.pg-none{color:var(--mute);padding:20px 0;text-align:center}
+mark{background:light-dark(#ffe58a,#7a6200);color:inherit;border-radius:3px}
 </style>
 <script>
 (function(){var errs=[];function show(msg){function put(){var d=document.getElementById('rn-diag');if(!d){d=document.createElement('div');d.id='rn-diag';d.style.cssText='position:fixed;left:12px;right:12px;top:12px;z-index:99;background:#fff3f3;color:#7a1010;border:2px solid #C62828;border-radius:12px;padding:12px 14px;font:15px/1.4 system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.2)';document.body.appendChild(d)}d.textContent=msg}if(document.body)put();else document.addEventListener('DOMContentLoaded',put)}
@@ -983,6 +1006,49 @@ bdBody.addEventListener('input',e=>{const t=e.target;let ch=false,full=false;
     for(const k of ['ex','de']){const s=bdBody.querySelector(`.itsum.${k} b`);if(s)s.textContent=(k==='ex'?'+':'−')+BV[k].reduce((a,i)=>a+(i.t&&i.v?Math.abs(+i.v):0),0)}}});
 bdBody.addEventListener('change',e=>{if(e.target.dataset.itv){const r=REUN.find(x=>x.id===BV.id);const [k,n]=e.target.dataset.itv.split('.');if(r&&BV[k][+n])e.target.value=BV[k][+n].v}});
 
+
+/* ---------- Progressão (Blocos de Aprendizagem da UEB) ---------- */
+const ramoDe=s=>{s=String(s||'');return s.startsWith('Ninhada')?'filhotes':s.startsWith('Alcateia')?'lobinho':s.startsWith('Tropa Escoteira')?'escoteiro':s.startsWith('Tropa Sênior')?'senior':s.startsWith('Clã')?'pioneiro':''};
+const PG={cache:{},q:'',all:false,erro:''};
+const semAc=t=>String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function abrirProg(){PG.q='';PG.all=false;PG.erro='';setView('prog');carregarProg()}
+async function carregarProg(){const sec=HOME_SEC,r=ramoDe(sec);if(!r||PG.cache[r])return;
+  try{const d=await gsr('apiProgressao',sec,PROOF[sec]||'');if(!d)throw new Error('vazio');PG.cache[r]=d}
+  catch(e){PG.erro=/codigo/.test(String(e&&e.message||e))?'A palavra-código desta seção não confere. Bloqueie e entre de novo.':'Não consegui carregar a progressão agora. Confira a internet e tente de novo.'}
+  if(VIEW==='prog')renderProg()}
+function renderProg(){const sec=HOME_SEC,col=secColor(sec),r=ramoDe(sec),d=PG.cache[r];
+  let h=`<div class="hero" style="--c:${col}"><div class="hl">${logoImg(sec,'hlogo')}<div><small>Progressão · ${esc(d?d.ramo:'')}</small><h2>${esc(sec)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-escolha="1">‹ Voltar</button></div></div>`;
+  if(!d){homeEl.innerHTML=h+`<p class="pg-none">${PG.erro?esc(PG.erro)+'<br><br><button type="button" class="btn sm" data-prog="1">Tentar de novo</button>':'Carregando os blocos…'}</p>`+CREDITO;return}
+  const et=d.etapas;
+  h+=`<div style="--c:${col}"><div class="pg-et">${et.itens.map(x=>`<span><b>${esc(x.nome)}</b>${esc(x.desc)}</span>`).join('')}${et.final?`<span class="fim"><b>${esc(et.final)}</b>ao concluir os ${d.blocos.length} blocos</span>`:''}</div>
+  <div class="pg-q"><input type="text" id="pg-q" placeholder="Buscar nos blocos (ex.: nós, primeiros socorros, horta)" value="${esc(PG.q)}" autocomplete="off" aria-label="Buscar nos blocos"></div>
+  <p style="text-align:right;margin:0"><button type="button" class="btn ghost sm" data-pgall="1">${PG.all?'Fechar todos':'Abrir todos'}</button></p>
+  <div id="pg-list"></div></div>`;
+  homeEl.innerHTML=h+`<p class="note" style="margin-top:20px">Fonte: Manual do Escotista do ${esc(d.ramo)} (UEB), capítulo do Sistema de Progressão Pessoal. Material de consulta só para os chefes do grupo.</p>`+CREDITO;
+  document.getElementById('pg-q').addEventListener('input',e=>{PG.q=e.target.value;listaProg()});
+  listaProg()}
+function listaProg(){const sec=HOME_SEC,col=secColor(sec),d=PG.cache[ramoDe(sec)],el=document.getElementById('pg-list');if(!d||!el)return;
+  const q0=PG.q.trim().toLowerCase(),acento=/[^\x00-\x7f]/.test(q0),nz=acento?(t=>String(t||'').toLowerCase()):semAc,q=nz(q0);
+  const ini=(n,k)=>k===0||!/[a-z0-9\u00e0-\u00ff]/.test(n[k-1]);const tem=n=>{let k=-1;while((k=n.indexOf(q,k+1))>=0)if(ini(n,k))return true;return false};
+  const hl=t=>{t=esc(t);if(!q)return t;const n=nz(t);let out='',i=0,k=-1;while((k=n.indexOf(q,k+1))>=0){if(!ini(n,k)||k<i)continue;out+=t.slice(i,k)+'<mark>'+t.slice(k,k+q.length)+'</mark>';i=k+q.length}return out+t.slice(i)};
+  const txt=b=>nz([b.nome,b.eixo,b.intencionalidade,...(b.fixas||[]).map(x=>x.t),...(b.variaveis||[]),...(b.modalidade||[]).map(x=>x.t),...(b.especialidades||[]),...(b.insignias||[]),...(b.especialidadesComplementares||[]),...(b.observar||[]),b.nota].join(' '));
+  const item=t=>{const p=String(t).split(/\s*•\s*/);return p.length>1?hl(p[0])+'<ul>'+p.slice(1).map(x=>`<li>${hl(x.replace(/;$/,''))}</li>`).join('')+'</ul>':hl(t)};
+  const mod=x=>x.mod?`<span class="pg-mod ${x.mod}">${x.mod==='Ar'?'Modalidade do Ar':'Modalidade do Mar'}</span>`:'';
+  const eixos=[];for(const b of d.blocos){if(q&&!tem(txt(b)))continue;let e=eixos.find(x=>x.n===b.eixo);if(!e)eixos.push(e={n:b.eixo,bs:[]});e.bs.push(b)}
+  if(!eixos.length){el.innerHTML=`<p class="pg-none">Nada encontrado para “${esc(PG.q)}”.</p>`;return}
+  el.innerHTML=eixos.map(e=>`<div class="pg-eixo" style="--c:${col}"><h3>${esc(e.n)}</h3>${e.bs.map(b=>{const nv=(b.variaveis||[]).length,fx=b.fixas||[];
+    const resumo=[fx.length?fx.length+' fixa'+(fx.length>1?'s':''):'',b.variaveisMin?b.variaveisMin+' de '+nv+' variáveis':nv?nv+' sugest'+(nv>1?'ões':'ão'):''].filter(Boolean).join(' · ');
+    return `<details class="pg-b"${q||PG.all?' open':''}><summary><span>${hl(b.nome)}<small>${resumo}</small></span></summary><div class="pg-in">
+    ${b.intencionalidade?`<h4>Intencionalidade educativa</h4><p class="pg-int">${hl(b.intencionalidade)}</p>`:''}
+    ${fx.length?`<h4>Ações educativas fixas · fazer todas</h4><ul>${fx.map(x=>`<li>${mod(x)}${item(x.t)}</li>`).join('')}</ul>`:''}
+    ${nv?`<h4>Ações educativas variáveis${b.variaveisMin?' · realizar '+b.variaveisMin:''}</h4>${b.nota?`<p>${hl(b.nota)}</p>`:''}<ul>${b.variaveis.map(x=>`<li>${item(x)}</li>`).join('')}</ul>`:''}
+    ${(b.modalidade||[]).length?`<h4>Para as modalidades do Ar e do Mar</h4><ul>${b.modalidade.map(x=>`<li>${mod(x)}${item(x.t)}</li>`).join('')}</ul>`:''}
+    ${(b.especialidadesComplementares||[]).length?`<h4>Especialidades que podem complementar as variáveis</h4><div class="pg-tags">${b.especialidadesComplementares.map(x=>`<span>${hl(x)}</span>`).join('')}</div>`:''}
+    ${(b.especialidades||[]).length?`<p class="pg-ou">ou</p><h4>Conquistar ao menos uma especialidade</h4><div class="pg-tags">${b.especialidades.map(x=>`<span>${hl(x)}</span>`).join('')}</div>`:''}
+    ${(b.insignias||[]).length?`<p class="pg-ou">ou</p><h4>Conquistar ${b.insignias.length>1?'uma das insígnias':'a insígnia'}</h4><div class="pg-tags">${b.insignias.map(x=>`<span>${hl(x)}</span>`).join('')}</div>`:''}
+    ${(b.observar||[]).length?`<h4>O que observar</h4><ul>${b.observar.map(x=>`<li>${hl(x)}</li>`).join('')}</ul>`:''}
+    </div></details>`}).join('')}</div>`).join('')}
+
 /* ---------- Capa e tela da seção ---------- */
 const GRUPOS=[['Ninhadas','#0F8A9D',['Ninhada 1','Ninhada 2']],['Alcateias','#C08A00',['Alcateia Lobo Guará','Alcateia Sabiá','Alcateia Túnel do Morcego']],
  ['Escoteiros','#2E8B57',['Tropa Escoteira Hussardos','Tropa Escoteira Lis de Ouro','Tropa Escoteira Scorpions']],['Seniores','#8B1E3F',['Tropa Sênior Botocudos Pankas','Tropa Sênior Kakremaan']],['Pioneiros','#C62828',['Clã Zulu Mac Smyth']]];
@@ -1024,9 +1090,11 @@ function renderHome(){
     homeEl.innerHTML=`<div class="hero" style="--c:${col}"><div class="hl">${logoImg(sec,'hlogo')}<div><small>${esc((GRUPOS.find(g=>g[2].includes(sec))||[''])[0])}</small><h2>${esc(sec)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-trocar="1">Trocar seção</button><button type="button" class="btn sm" data-lock="1">Bloquear</button></div></div>
     <p class="capsub" style="margin-top:18px">O que vamos fazer?</p>
     <div class="choose"><button type="button" class="chc" style="--c:${col}" data-preparar="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span><b>Preparar reunião</b><small>Programação, jogos e pontuação · ${nr} salva${nr===1?'':'s'}</small></span></button>
-    ${IN_API?`<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de segurança</b><small>Acampamentos, saídas e atividades fora da sede${ns!=null?' · '+ns+' salvo'+(ns===1?'':'s'):''}</small></span></button>`:''}</div>`+installHTML()+CREDITO;
+    ${IN_API?`<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de segurança</b><small>Acampamentos, saídas e atividades fora da sede${ns!=null?' · '+ns+' salvo'+(ns===1?'':'s'):''}</small></span></button>`:''}
+    ${IN_API&&ramoDe(sec)?`<button type="button" class="chc" style="--c:#2E8B57" data-prog="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><path d="M6 16l4-5 3 3 5-7"/><path d="M15 7h3v3"/></svg></span><span><b>Progressão</b><small>${ramoDe(sec)==='filhotes'?'Blocos de aprendizagem e distintivos dos personagens':'Eixos, blocos de aprendizagem e etapas do ramo'}</small></span></button>`:''}</div>`+installHTML()+CREDITO;
     if(IN_API&&ns==null)gsr('apiCount','seguranca').then(c=>{SEG_COUNT=objOr(c);Object.keys(SEG_COUNT).forEach(k=>SEG_COUNT[k]=+SEG_COUNT[k]||0);for(const g of GRUPOS)for(const s of g[2])if(SEG_COUNT[s]==null)SEG_COUNT[s]=0;if(VIEW==='secao')renderHome()}).catch(()=>{});
     return}
+  if(VIEW==='prog'){renderProg();return}
   const sec=HOME_SEC,col=secColor(sec),pont=!!PATRULHAS[sec];
   const rs=REUN.filter(r=>r.secao===sec).sort((a,b)=>b.data.localeCompare(a.data));
   const draft=S.secao===sec&&hasContent()&&UNSAVED;
@@ -1085,6 +1153,8 @@ homeEl.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)ret
   if(d.trocar){setView('capa');return}
   if(d.escolha){setView('secao');return}
   if(d.preparar){setView('reunioes');return}
+  if(d.prog){abrirProg();return}
+  if(d.pgall){PG.all=!PG.all;document.querySelectorAll('#pg-list details').forEach(x=>x.open=PG.all);b.textContent=PG.all?'Fechar todos':'Abrir todos';return}
   if(d.seguranca){try{localStorage.setItem('rn-secao-home',HOME_SEC)}catch(e){}location.href='/seguranca.html?secao='+encodeURIComponent(HOME_SEC);return}
   if(d.novo){novaReuniao();return}
   if(d.cont){setView('form');return}

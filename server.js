@@ -3,8 +3,9 @@
 // O conteúdo das reuniões chega embaralhado (criptografado) pelo app; aqui só se guarda
 // e se confere a palavra-código antes de gravar ou apagar.
 import 'dotenv/config'
-import { readFileSync } from 'node:fs'
-import { createHash } from 'node:crypto'
+import { readFileSync, existsSync } from 'node:fs'
+import { createHash, createDecipheriv } from 'node:crypto'
+import { gunzipSync } from 'node:zlib'
 import { Hono } from 'hono'
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
@@ -47,6 +48,32 @@ function confereDiretoria(prova) {
     if (createHash('sha256').update(Buffer.from(p, 'hex')).digest('hex') !== MVER) throw new Error('codigo: palavra da diretoria não confere')
 }
 const ID_BASE = /^(local|apoio|config):[a-z0-9_:-]{1,140}$/
+// Blocos de Aprendizagem (texto dos manuais da UEB): ficam na base com id 'prog:<ramo>',
+// fora da leitura pública; só saem por apiProgressao com a palavra-código da seção.
+const PRIVADO_BASE = id => String(id).startsWith('prog:')
+function ramoDaSecao(secao) {
+    const s = String(secao || '')
+    if (s.startsWith('Ninhada')) return 'filhotes'
+    if (s.startsWith('Alcateia')) return 'lobinho'
+    if (s.startsWith('Tropa Escoteira')) return 'escoteiro'
+    if (s.startsWith('Tropa Sênior')) return 'senior'
+    if (s.startsWith('Clã')) return 'pioneiro'
+    return null
+}
+const RAMOS = new Set(['filhotes', 'lobinho', 'escoteiro', 'senior', 'pioneiro'])
+// O texto vem embaralhado no repositório (progressao.enc, AES-256-GCM + gzip); a chave fica só
+// na variável PROG_CHAVE do Railway. Sem a chave, cai para a base ('prog:<ramo>').
+let PROG = null
+try {
+    const chave = process.env.PROG_CHAVE
+    if (chave && existsSync(new URL('./progressao.enc', import.meta.url))) {
+        const b = readFileSync(new URL('./progressao.enc', import.meta.url))
+        const d = createDecipheriv('aes-256-gcm', Buffer.from(chave, 'base64'), b.subarray(0, 12))
+        d.setAuthTag(b.subarray(12, 28))
+        PROG = JSON.parse(gunzipSync(Buffer.concat([d.update(b.subarray(28)), d.final()])).toString('utf8'))
+        console.log('Progressão carregada:', Object.keys(PROG).join(', '))
+    }
+} catch (e) { console.error('Progressão: não consegui abrir progressao.enc', e.message) }
 
 function colecao(c) {
     if (!COLECOES.has(c)) throw new Error('coleção inválida')
@@ -68,6 +95,7 @@ const api = {
         const linhas = await armazem.listar(colecao(c))
         // Planos de segurança: a lista leva só o resumo (embaralhado); o plano completo vem pelo apiGet.
         if (c === 'seguranca') return linhas.map(r => ({ id: r.id, secao: r.secao, r: r.dados && r.dados.r }))
+        if (c === 'base') return linhas.filter(r => !PRIVADO_BASE(r.id)).map(r => ({ ...r.dados, id: r.id, secao: r.secao }))
         return linhas.map(r => ({ ...r.dados, id: r.id, secao: r.secao }))
     },
     async apiCount(c) {
@@ -77,6 +105,7 @@ const api = {
         return n
     },
     async apiGet(c, id) {
+        if (c === 'base' && PRIVADO_BASE(id)) return null
         const r = await armazem.pegar(colecao(c), String(id))
         return r ? { ...r.dados, secao: r.secao } : null
     },
@@ -134,6 +163,22 @@ const api = {
         id = String(id)
         if (!ID_BASE.test(id)) throw new Error('id inválido')
         return emFila('base:' + id, async () => { await armazem.apagar('base', id); return true })
+    },
+    // Progressão: blocos do ramo da seção. Pede a palavra-código da seção (ou a da diretoria,
+    // que pode escolher qualquer ramo).
+    async apiProgressao(secao, prova, ramoPedido) {
+        let ramo
+        if (ramoPedido) {
+            confereDiretoria(prova)
+            ramo = String(ramoPedido)
+        } else {
+            confere(String(secao || ''), prova)
+            ramo = ramoDaSecao(secao)
+        }
+        if (!RAMOS.has(ramo)) throw new Error('ramo inválido')
+        if (PROG && PROG[ramo]) return PROG[ramo]
+        const r = await armazem.pegar('base', 'prog:' + ramo)
+        return r ? r.dados : null
     },
     // Diretoria exclui um jogo do banco (jogos fora do padrão), de qualquer seção.
     async apiJogoDelDiretoria(id, provaDiretoria) {

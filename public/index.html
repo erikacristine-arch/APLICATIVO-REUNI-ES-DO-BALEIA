@@ -310,6 +310,29 @@ table.tot tr.win td{background:color-mix(in srgb,#E07B00 12%,var(--card));font-w
 @media(max-width:600px){.itrow{grid-template-columns:minmax(0,1fr) 110px}.itrow input[data-itd]{grid-column:1/2}.ajrow{grid-template-columns:minmax(0,1fr) 96px}.ajrow input[data-ajm]{grid-column:1/-1}.board>header select{flex-basis:100%}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 .tema{flex:none;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}.tema svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.tema:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+/* Progressão */
+.pg-et{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
+.pg-et span{border:1.5px solid var(--c);border-radius:12px;padding:6px 12px;background:var(--card);font-size:14px;line-height:1.25}
+.pg-et span b{display:block;color:color-mix(in srgb,var(--c) 80%,var(--ink))}
+.pg-et span.fim{background:var(--c);color:#fff}.pg-et span.fim b{color:#fff}
+.pg-q{margin:14px 0 6px}
+.pg-eixo{margin-top:22px}.pg-eixo>h3{font-size:18px;margin:0 0 8px;color:color-mix(in srgb,var(--c) 80%,var(--ink))}
+.pg-b{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;margin-bottom:10px}
+.pg-b>summary{cursor:pointer;padding:14px 16px;font-weight:700;font-size:17px;list-style:none;display:flex;gap:10px;align-items:center;justify-content:space-between;min-height:44px}
+.pg-b>summary::-webkit-details-marker{display:none}
+.pg-b>summary small{display:block;font-weight:500;color:var(--mute);font-size:13px}
+.pg-b>summary::after{content:'▾';flex:none;color:var(--mute);transition:transform .15s}.pg-b[open]>summary::after{transform:rotate(180deg)}
+.pg-in{padding:0 16px 16px}
+.pg-in h4{font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin:14px 0 6px}
+.pg-in p{margin:0 0 6px}.pg-in ul{margin:0;padding-left:20px}.pg-in li{margin:4px 0}
+.pg-int{background:color-mix(in srgb,var(--c) 10%,var(--card));border-radius:10px;padding:10px 12px;font-style:italic}
+.pg-mod{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:1px 6px;margin-right:6px;vertical-align:1px;color:#fff;background:#3955A4}
+.pg-mod.Mar{background:#0F6FA8}.pg-mod.Ar{background:#6A5ACD}
+.pg-tags{display:flex;flex-wrap:wrap;gap:6px}.pg-tags span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:14px}
+.pg-ou{font-weight:700;color:var(--mute);text-align:center;margin:12px 0 4px}
+.pg-none{color:var(--mute);padding:20px 0;text-align:center}
+mark{background:light-dark(#ffe58a,#7a6200);color:inherit;border-radius:3px}
 </style>
 <script>window.RN_API='/api';</script>
 <script>
@@ -986,6 +1009,83 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
   }, schedRetry2 = function() {
     clearTimeout(retryT);
     retryT = setTimeout(retryPend, 2e4);
+  }, abrirProg2 = function() {
+    PG.q = "";
+    PG.all = false;
+    PG.erro = "";
+    setView2("prog");
+    carregarProg();
+  }, renderProg2 = function() {
+    const sec = HOME_SEC, col = secColor(sec), r = ramoDe(sec), d = PG.cache[r];
+    let h = `<div class="hero" style="--c:${col}"><div class="hl">${logoImg(sec, "hlogo")}<div><small>Progress\xE3o \xB7 ${esc(d ? d.ramo : "")}</small><h2>${esc(sec)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-escolha="1">\u2039 Voltar</button></div></div>`;
+    if (!d) {
+      homeEl.innerHTML = h + `<p class="pg-none">${PG.erro ? esc(PG.erro) + '<br><br><button type="button" class="btn sm" data-prog="1">Tentar de novo</button>' : "Carregando os blocos\u2026"}</p>` + CREDITO;
+      return;
+    }
+    const et = d.etapas;
+    h += `<div style="--c:${col}"><div class="pg-et">${et.itens.map((x) => `<span><b>${esc(x.nome)}</b>${esc(x.desc)}</span>`).join("")}${et.final ? `<span class="fim"><b>${esc(et.final)}</b>ao concluir os ${d.blocos.length} blocos</span>` : ""}</div>
+  <div class="pg-q"><input type="text" id="pg-q" placeholder="Buscar nos blocos (ex.: n\xF3s, primeiros socorros, horta)" value="${esc(PG.q)}" autocomplete="off" aria-label="Buscar nos blocos"></div>
+  <p style="text-align:right;margin:0"><button type="button" class="btn ghost sm" data-pgall="1">${PG.all ? "Fechar todos" : "Abrir todos"}</button></p>
+  <div id="pg-list"></div></div>`;
+    homeEl.innerHTML = h + `<p class="note" style="margin-top:20px">Fonte: Manual do Escotista do ${esc(d.ramo)} (UEB), cap\xEDtulo do Sistema de Progress\xE3o Pessoal. Material de consulta s\xF3 para os chefes do grupo.</p>` + CREDITO;
+    document.getElementById("pg-q").addEventListener("input", (e) => {
+      PG.q = e.target.value;
+      listaProg2();
+    });
+    listaProg2();
+  }, listaProg2 = function() {
+    const sec = HOME_SEC, col = secColor(sec), d = PG.cache[ramoDe(sec)], el = document.getElementById("pg-list");
+    if (!d || !el) return;
+    const q0 = PG.q.trim().toLowerCase(), acento = /[^\x00-\x7f]/.test(q0), nz = acento ? (t) => String(t || "").toLowerCase() : semAc, q = nz(q0);
+    const ini = (n, k) => k === 0 || !/[a-z0-9\u00e0-\u00ff]/.test(n[k - 1]);
+    const tem = (n) => {
+      let k = -1;
+      while ((k = n.indexOf(q, k + 1)) >= 0) if (ini(n, k)) return true;
+      return false;
+    };
+    const hl = (t) => {
+      t = esc(t);
+      if (!q) return t;
+      const n = nz(t);
+      let out = "", i = 0, k = -1;
+      while ((k = n.indexOf(q, k + 1)) >= 0) {
+        if (!ini(n, k) || k < i) continue;
+        out += t.slice(i, k) + "<mark>" + t.slice(k, k + q.length) + "</mark>";
+        i = k + q.length;
+      }
+      return out + t.slice(i);
+    };
+    const txt = (b) => nz([b.nome, b.eixo, b.intencionalidade, ...(b.fixas || []).map((x) => x.t), ...b.variaveis || [], ...(b.modalidade || []).map((x) => x.t), ...b.especialidades || [], ...b.insignias || [], ...b.especialidadesComplementares || [], ...b.observar || [], b.nota].join(" "));
+    const item3 = (t) => {
+      const p = String(t).split(/\s*•\s*/);
+      return p.length > 1 ? hl(p[0]) + "<ul>" + p.slice(1).map((x) => `<li>${hl(x.replace(/;$/, ""))}</li>`).join("") + "</ul>" : hl(t);
+    };
+    const mod = (x) => x.mod ? `<span class="pg-mod ${x.mod}">${x.mod === "Ar" ? "Modalidade do Ar" : "Modalidade do Mar"}</span>` : "";
+    const eixos = [];
+    for (const b of d.blocos) {
+      if (q && !tem(txt(b))) continue;
+      let e = eixos.find((x) => x.n === b.eixo);
+      if (!e) eixos.push(e = { n: b.eixo, bs: [] });
+      e.bs.push(b);
+    }
+    if (!eixos.length) {
+      el.innerHTML = `<p class="pg-none">Nada encontrado para \u201C${esc(PG.q)}\u201D.</p>`;
+      return;
+    }
+    el.innerHTML = eixos.map((e) => `<div class="pg-eixo" style="--c:${col}"><h3>${esc(e.n)}</h3>${e.bs.map((b) => {
+      const nv = (b.variaveis || []).length, fx = b.fixas || [];
+      const resumo = [fx.length ? fx.length + " fixa" + (fx.length > 1 ? "s" : "") : "", b.variaveisMin ? b.variaveisMin + " de " + nv + " vari\xE1veis" : nv ? nv + " sugest" + (nv > 1 ? "\xF5es" : "\xE3o") : ""].filter(Boolean).join(" \xB7 ");
+      return `<details class="pg-b"${q || PG.all ? " open" : ""}><summary><span>${hl(b.nome)}<small>${resumo}</small></span></summary><div class="pg-in">
+    ${b.intencionalidade ? `<h4>Intencionalidade educativa</h4><p class="pg-int">${hl(b.intencionalidade)}</p>` : ""}
+    ${fx.length ? `<h4>A\xE7\xF5es educativas fixas \xB7 fazer todas</h4><ul>${fx.map((x) => `<li>${mod(x)}${item3(x.t)}</li>`).join("")}</ul>` : ""}
+    ${nv ? `<h4>A\xE7\xF5es educativas vari\xE1veis${b.variaveisMin ? " \xB7 realizar " + b.variaveisMin : ""}</h4>${b.nota ? `<p>${hl(b.nota)}</p>` : ""}<ul>${b.variaveis.map((x) => `<li>${item3(x)}</li>`).join("")}</ul>` : ""}
+    ${(b.modalidade || []).length ? `<h4>Para as modalidades do Ar e do Mar</h4><ul>${b.modalidade.map((x) => `<li>${mod(x)}${item3(x.t)}</li>`).join("")}</ul>` : ""}
+    ${(b.especialidadesComplementares || []).length ? `<h4>Especialidades que podem complementar as vari\xE1veis</h4><div class="pg-tags">${b.especialidadesComplementares.map((x) => `<span>${hl(x)}</span>`).join("")}</div>` : ""}
+    ${(b.especialidades || []).length ? `<p class="pg-ou">ou</p><h4>Conquistar ao menos uma especialidade</h4><div class="pg-tags">${b.especialidades.map((x) => `<span>${hl(x)}</span>`).join("")}</div>` : ""}
+    ${(b.insignias || []).length ? `<p class="pg-ou">ou</p><h4>Conquistar ${b.insignias.length > 1 ? "uma das ins\xEDgnias" : "a ins\xEDgnia"}</h4><div class="pg-tags">${b.insignias.map((x) => `<span>${hl(x)}</span>`).join("")}</div>` : ""}
+    ${(b.observar || []).length ? `<h4>O que observar</h4><ul>${b.observar.map((x) => `<li>${hl(x)}</li>`).join("")}</ul>` : ""}
+    </div></details>`;
+    }).join("")}</div>`).join("");
   }, setView2 = function(v) {
     VIEW = v;
     clearTimeout(jumpT);
@@ -1017,7 +1117,8 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
       homeEl.innerHTML = `<div class="hero" style="--c:${col2}"><div class="hl">${logoImg(sec2, "hlogo")}<div><small>${esc((GRUPOS.find((g) => g[2].includes(sec2)) || [""])[0])}</small><h2>${esc(sec2)}</h2></div></div><div class="tools"><button type="button" class="btn sm" data-trocar="1">Trocar se\xE7\xE3o</button><button type="button" class="btn sm" data-lock="1">Bloquear</button></div></div>
     <p class="capsub" style="margin-top:18px">O que vamos fazer?</p>
     <div class="choose"><button type="button" class="chc" style="--c:${col2}" data-preparar="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span><b>Preparar reuni\xE3o</b><small>Programa\xE7\xE3o, jogos e pontua\xE7\xE3o \xB7 ${nr} salva${nr === 1 ? "" : "s"}</small></span></button>
-    ${IN_API ? `<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de seguran\xE7a</b><small>Acampamentos, sa\xEDdas e atividades fora da sede${ns != null ? " \xB7 " + ns + " salvo" + (ns === 1 ? "" : "s") : ""}</small></span></button>` : ""}</div>` + installHTML() + CREDITO;
+    ${IN_API ? `<button type="button" class="chc" style="--c:#C62828" data-seguranca="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><span><b>Criar plano de seguran\xE7a</b><small>Acampamentos, sa\xEDdas e atividades fora da sede${ns != null ? " \xB7 " + ns + " salvo" + (ns === 1 ? "" : "s") : ""}</small></span></button>` : ""}
+    ${IN_API && ramoDe(sec2) ? `<button type="button" class="chc" style="--c:#2E8B57" data-prog="1"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16"/><path d="M6 16l4-5 3 3 5-7"/><path d="M15 7h3v3"/></svg></span><span><b>Progress\xE3o</b><small>${ramoDe(sec2) === "filhotes" ? "Blocos de aprendizagem e distintivos dos personagens" : "Eixos, blocos de aprendizagem e etapas do ramo"}</small></span></button>` : ""}</div>` + installHTML() + CREDITO;
       if (IN_API && ns == null) gsr2("apiCount", "seguranca").then((c) => {
         SEG_COUNT = objOr(c);
         Object.keys(SEG_COUNT).forEach((k) => SEG_COUNT[k] = +SEG_COUNT[k] || 0);
@@ -1025,6 +1126,10 @@ var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
         if (VIEW === "secao") renderHome2();
       }).catch(() => {
       });
+      return;
+    }
+    if (VIEW === "prog") {
+      renderProg2();
       return;
     }
     const sec = HOME_SEC, col = secColor(sec), pont = !!PATRULHAS[sec];
@@ -1833,7 +1938,7 @@ ${hhmm(t + d)}` : "";
     const name = `RN_${slug(secaoNome()) || "Secao"}${S.data ? "_" + S.data : ""}.pdf`;
     return { doc, name, pages };
   };
-  var markSaved = markSaved2, defaults = defaults2, visible = visible2, filled = filled2, required = required2, soft = soft2, cicloOpts = cicloOpts2, field = field2, seg = seg2, listHTML = listHTML2, attachHTML = attachHTML2, teamsHTML = teamsHTML2, actHTML = actHTML2, clocks = clocks2, actsHTML = actsHTML2, item = item2, build = build2, rerender = rerender2, secDone = secDone2, setActive = setActive2, goSection = goSection2, currentSection = currentSection2, lastItem = lastItem2, refresh = refresh2, persist = persist2, saveMemo = saveMemo2, setVal = setVal2, applyMemo = applyMemo2, addTeam = addTeam2, toast = toast2, showPanel = showPanel2, delDraft = delDraft2, goTo = goTo2, lockSec = lockSec2, loadLocal = loadLocal2, gsr = gsr2, reuSummary = reuSummary2, saveBusy = saveBusy2, calc = calc2, ranking = ranking2, openBoard = openBoard2, statusHTML = statusHTML2, renderBoard = renderBoard2, actDone = actDone2, actCount = actCount2, renderScore = renderScore2, sbarHTML = sbarHTML2, itemsCard = itemsCard2, totHTML = totHTML2, markDirty = markDirty2, svText = svText2, schedRetry = schedRetry2, setView = setView2, updTrpBtn = updTrpBtn2, renderHome = renderHome2, guard = guard2, askLoad = askLoad2, novaReuniao = novaReuniao2, askCode = askCode2, searchJ = searchJ2, openJogos = openJogos2, closeJogos = closeJogos2, renderJogos = renderJogos2, useJogo = useJogo2, jHint = jHint2, saveToBank = saveToBank2, loadScript = loadScript2, pdfjs = pdfjs2, pdfLib = pdfLib2, makePdf = makePdf2;
+  var markSaved = markSaved2, defaults = defaults2, visible = visible2, filled = filled2, required = required2, soft = soft2, cicloOpts = cicloOpts2, field = field2, seg = seg2, listHTML = listHTML2, attachHTML = attachHTML2, teamsHTML = teamsHTML2, actHTML = actHTML2, clocks = clocks2, actsHTML = actsHTML2, item = item2, build = build2, rerender = rerender2, secDone = secDone2, setActive = setActive2, goSection = goSection2, currentSection = currentSection2, lastItem = lastItem2, refresh = refresh2, persist = persist2, saveMemo = saveMemo2, setVal = setVal2, applyMemo = applyMemo2, addTeam = addTeam2, toast = toast2, showPanel = showPanel2, delDraft = delDraft2, goTo = goTo2, lockSec = lockSec2, loadLocal = loadLocal2, gsr = gsr2, reuSummary = reuSummary2, saveBusy = saveBusy2, calc = calc2, ranking = ranking2, openBoard = openBoard2, statusHTML = statusHTML2, renderBoard = renderBoard2, actDone = actDone2, actCount = actCount2, renderScore = renderScore2, sbarHTML = sbarHTML2, itemsCard = itemsCard2, totHTML = totHTML2, markDirty = markDirty2, svText = svText2, schedRetry = schedRetry2, abrirProg = abrirProg2, renderProg = renderProg2, listaProg = listaProg2, setView = setView2, updTrpBtn = updTrpBtn2, renderHome = renderHome2, guard = guard2, askLoad = askLoad2, novaReuniao = novaReuniao2, askCode = askCode2, searchJ = searchJ2, openJogos = openJogos2, closeJogos = closeJogos2, renderJogos = renderJogos2, useJogo = useJogo2, jHint = jHint2, saveToBank = saveToBank2, loadScript = loadScript2, pdfjs = pdfjs2, pdfLib = pdfLib2, makePdf = makePdf2;
   const LOGO_B = [
     "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCAFcAY0DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD7+ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoqtqGo2GladLqGqXtvZWkQ3ST3EgjRB6ljwK8Z8QftP+BrHWodH8M29z4hvJZlhWRG+z2wYkDmRxnqeoUj3rooYStiHalFv+",
     "u5E6kYfEz2+ms6Jt3uq7jtGTjJ9K+VP2ivjH468OfEmXwh4a1U6VZRWsTySQIvmys4LE7yMqACB8uOnXmuG/Z/vdY8U/tK6TqGvXt9q5tIri5knvJXm8rETAOSxOAGZQD6kV6dPJJvDvEzkkrXtuznli4qp7NLU+tfEXxX+HXhS/ksNe8Xada3cWBJbK5lkjJ7MiAkHvgiqPhT4z+APG3iaTQ/DOp3N7PHC1w8n2SWONI1xlmZ1GBkgc45NfH2t/Df4meOfiJreuaZ4L1qWHUdQnuIpp7c26MryMykNJgYwR3r2b4P/AAY+IHgvwb4vvL6zs7bW9Usf7PsbSW6Uqm770jum4DGQQBknafUGt6+WYOjRu6l56aXW78t9CIYirOduXQ63UP2qPhXY6jLawvrN8qEr59raDy2+m9lOPwrqfBfxp8GeOrPU73ShqNtZ6XB9ovLq+gEUUK88FgxGcBjj0Br5ouP2TPifDKFju/D1wCM74ruQAe3zRg16rYfBfxr4Z/ZpvvAeiPpVzrOsXJn1G5M7RpEny4jjJXL5CAc4A3N9a580pYDD4WU8NLmn0V7/AKHZlUKmKxdOjiGoQbV29LLq9eyO2sv2hvhJe3BhHigwHs1xaTIp/Hbgfjiu40DxX4a8U28k/hzXbDU0ix5n2WZXMeem4Dlc4PX0NfFl/wDs7fFqylVE8NJdqxwHtruEjPvlgR9cV3fxCh1b4Wfs+ab8OdI0/UE1C6/0vWtUtbdxBgkkx+cAAxztX/dTB618TTzHERTlWhZLya9EfqeYcH5NVlSo5ViuedSVvijJRXWTsk9Oi6tn1hRX5zeG/HXjjw5dxJ4b8R6pasSES3ilZ0Y9APLOVb2GK+stb+MNz8LPB2h23xCzrHia/i+0S2+nxLAIE/28nBOcjIABIbgY53w+a06ibmuW3zX9fI8rOuAMZl9WnSozVWU78qV1J2V27bJLvzHs9FedeC/jf8PfG7R21lq4sL9+BY6ji",
@@ -3125,6 +3230,24 @@ ${hhmm(t + d)}` : "";
       if (r && BV[k][+n]) e.target.value = BV[k][+n].v;
     }
   });
+  const ramoDe = (s) => {
+    s = String(s || "");
+    return s.startsWith("Ninhada") ? "filhotes" : s.startsWith("Alcateia") ? "lobinho" : s.startsWith("Tropa Escoteira") ? "escoteiro" : s.startsWith("Tropa S\xEAnior") ? "senior" : s.startsWith("Cl\xE3") ? "pioneiro" : "";
+  };
+  const PG = { cache: {}, q: "", all: false, erro: "" };
+  const semAc = (t) => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  async function carregarProg() {
+    const sec = HOME_SEC, r = ramoDe(sec);
+    if (!r || PG.cache[r]) return;
+    try {
+      const d = await gsr2("apiProgressao", sec, PROOF[sec] || "");
+      if (!d) throw new Error("vazio");
+      PG.cache[r] = d;
+    } catch (e) {
+      PG.erro = /codigo/.test(String(e && e.message || e)) ? "A palavra-c\xF3digo desta se\xE7\xE3o n\xE3o confere. Bloqueie e entre de novo." : "N\xE3o consegui carregar a progress\xE3o agora. Confira a internet e tente de novo.";
+    }
+    if (VIEW === "prog") renderProg2();
+  }
   const GRUPOS = [
     ["Ninhadas", "#0F8A9D", ["Ninhada 1", "Ninhada 2"]],
     ["Alcateias", "#C08A00", ["Alcateia Lobo Guar\xE1", "Alcateia Sabi\xE1", "Alcateia T\xFAnel do Morcego"]],
@@ -3358,6 +3481,16 @@ ${hhmm(t + d)}` : "";
     }
     if (d.preparar) {
       setView2("reunioes");
+      return;
+    }
+    if (d.prog) {
+      abrirProg2();
+      return;
+    }
+    if (d.pgall) {
+      PG.all = !PG.all;
+      document.querySelectorAll("#pg-list details").forEach((x) => x.open = PG.all);
+      b.textContent = PG.all ? "Fechar todos" : "Abrir todos";
       return;
     }
     if (d.seguranca) {
